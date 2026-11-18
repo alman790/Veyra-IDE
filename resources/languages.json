@@ -1,0 +1,1821 @@
+{
+  "version": 1,
+  "languages": [
+    {
+      "id": 1,
+      "key": "c",
+      "name": "C",
+      "extensions": [
+        "c",
+        "h"
+      ],
+      "server": "clangd",
+      "runnable": true,
+      "compiled": true,
+      "build": {
+        "program": "cc",
+        "arguments": [
+          "-std=c17",
+          "-Wall",
+          "-Wextra",
+          "-g",
+          "{file}",
+          "-o",
+          "{output}"
+        ]
+      },
+      "run": {
+        "program": "{output}",
+        "arguments": []
+      },
+      "msvc": {
+        "build": {
+          "program": "cl",
+          "arguments": [
+            "/nologo",
+            "/utf-8",
+            "/TC",
+            "/W4",
+            "/Zi",
+            "/Fo:{output}.obj",
+            "/Fe:{output}",
+            "{file}"
+          ]
+        }
+      },
+      "projectKind": "cmake",
+      "entry": "src/main.c",
+      "excludedExtensions": [
+        "h"
+      ],
+      "lineComment": "//",
+      "blockComments": true,
+      "template": "#include <stdio.h>\n\nint main(void) {\n    puts(\"Hello, world!\");\n    return 0;\n}\n",
+      "sdkVariable": "",
+      "tools": {
+        "build": "cc",
+        "run": "{output}"
+      },
+      "compilerCandidates": [
+        "clang",
+        "gcc",
+        "cc",
+        "cl"
+      ],
+      "projectFiles": {
+        "CMakeLists.txt": "cmake_minimum_required(VERSION 3.20)\nproject(App LANGUAGES C)\n\nset(CMAKE_C_STANDARD 17)\nset(CMAKE_C_STANDARD_REQUIRED ON)\nset(CMAKE_EXPORT_COMPILE_COMMANDS ON)\n\nadd_executable(app src/main.c)\n"
+      },
+      "keywords": [
+        "alignas",
+        "auto",
+        "bool",
+        "break",
+        "case",
+        "catch",
+        "char",
+        "class",
+        "const",
+        "constexpr",
+        "continue",
+        "decltype",
+        "default",
+        "delete",
+        "do",
+        "double",
+        "else",
+        "enum",
+        "explicit",
+        "false",
+        "float",
+        "for",
+        "friend",
+        "if",
+        "inline",
+        "int",
+        "long",
+        "mutable",
+        "namespace",
+        "new",
+        "noexcept",
+        "nullptr",
+        "operator",
+        "override",
+        "private",
+        "protected",
+        "public",
+        "return",
+        "short",
+        "signed",
+        "sizeof",
+        "static",
+        "struct",
+        "switch",
+        "template",
+        "this",
+        "throw",
+        "true",
+        "try",
+        "typedef",
+        "typename",
+        "union",
+        "unsigned",
+        "using",
+        "virtual",
+        "void",
+        "volatile",
+        "while"
+      ],
+      "highlightPatterns": [
+        {
+          "pattern": "^\\s*#\\s*(?:include|define|pragma|ifdef|ifndef|endif|if|else)\\b",
+          "role": "keyword"
+        }
+      ],
+      "cmakeLanguage": "C",
+      "quotePrefixes": [
+        "u8",
+        "u",
+        "U",
+        "L"
+      ]
+    },
+    {
+      "id": 2,
+      "key": "cpp",
+      "name": "C++",
+      "extensions": [
+        "cpp",
+        "cc",
+        "cxx",
+        "hpp",
+        "hh",
+        "hxx"
+      ],
+      "server": "clangd",
+      "runnable": true,
+      "compiled": true,
+      "build": {
+        "program": "c++",
+        "arguments": [
+          "-std=c++20",
+          "-Wall",
+          "-Wextra",
+          "-g",
+          "-pthread",
+          "{file}",
+          "-o",
+          "{output}"
+        ]
+      },
+      "run": {
+        "program": "{output}",
+        "arguments": []
+      },
+      "msvc": {
+        "build": {
+          "program": "cl",
+          "arguments": [
+            "/nologo",
+            "/utf-8",
+            "/EHsc",
+            "/std:c++20",
+            "/W4",
+            "/Zi",
+            "/Fo:{output}.obj",
+            "/Fe:{output}",
+            "{file}"
+          ]
+        }
+      },
+      "projectKind": "cmake",
+      "entry": "src/main.cpp",
+      "excludedExtensions": [
+        "hpp",
+        "hh",
+        "hxx"
+      ],
+      "lineComment": "//",
+      "blockComments": true,
+      "template": "#include <iostream>\n\nint main() {\n    std::cout << \"Hello, world!\\n\";\n    return 0;\n}\n",
+      "sdkVariable": "",
+      "tools": {
+        "build": "c++",
+        "run": "{output}"
+      },
+      "compilerCandidates": [
+        "clang++",
+        "g++",
+        "c++",
+        "cl"
+      ],
+      "projectFiles": {
+        "CMakeLists.txt": "cmake_minimum_required(VERSION 3.20)\nproject(App LANGUAGES CXX)\n\nset(CMAKE_CXX_STANDARD 20)\nset(CMAKE_CXX_STANDARD_REQUIRED ON)\nset(CMAKE_EXPORT_COMPILE_COMMANDS ON)\n\nadd_executable(app src/main.cpp)\n"
+      },
+      "keywords": [
+        "alignas",
+        "auto",
+        "bool",
+        "break",
+        "case",
+        "catch",
+        "char",
+        "class",
+        "const",
+        "constexpr",
+        "continue",
+        "decltype",
+        "default",
+        "delete",
+        "do",
+        "double",
+        "else",
+        "enum",
+        "explicit",
+        "false",
+        "float",
+        "for",
+        "friend",
+        "if",
+        "inline",
+        "int",
+        "long",
+        "mutable",
+        "namespace",
+        "new",
+        "noexcept",
+        "nullptr",
+        "operator",
+        "override",
+        "private",
+        "protected",
+        "public",
+        "return",
+        "short",
+        "signed",
+        "sizeof",
+        "static",
+        "struct",
+        "switch",
+        "template",
+        "this",
+        "throw",
+        "true",
+        "try",
+        "typedef",
+        "typename",
+        "union",
+        "unsigned",
+        "using",
+        "virtual",
+        "void",
+        "volatile",
+        "while"
+      ],
+      "highlightPatterns": [
+        {
+          "pattern": "^\\s*#\\s*(?:include|define|pragma|ifdef|ifndef|endif|if|else)\\b",
+          "role": "keyword"
+        }
+      ],
+      "cmakeLanguage": "CXX",
+      "quotePrefixes": [
+        "u8",
+        "u",
+        "U",
+        "L"
+      ]
+    },
+    {
+      "id": 3,
+      "key": "python",
+      "name": "Python",
+      "extensions": [
+        "py"
+      ],
+      "server": "pyright-langserver --stdio",
+      "runnable": true,
+      "build": {
+        "program": "python3",
+        "arguments": [
+          "-c",
+          "import ast,sys; ast.parse(open(sys.argv[1],encoding='utf-8').read(),filename=sys.argv[1])",
+          "{file}"
+        ]
+      },
+      "run": {
+        "program": "python3",
+        "arguments": [
+          "{file}"
+        ]
+      },
+      "windows": {
+        "build": {
+          "program": "python",
+          "arguments": [
+            "-c",
+            "import ast,sys; ast.parse(open(sys.argv[1],encoding='utf-8').read(),filename=sys.argv[1])",
+            "{file}"
+          ]
+        },
+        "run": {
+          "program": "python",
+          "arguments": [
+            "{file}"
+          ]
+        },
+        "installation": {
+          "steps": [
+            {
+              "program": "{compiler}",
+              "arguments": [
+                "-m",
+                "venv",
+                "{managed}/venv"
+              ]
+            },
+            {
+              "program": "{managed}/venv/Scripts/python.exe",
+              "arguments": [
+                "-m",
+                "pip",
+                "install",
+                "--disable-pip-version-check",
+                "python-lsp-server==1.12.2"
+              ]
+            }
+          ],
+          "server": "{managed}/venv/Scripts/pylsp.exe",
+          "packages": [
+            "python-lsp-server==1.12.2"
+          ],
+          "serverArguments": []
+        }
+      },
+      "projectKind": "python",
+      "excludedExtensions": [],
+      "lineComment": "#",
+      "blockComments": false,
+      "template": "def main():\n    print(\"Hello, world!\")\n\n\nif __name__ == \"__main__\":\n    main()\n",
+      "entry": "main.py",
+      "sdkVariable": "",
+      "tools": {
+        "build": "python3",
+        "run": "python3"
+      },
+      "compilerCandidates": [],
+      "projectFiles": {
+        "pyproject.toml": "[project]\nname = \"app\"\nversion = \"0.1.0\"\nrequires-python = \">=3.10\"\n"
+      },
+      "keywords": [
+        "and",
+        "as",
+        "assert",
+        "async",
+        "await",
+        "break",
+        "class",
+        "continue",
+        "def",
+        "del",
+        "elif",
+        "else",
+        "except",
+        "False",
+        "finally",
+        "for",
+        "from",
+        "global",
+        "if",
+        "import",
+        "in",
+        "is",
+        "lambda",
+        "nonlocal",
+        "not",
+        "or",
+        "pass",
+        "raise",
+        "return",
+        "True",
+        "try",
+        "while",
+        "with",
+        "yield",
+        "None"
+      ],
+      "highlightPatterns": [],
+      "installation": {
+        "steps": [
+          {
+            "program": "{compiler}",
+            "arguments": [
+              "-m",
+              "venv",
+              "{managed}/venv"
+            ]
+          },
+          {
+            "program": "{managed}/venv/bin/python",
+            "arguments": [
+              "-m",
+              "pip",
+              "install",
+              "--disable-pip-version-check",
+              "python-lsp-server==1.12.2"
+            ]
+          }
+        ],
+        "server": "{managed}/venv/bin/pylsp",
+        "packages": [
+          "python-lsp-server==1.12.2"
+        ],
+        "serverArguments": []
+      },
+      "serverSettings": {
+        "python": {
+          "pythonPath": "{compiler}",
+          "analysis": {
+            "autoSearchPaths": true
+          }
+        },
+        "pylsp": {
+          "plugins": {
+            "jedi": {
+              "environment": "{compiler}"
+            }
+          }
+        }
+      },
+      "sdkRoots": [
+        "{env:VIRTUAL_ENV}",
+        "{env:CONDA_PREFIX}",
+        "{home}/.pyenv/versions/*"
+      ],
+      "quotePrefixes": [
+        "f",
+        "r",
+        "b",
+        "u",
+        "fr",
+        "rf",
+        "br",
+        "rb",
+        "F",
+        "R",
+        "B",
+        "U",
+        "FR",
+        "RF",
+        "BR",
+        "RB"
+      ]
+    },
+    {
+      "id": 4,
+      "key": "java",
+      "name": "Java",
+      "extensions": [
+        "java"
+      ],
+      "server": "jdtls",
+      "runnable": true,
+      "compiled": true,
+      "entry": "src/Main.java",
+      "build": {
+        "program": "javac",
+        "arguments": [
+          "-encoding",
+          "UTF-8",
+          "-d",
+          "{build}",
+          "{file}"
+        ]
+      },
+      "run": {
+        "program": "java",
+        "arguments": [
+          "-cp",
+          "{build}",
+          "{stem}"
+        ]
+      },
+      "excludedExtensions": [],
+      "lineComment": "//",
+      "blockComments": true,
+      "template": "public class {stem} {\n    public static void main(String[] args) {\n        System.out.println(\"Hello, world!\");\n    }\n}\n",
+      "sdkVariable": "JAVA_HOME",
+      "tools": {
+        "build": "javac",
+        "run": "java"
+      },
+      "compilerCandidates": [],
+      "projectFiles": {},
+      "keywords": [
+        "abstract",
+        "as",
+        "boolean",
+        "break",
+        "byte",
+        "case",
+        "catch",
+        "char",
+        "class",
+        "const",
+        "continue",
+        "default",
+        "do",
+        "double",
+        "else",
+        "enum",
+        "extends",
+        "false",
+        "final",
+        "finally",
+        "float",
+        "for",
+        "fun",
+        "if",
+        "implements",
+        "import",
+        "in",
+        "int",
+        "interface",
+        "internal",
+        "long",
+        "namespace",
+        "new",
+        "null",
+        "object",
+        "override",
+        "package",
+        "private",
+        "protected",
+        "public",
+        "return",
+        "sealed",
+        "short",
+        "static",
+        "string",
+        "super",
+        "switch",
+        "this",
+        "throw",
+        "true",
+        "try",
+        "using",
+        "val",
+        "var",
+        "void",
+        "volatile",
+        "when",
+        "while"
+      ],
+      "highlightPatterns": [],
+      "sdkRoots": [
+        "{env:JAVA_HOME}",
+        "/Library/Java/JavaVirtualMachines/*/Contents/Home",
+        "{home}/Library/Java/JavaVirtualMachines/*/Contents/Home",
+        "{home}/.sdkman/candidates/java/*",
+        "/Applications/*.app/Contents/jbr/Contents/Home",
+        "{env:ProgramFiles}/Java/*",
+        "{env:ProgramFiles}/Eclipse Adoptium/*",
+        "/usr/lib/jvm/*"
+      ],
+      "sdkRequiredFiles": [
+        "release"
+      ]
+    },
+    {
+      "id": 5,
+      "key": "javascript",
+      "name": "JavaScript",
+      "extensions": [
+        "js",
+        "mjs",
+        "cjs",
+        "jsx"
+      ],
+      "server": "typescript-language-server --stdio",
+      "runnable": true,
+      "build": {
+        "program": "node",
+        "arguments": [
+          "--check",
+          "{file}"
+        ]
+      },
+      "run": {
+        "program": "node",
+        "arguments": [
+          "{file}"
+        ]
+      },
+      "projectKind": "javascript",
+      "excludedExtensions": [
+        "jsx"
+      ],
+      "lineComment": "//",
+      "blockComments": true,
+      "template": "console.log(\"Hello, world!\");\n",
+      "entry": "main.js",
+      "sdkVariable": "",
+      "tools": {
+        "build": "node",
+        "run": "node"
+      },
+      "compilerCandidates": [],
+      "projectFiles": {
+        "package.json": "{\n  \"name\": \"app\",\n  \"private\": true,\n  \"type\": \"module\"\n}\n"
+      },
+      "keywords": [
+        "async",
+        "await",
+        "break",
+        "case",
+        "catch",
+        "class",
+        "const",
+        "continue",
+        "debugger",
+        "default",
+        "delete",
+        "do",
+        "else",
+        "enum",
+        "export",
+        "extends",
+        "false",
+        "finally",
+        "for",
+        "function",
+        "if",
+        "import",
+        "in",
+        "instanceof",
+        "interface",
+        "let",
+        "new",
+        "null",
+        "return",
+        "static",
+        "super",
+        "switch",
+        "this",
+        "throw",
+        "true",
+        "try",
+        "typeof",
+        "undefined",
+        "var",
+        "void",
+        "while",
+        "yield",
+        "type",
+        "readonly",
+        "implements",
+        "public",
+        "private"
+      ],
+      "highlightPatterns": [],
+      "installation": {
+        "steps": [
+          {
+            "program": "npm",
+            "arguments": [
+              "install",
+              "--prefix",
+              "{managed}",
+              "--ignore-scripts",
+              "--no-audit",
+              "--no-fund",
+              "typescript-language-server@4.3.4",
+              "typescript@5.9.3"
+            ]
+          }
+        ],
+        "server": "{managed}/node_modules/.bin/typescript-language-server",
+        "packages": [
+          "typescript-language-server@4.3.4",
+          "typescript@5.9.3"
+        ],
+        "serverArguments": [
+          "--stdio"
+        ]
+      },
+      "windows": {
+        "installation": {
+          "steps": [
+            {
+              "program": "npm.cmd",
+              "arguments": [
+                "install",
+                "--prefix",
+                "{managed}",
+                "--ignore-scripts",
+                "--no-audit",
+                "--no-fund",
+                "typescript-language-server@4.3.4",
+                "typescript@5.9.3"
+              ]
+            }
+          ],
+          "server": "{managed}/node_modules/.bin/typescript-language-server.cmd",
+          "packages": [
+            "typescript-language-server@4.3.4",
+            "typescript@5.9.3"
+          ],
+          "serverArguments": [
+            "--stdio"
+          ]
+        }
+      },
+      "sdkRoots": [
+        "{home}/.nvm/versions/node/*",
+        "{env:NVM_HOME}/*"
+      ]
+    },
+    {
+      "id": 6,
+      "key": "typescript",
+      "name": "TypeScript",
+      "extensions": [
+        "ts",
+        "tsx"
+      ],
+      "server": "typescript-language-server --stdio",
+      "runnable": true,
+      "compiled": true,
+      "build": {
+        "program": "tsc",
+        "arguments": [
+          "{file}",
+          "--target",
+          "ES2020",
+          "--module",
+          "commonjs",
+          "--outDir",
+          "{build}"
+        ]
+      },
+      "run": {
+        "program": "node",
+        "arguments": [
+          "{build}/{stem}.js"
+        ]
+      },
+      "projectKind": "typescript",
+      "excludedExtensions": [
+        "tsx"
+      ],
+      "lineComment": "//",
+      "blockComments": true,
+      "template": "const message: string = \"Hello, world!\";\nconsole.log(message);\n",
+      "entry": "main.ts",
+      "sdkVariable": "",
+      "tools": {
+        "build": "tsc",
+        "run": "node"
+      },
+      "compilerCandidates": [],
+      "projectFiles": {
+        "package.json": "{\n  \"name\": \"app\",\n  \"private\": true,\n  \"type\": \"module\"\n}\n",
+        "tsconfig.json": "{\n  \"compilerOptions\": {\n    \"target\": \"ES2022\",\n    \"module\": \"NodeNext\",\n    \"strict\": true\n  }\n}\n"
+      },
+      "keywords": [
+        "async",
+        "await",
+        "break",
+        "case",
+        "catch",
+        "class",
+        "const",
+        "continue",
+        "debugger",
+        "default",
+        "delete",
+        "do",
+        "else",
+        "enum",
+        "export",
+        "extends",
+        "false",
+        "finally",
+        "for",
+        "function",
+        "if",
+        "import",
+        "in",
+        "instanceof",
+        "interface",
+        "let",
+        "new",
+        "null",
+        "return",
+        "static",
+        "super",
+        "switch",
+        "this",
+        "throw",
+        "true",
+        "try",
+        "typeof",
+        "undefined",
+        "var",
+        "void",
+        "while",
+        "yield",
+        "type",
+        "readonly",
+        "implements",
+        "public",
+        "private"
+      ],
+      "highlightPatterns": [],
+      "installation": {
+        "steps": [
+          {
+            "program": "npm",
+            "arguments": [
+              "install",
+              "--prefix",
+              "{managed}",
+              "--ignore-scripts",
+              "--no-audit",
+              "--no-fund",
+              "typescript-language-server@4.3.4",
+              "typescript@5.9.3"
+            ]
+          }
+        ],
+        "server": "{managed}/node_modules/.bin/typescript-language-server",
+        "packages": [
+          "typescript-language-server@4.3.4",
+          "typescript@5.9.3"
+        ],
+        "serverArguments": [
+          "--stdio"
+        ],
+        "tools": {
+          "build": "{managed}/node_modules/.bin/tsc"
+        }
+      },
+      "windows": {
+        "installation": {
+          "steps": [
+            {
+              "program": "npm.cmd",
+              "arguments": [
+                "install",
+                "--prefix",
+                "{managed}",
+                "--ignore-scripts",
+                "--no-audit",
+                "--no-fund",
+                "typescript-language-server@4.3.4",
+                "typescript@5.9.3"
+              ]
+            }
+          ],
+          "server": "{managed}/node_modules/.bin/typescript-language-server.cmd",
+          "packages": [
+            "typescript-language-server@4.3.4",
+            "typescript@5.9.3"
+          ],
+          "serverArguments": [
+            "--stdio"
+          ],
+          "tools": {
+            "build": "{managed}/node_modules/.bin/tsc.cmd"
+          }
+        }
+      },
+      "sdkRoots": [
+        "{home}/.nvm/versions/node/*",
+        "{env:NVM_HOME}/*"
+      ]
+    },
+    {
+      "id": 7,
+      "key": "rust",
+      "name": "Rust",
+      "extensions": [
+        "rs"
+      ],
+      "server": "rust-analyzer",
+      "runnable": true,
+      "compiled": true,
+      "build": {
+        "program": "rustc",
+        "arguments": [
+          "{file}",
+          "-o",
+          "{output}"
+        ]
+      },
+      "run": {
+        "program": "{output}",
+        "arguments": []
+      },
+      "projectKind": "rust",
+      "excludedExtensions": [],
+      "lineComment": "//",
+      "blockComments": true,
+      "template": "fn main() {\n    println!(\"Hello, world!\");\n}\n",
+      "entry": "main.rs",
+      "sdkVariable": "",
+      "tools": {
+        "build": "rustc",
+        "run": "{output}"
+      },
+      "compilerCandidates": [],
+      "projectFiles": {
+        "Cargo.toml": "[package]\nname = \"app\"\nversion = \"0.1.0\"\nedition = \"2021\"\n\n[[bin]]\nname = \"app\"\npath = \"main.rs\"\n"
+      },
+      "keywords": [
+        "as",
+        "async",
+        "await",
+        "break",
+        "const",
+        "continue",
+        "crate",
+        "dyn",
+        "else",
+        "enum",
+        "extern",
+        "false",
+        "fn",
+        "for",
+        "if",
+        "impl",
+        "in",
+        "let",
+        "loop",
+        "match",
+        "mod",
+        "move",
+        "mut",
+        "pub",
+        "ref",
+        "return",
+        "self",
+        "Self",
+        "static",
+        "struct",
+        "super",
+        "trait",
+        "true",
+        "type",
+        "unsafe",
+        "use",
+        "where",
+        "while"
+      ],
+      "highlightPatterns": [],
+      "sdkRoots": [
+        "{home}/.rustup/toolchains/*"
+      ]
+    },
+    {
+      "id": 8,
+      "key": "go",
+      "name": "Go",
+      "extensions": [
+        "go"
+      ],
+      "server": "gopls",
+      "runnable": true,
+      "compiled": true,
+      "build": {
+        "program": "go",
+        "arguments": [
+          "build",
+          "-o",
+          "{output}",
+          "{file}"
+        ]
+      },
+      "run": {
+        "program": "{output}",
+        "arguments": []
+      },
+      "projectKind": "go",
+      "excludedExtensions": [],
+      "lineComment": "//",
+      "blockComments": true,
+      "template": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    fmt.Println(\"Hello, world!\")\n}\n",
+      "entry": "main.go",
+      "sdkVariable": "GOROOT",
+      "tools": {
+        "build": "go",
+        "run": "{output}"
+      },
+      "compilerCandidates": [],
+      "projectFiles": {
+        "go.mod": "module app\n\ngo 1.20\n"
+      },
+      "keywords": [
+        "break",
+        "case",
+        "chan",
+        "const",
+        "continue",
+        "default",
+        "defer",
+        "else",
+        "fallthrough",
+        "for",
+        "func",
+        "go",
+        "goto",
+        "if",
+        "import",
+        "interface",
+        "map",
+        "package",
+        "range",
+        "return",
+        "select",
+        "struct",
+        "switch",
+        "type",
+        "var"
+      ],
+      "highlightPatterns": [],
+      "sdkRoots": [
+        "{env:GOROOT}",
+        "/usr/local/go"
+      ]
+    },
+    {
+      "id": 9,
+      "key": "ruby",
+      "name": "Ruby",
+      "extensions": [
+        "rb"
+      ],
+      "server": "solargraph stdio",
+      "runnable": true,
+      "build": {
+        "program": "ruby",
+        "arguments": [
+          "-c",
+          "{file}"
+        ]
+      },
+      "run": {
+        "program": "ruby",
+        "arguments": [
+          "{file}"
+        ]
+      },
+      "excludedExtensions": [],
+      "lineComment": "#",
+      "blockComments": false,
+      "template": "",
+      "entry": "main.rb",
+      "sdkVariable": "",
+      "tools": {
+        "build": "ruby",
+        "run": "ruby"
+      },
+      "compilerCandidates": [],
+      "projectFiles": {},
+      "highlightPatterns": []
+    },
+    {
+      "id": 10,
+      "key": "php",
+      "name": "PHP",
+      "extensions": [
+        "php"
+      ],
+      "server": "intelephense --stdio",
+      "runnable": true,
+      "build": {
+        "program": "php",
+        "arguments": [
+          "-l",
+          "{file}"
+        ]
+      },
+      "run": {
+        "program": "php",
+        "arguments": [
+          "{file}"
+        ]
+      },
+      "excludedExtensions": [],
+      "lineComment": "//",
+      "blockComments": true,
+      "template": "",
+      "entry": "main.php",
+      "sdkVariable": "",
+      "tools": {
+        "build": "php",
+        "run": "php"
+      },
+      "compilerCandidates": [],
+      "projectFiles": {},
+      "highlightPatterns": []
+    },
+    {
+      "id": 11,
+      "key": "lua",
+      "name": "Lua",
+      "extensions": [
+        "lua"
+      ],
+      "server": "lua-language-server",
+      "runnable": true,
+      "build": {
+        "program": "luac",
+        "arguments": [
+          "-p",
+          "{file}"
+        ]
+      },
+      "run": {
+        "program": "lua",
+        "arguments": [
+          "{file}"
+        ]
+      },
+      "excludedExtensions": [],
+      "lineComment": "--",
+      "blockComments": false,
+      "template": "",
+      "entry": "main.lua",
+      "sdkVariable": "",
+      "tools": {
+        "build": "luac",
+        "run": "lua"
+      },
+      "compilerCandidates": [],
+      "projectFiles": {},
+      "highlightPatterns": []
+    },
+    {
+      "id": 12,
+      "key": "shellscript",
+      "name": "Shell",
+      "extensions": [
+        "sh",
+        "bash"
+      ],
+      "server": "bash-language-server start",
+      "runnable": true,
+      "build": {
+        "program": "bash",
+        "arguments": [
+          "-n",
+          "{file}"
+        ]
+      },
+      "run": {
+        "program": "bash",
+        "arguments": [
+          "{file}"
+        ]
+      },
+      "excludedExtensions": [],
+      "lineComment": "#",
+      "blockComments": false,
+      "template": "",
+      "entry": "main.sh",
+      "sdkVariable": "",
+      "tools": {
+        "build": "bash",
+        "run": "bash"
+      },
+      "compilerCandidates": [],
+      "projectFiles": {},
+      "keywords": [
+        "case",
+        "do",
+        "done",
+        "elif",
+        "else",
+        "esac",
+        "fi",
+        "for",
+        "function",
+        "if",
+        "in",
+        "local",
+        "readonly",
+        "return",
+        "select",
+        "then",
+        "until",
+        "while"
+      ],
+      "highlightPatterns": []
+    },
+    {
+      "id": 13,
+      "key": "swift",
+      "name": "Swift",
+      "extensions": [
+        "swift"
+      ],
+      "server": "sourcekit-lsp",
+      "runnable": true,
+      "compiled": true,
+      "build": {
+        "program": "swiftc",
+        "arguments": [
+          "{file}",
+          "-o",
+          "{output}"
+        ]
+      },
+      "run": {
+        "program": "{output}",
+        "arguments": []
+      },
+      "excludedExtensions": [],
+      "lineComment": "//",
+      "blockComments": true,
+      "template": "",
+      "entry": "main.swift",
+      "sdkVariable": "",
+      "tools": {
+        "build": "swiftc",
+        "run": "{output}"
+      },
+      "compilerCandidates": [],
+      "projectFiles": {},
+      "highlightPatterns": []
+    },
+    {
+      "id": 14,
+      "key": "kotlin",
+      "name": "Kotlin",
+      "extensions": [
+        "kt",
+        "kts"
+      ],
+      "server": "kotlin-language-server",
+      "runnable": true,
+      "compiled": true,
+      "build": {
+        "program": "kotlinc",
+        "arguments": [
+          "{file}",
+          "-include-runtime",
+          "-d",
+          "{output}.jar"
+        ]
+      },
+      "run": {
+        "program": "java",
+        "arguments": [
+          "-jar",
+          "{output}.jar"
+        ]
+      },
+      "excludedExtensions": [
+        "kts"
+      ],
+      "lineComment": "//",
+      "blockComments": true,
+      "template": "",
+      "entry": "main.kt",
+      "sdkVariable": "",
+      "tools": {
+        "build": "kotlinc",
+        "run": "java"
+      },
+      "compilerCandidates": [],
+      "projectFiles": {},
+      "keywords": [
+        "abstract",
+        "as",
+        "boolean",
+        "break",
+        "byte",
+        "case",
+        "catch",
+        "char",
+        "class",
+        "const",
+        "continue",
+        "default",
+        "do",
+        "double",
+        "else",
+        "enum",
+        "extends",
+        "false",
+        "final",
+        "finally",
+        "float",
+        "for",
+        "fun",
+        "if",
+        "implements",
+        "import",
+        "in",
+        "int",
+        "interface",
+        "internal",
+        "long",
+        "namespace",
+        "new",
+        "null",
+        "object",
+        "override",
+        "package",
+        "private",
+        "protected",
+        "public",
+        "return",
+        "sealed",
+        "short",
+        "static",
+        "string",
+        "super",
+        "switch",
+        "this",
+        "throw",
+        "true",
+        "try",
+        "using",
+        "val",
+        "var",
+        "void",
+        "volatile",
+        "when",
+        "while"
+      ],
+      "highlightPatterns": [],
+      "sdkRoots": [
+        "{env:KOTLIN_HOME}",
+        "{home}/.sdkman/candidates/kotlin/*"
+      ]
+    },
+    {
+      "id": 15,
+      "key": "csharp",
+      "name": "C#",
+      "extensions": [
+        "cs"
+      ],
+      "server": "csharp-ls",
+      "runnable": true,
+      "compiled": true,
+      "preparation": "dotnet",
+      "output": "VeyraUserProgram.dll",
+      "build": {
+        "program": "dotnet",
+        "arguments": [
+          "build",
+          "{build}/VeyraUserProgram.csproj",
+          "--nologo",
+          "-o",
+          "{build}",
+          "-p:RestoreIgnoreFailedSources=true"
+        ]
+      },
+      "run": {
+        "program": "dotnet",
+        "arguments": [
+          "{output}"
+        ]
+      },
+      "excludedExtensions": [],
+      "lineComment": "//",
+      "blockComments": true,
+      "template": "",
+      "entry": "main.cs",
+      "sdkVariable": "",
+      "tools": {
+        "build": "dotnet",
+        "run": "dotnet"
+      },
+      "compilerCandidates": [],
+      "projectFiles": {},
+      "keywords": [
+        "abstract",
+        "as",
+        "boolean",
+        "break",
+        "byte",
+        "case",
+        "catch",
+        "char",
+        "class",
+        "const",
+        "continue",
+        "default",
+        "do",
+        "double",
+        "else",
+        "enum",
+        "extends",
+        "false",
+        "final",
+        "finally",
+        "float",
+        "for",
+        "fun",
+        "if",
+        "implements",
+        "import",
+        "in",
+        "int",
+        "interface",
+        "internal",
+        "long",
+        "namespace",
+        "new",
+        "null",
+        "object",
+        "override",
+        "package",
+        "private",
+        "protected",
+        "public",
+        "return",
+        "sealed",
+        "short",
+        "static",
+        "string",
+        "super",
+        "switch",
+        "this",
+        "throw",
+        "true",
+        "try",
+        "using",
+        "val",
+        "var",
+        "void",
+        "volatile",
+        "when",
+        "while"
+      ],
+      "highlightPatterns": []
+    },
+    {
+      "id": 16,
+      "key": "json",
+      "name": "JSON",
+      "extensions": [
+        "json"
+      ],
+      "server": "vscode-json-language-server --stdio",
+      "runnable": false,
+      "excludedExtensions": [],
+      "lineComment": "//",
+      "blockComments": false,
+      "template": "",
+      "entry": "main.json",
+      "sdkVariable": "",
+      "tools": {
+        "build": "",
+        "run": ""
+      },
+      "compilerCandidates": [],
+      "projectFiles": {},
+      "highlightPatterns": [],
+      "installation": {
+        "steps": [
+          {
+            "program": "npm",
+            "arguments": [
+              "install",
+              "--prefix",
+              "{managed}",
+              "--ignore-scripts",
+              "--no-audit",
+              "--no-fund",
+              "vscode-langservers-extracted@4.10.0"
+            ]
+          }
+        ],
+        "server": "{managed}/node_modules/.bin/vscode-json-language-server",
+        "packages": [
+          "vscode-langservers-extracted@4.10.0"
+        ],
+        "serverArguments": [
+          "--stdio"
+        ]
+      },
+      "windows": {
+        "installation": {
+          "steps": [
+            {
+              "program": "npm.cmd",
+              "arguments": [
+                "install",
+                "--prefix",
+                "{managed}",
+                "--ignore-scripts",
+                "--no-audit",
+                "--no-fund",
+                "vscode-langservers-extracted@4.10.0"
+              ]
+            }
+          ],
+          "server": "{managed}/node_modules/.bin/vscode-json-language-server.cmd",
+          "packages": [
+            "vscode-langservers-extracted@4.10.0"
+          ],
+          "serverArguments": [
+            "--stdio"
+          ]
+        }
+      },
+      "sdkExecutables": [
+        "node"
+      ],
+      "serverSettings": {
+        "json": {
+          "schemaDownload": {
+            "enable": false
+          }
+        }
+      },
+      "sdkRoots": [
+        "{home}/.nvm/versions/node/*",
+        "{env:NVM_HOME}/*"
+      ]
+    },
+    {
+      "id": 17,
+      "key": "html",
+      "name": "HTML",
+      "extensions": [
+        "html",
+        "htm"
+      ],
+      "server": "vscode-html-language-server --stdio",
+      "runnable": false,
+      "excludedExtensions": [],
+      "lineComment": "//",
+      "blockComments": false,
+      "template": "",
+      "entry": "main.html",
+      "sdkVariable": "",
+      "tools": {
+        "build": "",
+        "run": ""
+      },
+      "compilerCandidates": [],
+      "projectFiles": {},
+      "highlightPatterns": [
+        {
+          "pattern": "<\\/?[A-Za-z][A-Za-z\\d:-]*",
+          "role": "keyword"
+        }
+      ],
+      "installation": {
+        "steps": [
+          {
+            "program": "npm",
+            "arguments": [
+              "install",
+              "--prefix",
+              "{managed}",
+              "--ignore-scripts",
+              "--no-audit",
+              "--no-fund",
+              "vscode-langservers-extracted@4.10.0"
+            ]
+          }
+        ],
+        "server": "{managed}/node_modules/.bin/vscode-html-language-server",
+        "packages": [
+          "vscode-langservers-extracted@4.10.0"
+        ],
+        "serverArguments": [
+          "--stdio"
+        ]
+      },
+      "windows": {
+        "installation": {
+          "steps": [
+            {
+              "program": "npm.cmd",
+              "arguments": [
+                "install",
+                "--prefix",
+                "{managed}",
+                "--ignore-scripts",
+                "--no-audit",
+                "--no-fund",
+                "vscode-langservers-extracted@4.10.0"
+              ]
+            }
+          ],
+          "server": "{managed}/node_modules/.bin/vscode-html-language-server.cmd",
+          "packages": [
+            "vscode-langservers-extracted@4.10.0"
+          ],
+          "serverArguments": [
+            "--stdio"
+          ]
+        }
+      },
+      "sdkExecutables": [
+        "node"
+      ],
+      "sdkRoots": [
+        "{home}/.nvm/versions/node/*",
+        "{env:NVM_HOME}/*"
+      ]
+    },
+    {
+      "id": 18,
+      "key": "css",
+      "name": "CSS",
+      "extensions": [
+        "css"
+      ],
+      "server": "vscode-css-language-server --stdio",
+      "runnable": false,
+      "excludedExtensions": [],
+      "lineComment": "//",
+      "blockComments": true,
+      "template": "",
+      "entry": "main.css",
+      "sdkVariable": "",
+      "tools": {
+        "build": "",
+        "run": ""
+      },
+      "compilerCandidates": [],
+      "projectFiles": {},
+      "highlightPatterns": [],
+      "installation": {
+        "steps": [
+          {
+            "program": "npm",
+            "arguments": [
+              "install",
+              "--prefix",
+              "{managed}",
+              "--ignore-scripts",
+              "--no-audit",
+              "--no-fund",
+              "vscode-langservers-extracted@4.10.0"
+            ]
+          }
+        ],
+        "server": "{managed}/node_modules/.bin/vscode-css-language-server",
+        "packages": [
+          "vscode-langservers-extracted@4.10.0"
+        ],
+        "serverArguments": [
+          "--stdio"
+        ]
+      },
+      "windows": {
+        "installation": {
+          "steps": [
+            {
+              "program": "npm.cmd",
+              "arguments": [
+                "install",
+                "--prefix",
+                "{managed}",
+                "--ignore-scripts",
+                "--no-audit",
+                "--no-fund",
+                "vscode-langservers-extracted@4.10.0"
+              ]
+            }
+          ],
+          "server": "{managed}/node_modules/.bin/vscode-css-language-server.cmd",
+          "packages": [
+            "vscode-langservers-extracted@4.10.0"
+          ],
+          "serverArguments": [
+            "--stdio"
+          ]
+        }
+      },
+      "sdkExecutables": [
+        "node"
+      ],
+      "sdkRoots": [
+        "{home}/.nvm/versions/node/*",
+        "{env:NVM_HOME}/*"
+      ]
+    },
+    {
+      "id": 19,
+      "key": "sql",
+      "name": "SQL",
+      "extensions": [
+        "sql"
+      ],
+      "server": "sqls",
+      "runnable": true,
+      "run": {
+        "program": "sqlite3",
+        "arguments": [
+          ":memory:"
+        ],
+        "stdin": "{file}"
+      },
+      "excludedExtensions": [],
+      "lineComment": "--",
+      "blockComments": false,
+      "template": "",
+      "entry": "main.sql",
+      "sdkVariable": "",
+      "tools": {
+        "build": "",
+        "run": "sqlite3"
+      },
+      "compilerCandidates": [],
+      "projectFiles": {},
+      "keywords": [
+        "select",
+        "from",
+        "where",
+        "insert",
+        "into",
+        "update",
+        "delete",
+        "create",
+        "table",
+        "drop",
+        "alter",
+        "join",
+        "left",
+        "right",
+        "inner",
+        "outer",
+        "on",
+        "group",
+        "by",
+        "order",
+        "having",
+        "limit",
+        "distinct",
+        "union",
+        "null",
+        "and",
+        "or",
+        "not",
+        "as",
+        "values",
+        "index",
+        "primary",
+        "key"
+      ],
+      "highlightPatterns": []
+    },
+    {
+      "id": 20,
+      "key": "markdown",
+      "name": "Markdown",
+      "extensions": [
+        "md",
+        "markdown"
+      ],
+      "server": "marksman server",
+      "runnable": false,
+      "excludedExtensions": [],
+      "lineComment": "//",
+      "blockComments": false,
+      "template": "",
+      "entry": "main.md",
+      "sdkVariable": "",
+      "tools": {
+        "build": "",
+        "run": ""
+      },
+      "compilerCandidates": [],
+      "projectFiles": {},
+      "highlightPatterns": []
+    },
+    {
+      "id": 21,
+      "key": "plaintext",
+      "name": "Plain text",
+      "extensions": [
+        "txt"
+      ],
+      "server": "",
+      "runnable": false,
+      "excludedExtensions": [],
+      "lineComment": "//",
+      "blockComments": false,
+      "template": "",
+      "entry": "main.txt",
+      "sdkVariable": "",
+      "tools": {
+        "build": "",
+        "run": ""
+      },
+      "compilerCandidates": [],
+      "projectFiles": {},
+      "highlightPatterns": []
+    }
+  ]
+}

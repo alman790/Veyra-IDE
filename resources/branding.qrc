@@ -1,0 +1,2 @@
+<RCC><qresource prefix="/branding">
+<file alias="veyra.png">branding/veyra.png</file></qresource><qresource prefix="/i18n"><file alias="en.json">i18n/en.json</file></qresource></RCC>

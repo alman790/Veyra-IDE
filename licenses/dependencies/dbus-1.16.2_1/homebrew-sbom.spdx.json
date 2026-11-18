@@ -1,0 +1,49 @@
+{
+  "SPDXID": "SPDXRef-DOCUMENT",
+  "spdxVersion": "SPDX-2.3",
+  "name": "SBOM-SPDX-dbus-1.16.2",
+  "creationInfo": {
+    "created": "2026-07-07T19:55:17Z",
+    "creators": [
+      "Tool: https://github.com/Homebrew/brew@6.0.8"
+    ]
+  },
+  "dataLicense": "CC0-1.0",
+  "documentNamespace": "https://formulae.brew.sh/spdx/dbus-1.16.2.json",
+  "documentDescribes": [
+    "SPDXRef-Archive-dbus-src"
+  ],
+  "files": [],
+  "packages": [
+    {
+      "SPDXID": "SPDXRef-Archive-dbus-src",
+      "name": "dbus",
+      "versionInfo": "1.16.2",
+      "filesAnalyzed": false,
+      "licenseDeclared": "NOASSERTION",
+      "builtDate": "2025-02-27 16:29:06 UTC",
+      "licenseConcluded": "AFL-2.1 OR GPL-2.0-or-later",
+      "downloadLocation": "https://dbus.freedesktop.org/releases/dbus/dbus-1.16.2.tar.xz",
+      "copyrightText": "NOASSERTION",
+      "externalRefs": [],
+      "checksums": [
+        {
+          "algorithm": "SHA256",
+          "checksumValue": "0ba2a1a4b16afe7bceb2c07e9ce99a8c2c3508e5dec290dbb643384bd6beb7e2"
+        }
+      ]
+    }
+  ],
+  "relationships": [
+    {
+      "spdxElementId": "SPDXRef-Patch-dbus-0",
+      "relationshipType": "PATCH_APPLIED",
+      "relatedSpdxElement": "SPDXRef-Archive-dbus-src"
+    },
+    {
+      "spdxElementId": "SPDXRef-File-dbus",
+      "relationshipType": "PACKAGE_OF",
+      "relatedSpdxElement": "SPDXRef-Archive-dbus-src"
+    }
+  ]
+}

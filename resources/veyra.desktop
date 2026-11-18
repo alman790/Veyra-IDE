@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=Veyra IDE
+Exec=VeyraIDE
+Icon=veyra
+Categories=Development;IDE;
+Terminal=false

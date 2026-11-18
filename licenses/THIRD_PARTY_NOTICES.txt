@@ -1,0 +1,34 @@
+Third-party notices
+
+Veyra IDE uses Qt, llama.cpp, and the Qwen2.5-Coder model. Their licenses and copyright notices are retained in this directory and in the corresponding source directories.
+
+Qt is dynamically linked. Its applicable license texts, SPDX records, and saved Homebrew package formulae are included here. Runtime dependencies vary with the Qt SDK and deployment platform. The inventory below records the dependency versions for which notices were collected; it is not a version manifest for every application build.
+
+The llama.cpp runtime uses the MIT license; see llama-runtime.txt and third_party/llama/LICENSE. The bundled Qwen model uses Apache-2.0; see Qwen-Code-Model.txt. Its source revision and checksum are recorded in resources/models/manifest.json.
+
+No license is currently declared for the first-party application source. Third-party license terms remain those of their respective authors.
+
+Recorded dependency inventory
+
+| Package | Recorded version | License record | Source |
+|---|---|---|---|
+| brotli | 1.2.1 | "MIT" | [source](https://github.com/google/brotli/archive/refs/tags/v1.2.1.tar.gz) |
+| dbus | 1.16.2_1 | any_of: ["AFL-2.1", "GPL-2.0-or-later"] | [source](https://dbus.freedesktop.org/releases/dbus/dbus-1.16.2.tar.xz) |
+| double-conversion | 3.4.0 | "BSD-3-Clause" | [source](https://github.com/google/double-conversion/archive/refs/tags/v3.4.0.tar.gz) |
+| freetype | 2.15.0 | "FTL" | [source](https://downloads.sourceforge.net/project/freetype/freetype2/2.15.0/freetype-2.15.0.tar.xz) |
+| gettext | 1.0 | Multiple licenses; see the saved formula | [source](https://ftpmirror.gnu.org/gnu/gettext/gettext-1.0.tar.gz) |
+| glib | 2.90.1 | "LGPL-2.1-or-later" | [source](https://download.gnome.org/sources/glib/2.90/glib-2.90.1.tar.xz) |
+| graphite2 | 1.3.15 | any_of: ["GPL-2.0-or-later", "LGPL-2.1-or-later", "MPL-1.1+"] | [source](https://github.com/silnrsi/graphite/releases/download/1.3.15/graphite2-1.3.15.tgz) |
+| harfbuzz | 15.1.0 | "MIT" | [source](https://github.com/harfbuzz/harfbuzz/releases/download/15.1.0/harfbuzz-15.1.0.tar.xz) |
+| icu4c@79 | 79.1 | Unicode-3.0; see LICENSE | [source](https://github.com/unicode-org/icu/releases/download/release-79.1/icu4c-79.1-sources.tgz) |
+| libb2 | 0.98.1 | "CC0-1.0" | [source](https://github.com/BLAKE2/libb2/releases/download/v0.98.1/libb2-0.98.1.tar.gz) |
+| libpng | 1.6.59 | "libpng-2.0" | [source](https://downloads.sourceforge.net/project/libpng/libpng16/1.6.59/libpng-1.6.59.tar.xz) |
+| md4c | 0.6.0 | "MIT" | [source](https://github.com/mity/md4c/archive/refs/tags/v0.6.0.tar.gz) |
+| openssl@4 | 4.1.0 | "Apache-2.0" | [source](https://github.com/openssl/openssl/releases/download/openssl-4.1.0/openssl-4.1.0.tar.gz) |
+| pcre2 | 10.49 | "BSD-3-Clause" | [source](https://github.com/PCRE2Project/pcre2/releases/download/pcre2-10.49/pcre2-10.49.tar.bz2) |
+| qtbase | 6.12.0_2 | Multiple licenses; see the saved formula | [source](https://download.qt.io/official_releases/qt/6.12/6.12.0/submodules/qtbase-everywhere-src-6.12.0.tar.xz) |
+| zstd | 1.5.7_1 | Multiple licenses; see the saved formula | [source](https://github.com/facebook/zstd/archive/refs/tags/v1.5.7.tar.gz) |
+
+Package-specific COPYRIGHT, COPYING, LICENSE, AUTHORS, NOTICE, formula, and SBOM files are retained under dependencies/ where available. The Qt source URL and Homebrew patches are recorded in the saved qtbase formula. Qt copyright and component license details are also recorded in qtbase-6.12.0.spdx.
+
+GNU license texts: https://www.gnu.org/licenses/lgpl-3.0.txt and https://www.gnu.org/licenses/gpl-3.0.txt.

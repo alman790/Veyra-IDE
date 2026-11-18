@@ -1,0 +1,104 @@
+{
+  "SPDXID": "SPDXRef-DOCUMENT",
+  "spdxVersion": "SPDX-2.3",
+  "name": "SBOM-SPDX-icu4c@79-79.1",
+  "creationInfo": {
+    "created": "2026-11-15T18:13:43Z",
+    "creators": [
+      "Tool: https://github.com/Homebrew/brew@6.0.8"
+    ]
+  },
+  "dataLicense": "CC0-1.0",
+  "documentNamespace": "https://formulae.brew.sh/spdx/icu4c@79-79.1.json",
+  "documentDescribes": [
+    "SPDXRef-Archive-icu4c.40.79-src",
+    "SPDXRef-Compiler",
+    "SPDXRef-Bottle-icu4c.40.79"
+  ],
+  "files": [
+    {
+      "SPDXID": "SPDXRef-File-icu4c.40.79",
+      "fileName": "icu4c-79.1-sources.tgz",
+      "checksums": [
+        {
+          "algorithm": "SHA256",
+          "checksumValue": "06fa63ecb521048f8082f12ad988f6b678d90cbd88aafce24cbc94902b191d99"
+        }
+      ]
+    }
+  ],
+  "packages": [
+    {
+      "SPDXID": "SPDXRef-Archive-icu4c.40.79-src",
+      "name": "icu4c@79",
+      "versionInfo": "79.1",
+      "filesAnalyzed": false,
+      "licenseDeclared": "NOASSERTION",
+      "builtDate": "2026-10-22T15:02:08Z",
+      "licenseConcluded": "Unicode-3.0",
+      "downloadLocation": "https://github.com/unicode-org/icu/releases/download/release-79.1/icu4c-79.1-sources.tgz",
+      "copyrightText": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceLocator": "pkg:brew/homebrew/core/icu4c%4079@79.1",
+          "referenceType": "purl"
+        }
+      ],
+      "checksums": [
+        {
+          "algorithm": "SHA256",
+          "checksumValue": "06fa63ecb521048f8082f12ad988f6b678d90cbd88aafce24cbc94902b191d99"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-Compiler",
+      "name": "clang",
+      "versionInfo": "27.0",
+      "filesAnalyzed": false,
+      "licenseDeclared": "NOASSERTION",
+      "licenseConcluded": "NOASSERTION",
+      "copyrightText": "NOASSERTION",
+      "downloadLocation": "NOASSERTION",
+      "checksums": [],
+      "externalRefs": []
+    },
+    {
+      "SPDXID": "SPDXRef-Bottle-icu4c.40.79",
+      "name": "icu4c@79",
+      "versionInfo": "79.1",
+      "filesAnalyzed": false,
+      "licenseDeclared": "NOASSERTION",
+      "builtDate": "2026-10-22T16:47:42Z",
+      "licenseConcluded": "Unicode-3.0",
+      "downloadLocation": "https://ghcr.io/v2/homebrew/core/icu4c/79/blobs/sha256:4424c58d257d07b28086814a575baa9e462560460fdea5455581d99062896cec",
+      "copyrightText": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceLocator": "pkg:brew/icu4c%4079@79.1",
+          "referenceType": "purl"
+        }
+      ],
+      "checksums": [
+        {
+          "algorithm": "SHA256",
+          "checksumValue": "4424c58d257d07b28086814a575baa9e462560460fdea5455581d99062896cec"
+        }
+      ]
+    }
+  ],
+  "relationships": [
+    {
+      "spdxElementId": "SPDXRef-File-icu4c.40.79",
+      "relationshipType": "PACKAGE_OF",
+      "relatedSpdxElement": "SPDXRef-Archive-icu4c.40.79-src"
+    },
+    {
+      "spdxElementId": "SPDXRef-Compiler",
+      "relationshipType": "BUILD_TOOL_OF",
+      "relatedSpdxElement": "SPDXRef-Archive-icu4c.40.79-src"
+    }
+  ]
+}

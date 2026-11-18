@@ -1,0 +1,97 @@
+name: Native C++ and Qt verification
+on:
+  workflow_dispatch:
+  push:
+  pull_request:
+jobs:
+  native-qt:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, macos-15, macos-15-intel, windows-2022]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: true
+      - name: Enable MSVC toolchain for real editor build/run tests
+        if: runner.os == 'Windows'
+        uses: ilammy/msvc-dev-cmd@v1
+      - name: Install Qt and clangd on Ubuntu
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y qt6-base-dev libgl1-mesa-dev libxkbcommon-dev clangd clang lldb ninja-build dpkg-dev rpm file
+      - name: Install Qt on macOS
+        if: runner.os == 'macOS'
+        run: brew install qt ninja
+      - name: Install Qt on Windows
+        if: runner.os == 'Windows'
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: '6.8.3'
+          arch: win64_msvc2022_64
+          cache: true
+      - name: Install Windows installer builder
+        if: runner.os == 'Windows'
+        run: choco install nsis --no-progress -y
+      - name: Install compatible TypeScript SDK and web language servers
+        run: npm install --global typescript@5.9.3 typescript-language-server@4.3.4 vscode-langservers-extracted@4.10.0
+      - name: Configure strict GUI and C++ tests
+        run: cmake -S . -B build -DTS_BUILD_GUI=ON -DTS_REQUIRE_GUI=ON -DTS_BUILD_TESTS=ON -DCMAKE_BUILD_TYPE=Release
+      - name: Build app and execute CTest
+        run: cmake --build build --target VeyraIDE check --config Release --parallel 2
+      - name: Stage native Qt dependencies
+        run: cmake --build build --target deploy --config Release
+      - name: Build native installers
+        run: cmake --build build --target installer --config Release
+      - name: Launch deployed Windows GUI
+        if: runner.os == 'Windows'
+        run: python tools/smoke_launch.py build/deployment.noindex/VeyraIDE.exe
+      - name: Launch deployed macOS GUI
+        if: runner.os == 'macOS'
+        run: python3 tools/smoke_launch.py build/deployment.noindex/VeyraIDE.app/Contents/MacOS/VeyraIDE
+      - name: Install Linux DEB and launch installed GUI
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get install -y ./build/packages.noindex/*.deb
+          python3 tools/smoke_launch.py /usr/bin/VeyraIDE --platform offscreen
+      - name: Retain evidence on success or failure
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: qa-${{ matrix.os }}
+          path: |
+            build/Testing/Temporary/LastTest.log
+            build/packages.noindex/
+            build/deployment.noindex/*.zip
+            build/deployment.noindex/*.dmg
+            build/deployment.noindex/*.pkg
+  sanitizers:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: true
+      - run: sudo apt-get update && sudo apt-get install -y clang lldb qt6-base-dev libgl1-mesa-dev libxkbcommon-dev clangd
+      - run: cmake -S . -B build -DCMAKE_CXX_COMPILER=clang++ -DTS_REQUIRE_GUI=ON -DTS_BUILD_TESTS=ON -DTS_ENABLE_SANITIZERS=ON -DCMAKE_BUILD_TYPE=Debug
+      - name: Run ASan and UBSan (Qt process lifetime allocations excluded from LSan)
+        env:
+          ASAN_OPTIONS: detect_leaks=0
+        run: cmake --build build --target check --parallel 2
+  fedora-core:
+    runs-on: ubuntu-24.04
+    container: fedora:latest
+    steps:
+      - run: dnf -y install git git-lfs gcc-c++ cmake make qt6-qtbase-devel
+      - uses: actions/checkout@v4
+        with:
+          lfs: true
+      - run: cmake -S . -B build -DTS_BUILD_GUI=OFF -DTS_BUILD_TESTS=ON -DCMAKE_BUILD_TYPE=Release
+      - run: cmake --build build --target check --parallel 2
+
+  formatting:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - run: pipx install clang-format==22.1.0
+      - run: python3 tools/format_sources.py --check
+      - run: python3 tools/check_translations.py

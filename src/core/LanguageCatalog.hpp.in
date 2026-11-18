@@ -1,0 +1,2 @@
+#pragma once
+inline constexpr char TS_LANGUAGE_CATALOG[] = R"CATALOG(@TS_LANGUAGE_JSON@)CATALOG";
