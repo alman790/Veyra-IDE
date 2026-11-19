@@ -8,3 +8,6 @@
 *.cmake text eol=lf
 CMakeLists.txt text eol=lf
 *.gguf filter=lfs diff=lfs merge=lfs -text
+third_party/** linguist-vendored
+licenses/** linguist-documentation
+docs/** linguist-documentation
