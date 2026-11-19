@@ -320,12 +320,17 @@ void SourceInspector::launch() {
             [request, result, temporary, snapshot, finish](bool success, int code) {
                 result->exitCode = code;
                 result->evaluated = code != 124 && code != 130 && code != -1;
-                result->status = success       ? "Completed"
-                                 : code == 124 ? "Time limit reached; analysis incomplete"
-                                 : code == 130 ? "Cancelled"
-                                 : code == -1  ? "Could not launch analysis tool"
-                                               : "Compiler/analyzer reported diagnostics (exit " +
-                                                    QString::number(code) + ")";
+                if (success)
+                    result->status = "Completed";
+                else if (code == 124)
+                    result->status = "Time limit reached; analysis incomplete";
+                else if (code == 130)
+                    result->status = "Cancelled";
+                else if (code == -1)
+                    result->status = "Could not launch analysis tool";
+                else
+                    result->status =
+                        "Compiler/analyzer reported diagnostics (exit " + QString::number(code) + ")";
                 result->diagnostics = parseDiagnostics(result->output, code);
                 for (auto& diagnostic : result->diagnostics)
                     diagnostic.title = result->engine.toStdString();
