@@ -400,5 +400,6 @@
   "Проверьте отмену и блокирующие вызовы по документации выбранного SDK.": "Inspect cancellation and blocking calls in the selected SDK documentation.",
   "Не удалось ограничить формат ответа локальной модели.": "Unable to constrain the local model output.",
   "Исполняемый файл LLDB DAP": "LLDB DAP executable",
-  "Перед отладкой выберите исполняемый файл LLDB DAP в настройках.": "Select an LLDB DAP executable in Settings before debugging."
+  "Перед отладкой выберите исполняемый файл LLDB DAP в настройках.": "Select an LLDB DAP executable in Settings before debugging.",
+  "Исполняемый файл для отладки не найден.": "The debug executable was not found."
 }

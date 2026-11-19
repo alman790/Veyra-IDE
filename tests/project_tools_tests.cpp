@@ -41,7 +41,9 @@ int main() {
         expect(plan.build.arguments.size() == 6, "build arg count");
         expect(plan.build.arguments[4] == "--target" && plan.build.arguments[5] == "project_fixture",
                "explicit target");
-        expect(plan.run.program == plan.buildDirectory + "/project_fixture", "project output path");
+        expect(std::filesystem::path(plan.run.program) ==
+                   std::filesystem::path(plan.buildDirectory) / "project_fixture",
+               "project output path");
         auto withoutRun = ts::cmakeProjectPlanFor(root);
         expect(withoutRun.supported && !withoutRun.run.valid, "project build without executable");
         std::cout << "CMake project discovery and plan tests: PASS\n";

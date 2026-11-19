@@ -106,9 +106,12 @@ DebuggerPanel::DebuggerPanel(QWidget* parent, std::function<void(const QString&,
     connect(&process_, &QProcess::readyReadStandardOutput, this, &DebuggerPanel::consume);
     connect(&process_, &QProcess::readyReadStandardError, this,
             [this] { output_->appendPlainText(QString::fromUtf8(process_.readAllStandardError())); });
-    connect(&process_, &QProcess::errorOccurred, this, [this] { status_->setText(process_.errorString()); });
+    connect(&process_, &QProcess::errorOccurred, this, [this] {
+        status_->setText(process_.errorString());
+        output_->appendPlainText(process_.errorString());
+    });
     connect(&process_, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished), this,
-            [this](int, QProcess::ExitStatus) {
+            [this](int code, QProcess::ExitStatus) {
                 readTerminal();
                 closeTerminal();
                 consume();
@@ -116,6 +119,8 @@ DebuggerPanel::DebuggerPanel(QWidget* parent, std::function<void(const QString&,
                 tree_.reset();
                 ready_ = false;
                 status_->setText(UiLanguage::tr("Debug session ended"));
+                if (code != 0)
+                    output_->appendPlainText(status_->text() + ": " + QString::number(code));
             });
     connect(&target_, &QProcess::started, this, [this] {
         QString error;
@@ -178,6 +183,10 @@ bool DebuggerPanel::start(const QString& executable, const QString& directory, c
                           QString& error) {
     if (busy() || target_.state() != QProcess::NotRunning) {
         error = "A debug session is already active.";
+        return false;
+    }
+    if (!QFileInfo::exists(executable)) {
+        error = "The debug executable was not found.";
         return false;
     }
     const auto adapter = adapterPath();

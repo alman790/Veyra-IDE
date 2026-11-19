@@ -15,11 +15,22 @@
 
 int main(int argc, char** argv) {
     QApplication app(argc, argv);
-    if (DebuggerPanel::adapterPath().isEmpty() || ToolDiscovery::find("c++").isEmpty())
+    const auto adapter = DebuggerPanel::adapterPath();
+    auto compilerPath = ToolDiscovery::find("c++");
+#ifdef Q_OS_WIN
+    const auto sdkCompiler = QStandardPaths::findExecutable("clang++", {QFileInfo(adapter).absolutePath()});
+    if (!sdkCompiler.isEmpty())
+        compilerPath = sdkCompiler;
+#endif
+    if (adapter.isEmpty() || compilerPath.isEmpty())
         return 77;
     QTemporaryDir temporary;
     try {
-        const auto file = temporary.path() + "/main.cpp", executable = temporary.path() + "/program";
+        const auto file = temporary.path() + "/main.cpp";
+        auto executable = temporary.path() + "/program";
+#ifdef Q_OS_WIN
+        executable += ".exe";
+#endif
         QFile source(file);
         if (!source.open(QIODevice::WriteOnly))
             return 1;
@@ -29,9 +40,11 @@ int main(int argc, char** argv) {
                      "    std::cout << \"ECHO=\" << input << '\\n';\n    return 0;\n}\n");
         source.close();
         QProcess compiler;
-        compiler.start(ToolDiscovery::find("c++"), {"-g", "-O0", file, "-o", executable});
+        compiler.start(compilerPath, {"-g", "-O0", file, "-o", executable});
         if (!compiler.waitForFinished(30000) || compiler.exitCode() != 0)
-            throw std::runtime_error("Build debug fixture");
+            throw std::runtime_error("Build debug fixture: " + compiler.readAllStandardError().toStdString());
+        if (!QFileInfo::exists(executable))
+            throw std::runtime_error("Compiler did not produce the debug executable");
         int line = 0;
         DebuggerPanel panel(nullptr, [&](const QString&, int value) { line = value; });
         panel.show();
@@ -46,7 +59,8 @@ int main(int argc, char** argv) {
             if (!ready())
                 throw std::runtime_error(
                     panel.findChild<QPlainTextEdit*>("debugConsole")->toPlainText().toStdString() +
-                    "\nDebugger timed out");
+                    "\nDebugger timed out\nAdapter: " + adapter.toStdString() +
+                    "\nCompiler: " + compilerPath.toStdString());
         };
         wait([&] { return line > 0; }, 15000);
         panel.send({{"command", "continue"}});

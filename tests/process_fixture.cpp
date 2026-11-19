@@ -20,10 +20,14 @@ int main(int argc, char** argv) {
     if (arguments[1] == "--tree") {
         QProcess child;
         child.setProcessChannelMode(QProcess::ForwardedChannels);
-        child.start(app.applicationFilePath(), {"--heartbeat", arguments[2]});
         QObject::connect(&child, &QProcess::started, &app, [] {
             std::cout << "CHILD_READY\n" << std::flush;
         });
+        QObject::connect(&child, &QProcess::errorOccurred, &app, [&] {
+            std::cerr << child.errorString().toStdString() << std::endl;
+            app.exit(1);
+        });
+        child.start(app.applicationFilePath(), {"--heartbeat", arguments[2]});
         return app.exec();
     }
     if (arguments[1] == "--heartbeat") {

@@ -51,7 +51,10 @@ int main(int argc, char** argv) {
         }
         const auto customRoot = temporary.path() + "/custom-sdk";
         QDir().mkpath(customRoot + "/bin");
-        const auto compilerFile = customRoot + "/bin/custom-compiler";
+        auto compilerFile = customRoot + "/bin/custom-compiler";
+#ifdef Q_OS_WIN
+        compilerFile += ".exe";
+#endif
         if (!QFile::copy(QCoreApplication::applicationFilePath(), compilerFile))
             throw std::runtime_error("Create declared SDK compiler fixture");
         QFile manifest(customRoot + "/veyra-languages.json");
@@ -71,7 +74,9 @@ int main(int argc, char** argv) {
         for (const auto& item : found) {
             if (item.language.lspId != "custom-fixture")
                 continue;
-            declared = item.root == customRoot && item.compiler == compilerFile;
+            declared =
+                QFileInfo(item.root).canonicalFilePath() == QFileInfo(customRoot).canonicalFilePath() &&
+                QFileInfo(item.compiler).canonicalFilePath() == QFileInfo(compilerFile).canonicalFilePath();
             if (ts::languageForPath("x.customfixture").id != ts::LanguageId::Unknown)
                 throw std::runtime_error("SDK inspection must not import without Connect");
             QString error;
