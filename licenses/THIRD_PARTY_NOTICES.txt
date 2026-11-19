@@ -6,7 +6,7 @@ Qt is dynamically linked. Its applicable license texts, SPDX records, and saved 
 
 The llama.cpp runtime uses the MIT license; see llama-runtime.txt and third_party/llama/LICENSE. The bundled Qwen model uses Apache-2.0; see Qwen-Code-Model.txt. Its source revision and checksum are recorded in resources/models/manifest.json.
 
-No license is currently declared for the first-party application source. Third-party license terms remain those of their respective authors.
+The first-party application source is licensed under MIT, copyright (c) 2026 alman790; see the root LICENSE file. Third-party license terms remain those of their respective authors.
 
 Recorded dependency inventory
 

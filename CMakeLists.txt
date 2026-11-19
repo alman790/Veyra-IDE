@@ -27,8 +27,14 @@ endif()
 
 
 find_package(Qt6 6.2 REQUIRED COMPONENTS Core)
+add_executable(veyra_devtools tools/devtools.cpp)
+target_link_libraries(veyra_devtools PRIVATE Qt6::Core)
+add_custom_target(translations-check
+    COMMAND $<TARGET_FILE:veyra_devtools> translations "${CMAKE_CURRENT_SOURCE_DIR}"
+    DEPENDS veyra_devtools VERBATIM)
 set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/resources/languages.json")
-file(READ "${CMAKE_CURRENT_SOURCE_DIR}/resources/languages.json" TS_LANGUAGE_JSON)
+file(READ "${CMAKE_CURRENT_SOURCE_DIR}/resources/languages.json" TS_LANGUAGE_HEX HEX)
+string(REGEX REPLACE "(..)" "0x\\1," TS_LANGUAGE_BYTES "${TS_LANGUAGE_HEX}")
 file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/generated")
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/src/core/LanguageCatalog.hpp.in" "${CMAKE_CURRENT_BINARY_DIR}/generated/LanguageCatalog.hpp" @ONLY)
 find_package(Threads REQUIRED)
@@ -63,7 +69,12 @@ if(TS_LOCAL_MODEL)
     set(GGML_NATIVE OFF CACHE BOOL "" FORCE)
     set(GGML_METAL OFF CACHE BOOL "" FORCE)
     set(GGML_OPENMP OFF CACHE BOOL "" FORCE)
+    foreach(backend IN ITEMS CUDA WEBGPU OPENCL HEXAGON VIRTGPU)
+        set(GGML_${backend} OFF CACHE BOOL "" FORCE)
+    endforeach()
+    set(CMAKE_CXX_STANDARD 17)
     add_subdirectory(third_party/llama EXCLUDE_FROM_ALL)
+    set(CMAKE_CXX_STANDARD 20)
     if(NOT MSVC)
         foreach(runtime_target IN ITEMS llama ggml ggml-base ggml-cpu ggml-blas)
             if(TARGET ${runtime_target})
@@ -151,7 +162,6 @@ if(TS_BUILD_GUI)
         add_library(veyra_gui STATIC ${TS_GUI_SOURCES})
         set_target_properties(veyra_gui PROPERTIES AUTOMOC ON AUTORCC ON)
         target_link_libraries(veyra_gui PUBLIC veyra_core Qt6::Widgets Qt6::Concurrent)
-        target_compile_definitions(veyra_gui PRIVATE TS_DEBUG_BRIDGE_PATH="${CMAKE_CURRENT_SOURCE_DIR}/tools/debug_bridge.py")
         if(TS_LOCAL_MODEL)
             target_link_libraries(veyra_gui PUBLIC veyra_local_model)
             target_compile_definitions(veyra_gui PRIVATE TS_HAS_LOCAL_MODEL=1)
@@ -227,17 +237,8 @@ if(TS_BUILD_GUI)
                 COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_CURRENT_SOURCE_DIR}/resources/models/code-model.gguf" "${TS_MODEL_OUTPUT}/code-model.gguf"
                 COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_CURRENT_SOURCE_DIR}/resources/models/manifest.json" "${TS_MODEL_OUTPUT}/manifest.json")
         endif()
-        if(APPLE)
-            set(TS_TOOL_OUTPUT "$<TARGET_FILE_DIR:VeyraIDE>/../Resources/tools")
-        else()
-            set(TS_TOOL_OUTPUT "$<TARGET_FILE_DIR:VeyraIDE>/tools")
-        endif()
-        add_custom_command(TARGET VeyraIDE POST_BUILD
-            COMMAND ${CMAKE_COMMAND} -E make_directory "${TS_TOOL_OUTPUT}"
-            COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_CURRENT_SOURCE_DIR}/tools/debug_bridge.py" "${TS_TOOL_OUTPUT}/debug_bridge.py")
         install(TARGETS VeyraIDE BUNDLE DESTINATION . RUNTIME DESTINATION bin)
         if(NOT APPLE)
-            install(FILES tools/debug_bridge.py DESTINATION share/VeyraIDE/tools)
             if(TS_LOCAL_MODEL)
                 install(FILES resources/models/code-model.gguf resources/models/manifest.json
                     DESTINATION share/VeyraIDE/models)
@@ -308,9 +309,12 @@ if(TS_BUILD_TESTS)
 endif()
 
 install(DIRECTORY licenses/ DESTINATION share/VeyraIDE/licenses)
+install(FILES LICENSE DESTINATION share/VeyraIDE)
 set(CPACK_PACKAGE_NAME "VeyraIDE")
 set(CPACK_PACKAGE_VENDOR "Veyra")
 set(CPACK_PACKAGE_VERSION "${PROJECT_VERSION}")
+set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE")
+set(CPACK_RPM_PACKAGE_LICENSE "MIT")
 set(CPACK_GENERATOR "ZIP")
 if(UNIX AND NOT APPLE)
     set(CPACK_GENERATOR "TGZ")
@@ -360,16 +364,10 @@ find_program(TS_CLANG_FORMAT NAMES clang-format clang-format-22 clang-format-23
     HINTS "/Applications/CLion.app/Contents/plugins/clion-radler/DotFiles/macos-arm64"
           "/Applications/CLion.app/Contents/plugins/clion-radler/DotFiles/macos-x64")
 if(TS_CLANG_FORMAT)
-    file(GLOB_RECURSE TS_FORMAT_SOURCES CONFIGURE_DEPENDS
-        "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp" "${CMAKE_CURRENT_SOURCE_DIR}/src/*.hpp"
-        "${CMAKE_CURRENT_SOURCE_DIR}/include/*.hpp" "${CMAKE_CURRENT_SOURCE_DIR}/tests/*.cpp"
-        "${CMAKE_CURRENT_SOURCE_DIR}/third_party/*.cpp" "${CMAKE_CURRENT_SOURCE_DIR}/third_party/*.hpp"
-        "${CMAKE_CURRENT_SOURCE_DIR}/third_party/*.c" "${CMAKE_CURRENT_SOURCE_DIR}/third_party/*.h"
-        "${CMAKE_CURRENT_SOURCE_DIR}/third_party/*.cc" "${CMAKE_CURRENT_SOURCE_DIR}/third_party/*.cxx"
-        "${CMAKE_CURRENT_SOURCE_DIR}/third_party/*.hh" "${CMAKE_CURRENT_SOURCE_DIR}/third_party/*.hxx"
-        "${CMAKE_CURRENT_SOURCE_DIR}/third_party/*.mm" "${CMAKE_CURRENT_SOURCE_DIR}/third_party/*.m"
-        "${CMAKE_CURRENT_SOURCE_DIR}/third_party/*.cu" "${CMAKE_CURRENT_SOURCE_DIR}/third_party/*.cuh")
-    list(FILTER TS_FORMAT_SOURCES EXCLUDE REGEX "/third_party/llama/vendor/")
-    add_custom_target(format COMMAND "${TS_CLANG_FORMAT}" -i ${TS_FORMAT_SOURCES} VERBATIM)
-    add_custom_target(format-check COMMAND "${TS_CLANG_FORMAT}" --dry-run --Werror ${TS_FORMAT_SOURCES} VERBATIM)
+    add_custom_target(format COMMAND ${CMAKE_COMMAND}
+        "-DTS_SOURCE_ROOT=${CMAKE_CURRENT_SOURCE_DIR}" "-DTS_CLANG_FORMAT=${TS_CLANG_FORMAT}"
+        -P "${CMAKE_CURRENT_SOURCE_DIR}/cmake/Format.cmake" VERBATIM)
+    add_custom_target(format-check COMMAND ${CMAKE_COMMAND}
+        "-DTS_SOURCE_ROOT=${CMAKE_CURRENT_SOURCE_DIR}" "-DTS_CLANG_FORMAT=${TS_CLANG_FORMAT}"
+        -DTS_FORMAT_CHECK=ON -P "${CMAKE_CURRENT_SOURCE_DIR}/cmake/Format.cmake" VERBATIM)
 endif()

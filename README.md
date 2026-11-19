@@ -7,7 +7,8 @@
 <p align="center">
   <a href="CMakeLists.txt"><img src="https://img.shields.io/badge/C%2B%2B-20-00599C?style=flat-square" alt="C++20"></a>
   <a href="#requirements"><img src="https://img.shields.io/badge/Qt-6-41CD52?style=flat-square" alt="Qt 6"></a>
-  <a href=".github/workflows/ci.yml"><img src="https://img.shields.io/badge/CI-CMake%20%2B%20CTest-5865F2?style=flat-square" alt="CI: CMake and CTest"></a>
+  <a href="https://github.com/alman790/Veyra-IDE/actions/workflows/ci.yml"><img src="https://github.com/alman790/Veyra-IDE/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-22A699?style=flat-square" alt="MIT License"></a>
   <a href="#contributing"><img src="https://img.shields.io/badge/Contributions-welcome-22A699?style=flat-square" alt="Contributions welcome"></a>
 </p>
 
@@ -34,7 +35,7 @@ Language adapters describe file types, project templates, compiler recipes, and 
 | Build system | CMake 3.20 or later |
 | UI framework | Qt 6.2 or later: Core, Widgets, Concurrent; Test for the test suite |
 | Model checkout | Git LFS |
-| Native debugging | LLDB with its Python scripting interface |
+| Native debugging | LLDB DAP adapter (`lldb-dap`, or the older `lldb-vscode`) |
 | Language services | An SDK and a compatible language server for each language in use |
 
 The model is stored in Git LFS. After cloning this repository, run:
@@ -43,6 +44,8 @@ The model is stored in Git LFS. After cloning this repository, run:
 git lfs install --local
 git lfs pull
 ```
+
+Local inference uses the CPU runtime. Optional backends that require external code generators are excluded from this build.
 
 ## Build and installation
 
@@ -126,11 +129,10 @@ Keep pull requests focused. Include a regression test when behavior changes, and
 
 ```sh
 cmake --build <build-directory> --target check
-python3 tools/format_sources.py --check
-python3 tools/check_translations.py
+cmake --build <build-directory> --target format-check translations-check
 ```
 
-The formatter requires clang-format 22 or later. Run `python3 tools/format_sources.py` to apply the repository style. Amalgamated libraries under `third_party/llama/vendor/` retain their upstream formatting.
+The formatter requires clang-format 22 or later. Run `cmake --build <build-directory> --target format` to apply the repository style. Amalgamated libraries under `third_party/llama/vendor/` retain their upstream formatting.
 
 ## Continuous integration
 
@@ -140,4 +142,8 @@ The [CI workflow](.github/workflows/ci.yml) defines native build, test, deployme
 
 Third-party notices are in [licenses/](licenses/). The model's source revision and checksum are recorded in [its manifest](resources/models/manifest.json).
 
-Refactoring support follows the connected language server. The integrated debugger currently targets native programs through LLDB.
+Refactoring support follows the connected language server. The integrated debugger targets native programs through the LLDB DAP adapter. The client and developer tools are implemented in C++; the application does not require a Python interpreter.
+
+## License
+
+Copyright (c) 2026 alman790. The application source is distributed under the [MIT License](LICENSE). Bundled dependencies retain their own licenses.

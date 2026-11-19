@@ -146,9 +146,10 @@ SettingsDialog::SettingsDialog(QWidget* parent, std::function<void()> applied)
         line->setProperty("settingsKey", field.second);
         tools->addRow(field.first, line);
     }
-    auto* debugger = new QLineEdit(prefs.value("debugger/lldb", "lldb").toString());
-    debugger->setProperty("settingsKey", "debugger/lldb");
-    tools->addRow(UiLanguage::tr("LLDB executable"), debugger);
+    auto* debugger = new QLineEdit(prefs.value("debugger/adapter").toString());
+    debugger->setPlaceholderText("lldb-dap");
+    debugger->setProperty("settingsKey", "debugger/adapter");
+    tools->addRow(UiLanguage::tr("LLDB DAP executable"), debugger);
     auto* toolInfo = new QLabel(UiLanguage::tr(
         "Choose the CMake target, generator and Debug/Release in the project Build/Run dialog. Enter a "
         "compiler executable name from PATH or an absolute path, without arguments."));

@@ -15,7 +15,7 @@
 
 int main(int argc, char** argv) {
     QApplication app(argc, argv);
-    if (ToolDiscovery::find("lldb").isEmpty() || ToolDiscovery::find("c++").isEmpty())
+    if (DebuggerPanel::adapterPath().isEmpty() || ToolDiscovery::find("c++").isEmpty())
         return 77;
     QTemporaryDir temporary;
     try {
@@ -24,7 +24,9 @@ int main(int argc, char** argv) {
         if (!source.open(QIODevice::WriteOnly))
             return 1;
         source.write("#include <iostream>\nint main() {\n    int value = 41;\n    value += 1;\n    std::cout "
-                     "<< \"RESULT=\" << value << '\\n';\n    return 0;\n}\n");
+                     "<< \"RESULT=\" << value << '\\n';\n"
+                     "    char input[128]; std::cin.getline(input, sizeof(input));\n"
+                     "    std::cout << \"ECHO=\" << input << '\\n';\n    return 0;\n}\n");
         source.close();
         QProcess compiler;
         compiler.start(ToolDiscovery::find("c++"), {"-g", "-O0", file, "-o", executable});
@@ -64,9 +66,14 @@ int main(int argc, char** argv) {
         wait([&] { return panel.findChild<QPlainTextEdit*>("debugConsole")->toPlainText().contains("42"); },
              10000);
         panel.send({{"command", "continue"}});
+        panel.send({{"command", "stdin"}, {"text", QString::fromUtf8("Привет")}});
         wait([&] { return !panel.busy(); }, 10000);
         if (!panel.findChild<QPlainTextEdit*>("debugConsole")->toPlainText().contains("RESULT=42"))
             throw std::runtime_error("Capture debuggee stdout");
+        if (!panel.findChild<QPlainTextEdit*>("debugConsole")
+                 ->toPlainText()
+                 .contains(QString::fromUtf8("ECHO=Привет")))
+            throw std::runtime_error("Round-trip UTF-8 program input through the native terminal");
         line = 0;
         if (!panel.start(executable, temporary.path(), {{file, QJsonArray{4}}}, error))
             throw std::runtime_error(error.toStdString());

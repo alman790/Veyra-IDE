@@ -29,7 +29,11 @@ struct Registry {
 
 Registry load() {
     QJsonArray entries =
-        QJsonDocument::fromJson(QByteArray(TS_LANGUAGE_CATALOG)).object().value("languages").toArray();
+        QJsonDocument::fromJson(QByteArray::fromRawData(reinterpret_cast<const char*>(TS_LANGUAGE_CATALOG),
+                                                        sizeof(TS_LANGUAGE_CATALOG)))
+            .object()
+            .value("languages")
+            .toArray();
     QString custom = qEnvironmentVariable("TS_LANGUAGE_PROFILES");
     if (custom.isEmpty() && QCoreApplication::instance())
         custom = QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation) + "/languages.json";

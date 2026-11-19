@@ -1,8 +1,10 @@
-name: Native C++ and Qt verification
+name: CI
 on:
   workflow_dispatch:
   push:
   pull_request:
+permissions:
+  contents: read
 jobs:
   native-qt:
     strategy:
@@ -14,13 +16,13 @@ jobs:
       - uses: actions/checkout@v4
         with:
           lfs: true
-      - name: Enable MSVC toolchain for real editor build/run tests
+      - name: Enable MSVC
         if: runner.os == 'Windows'
         uses: ilammy/msvc-dev-cmd@v1
-      - name: Install Qt and clangd on Ubuntu
+      - name: Install Linux dependencies
         if: runner.os == 'Linux'
         run: sudo apt-get update && sudo apt-get install -y qt6-base-dev libgl1-mesa-dev libxkbcommon-dev clangd clang lldb ninja-build dpkg-dev rpm file
-      - name: Install Qt on macOS
+      - name: Install macOS dependencies
         if: runner.os == 'macOS'
         run: brew install qt ninja
       - name: Install Qt on Windows
@@ -30,31 +32,35 @@ jobs:
           version: '6.8.3'
           arch: win64_msvc2022_64
           cache: true
-      - name: Install Windows installer builder
+      - name: Install NSIS
         if: runner.os == 'Windows'
         run: choco install nsis --no-progress -y
-      - name: Install compatible TypeScript SDK and web language servers
+      - name: Install web language servers
         run: npm install --global typescript@5.9.3 typescript-language-server@4.3.4 vscode-langservers-extracted@4.10.0
-      - name: Configure strict GUI and C++ tests
-        run: cmake -S . -B build -DTS_BUILD_GUI=ON -DTS_REQUIRE_GUI=ON -DTS_BUILD_TESTS=ON -DCMAKE_BUILD_TYPE=Release
-      - name: Build app and execute CTest
-        run: cmake --build build --target VeyraIDE check --config Release --parallel 2
-      - name: Stage native Qt dependencies
+      - name: Configure
+        run: cmake -S . -B build -DTS_REQUIRE_GUI=ON -DTS_BUILD_TESTS=ON -DCMAKE_BUILD_TYPE=Release
+      - name: Build
+        run: cmake --build build --config Release --parallel 2
+      - name: Test
+        run: ctest --test-dir build -C Release --output-on-failure
+      - name: Check translations
+        run: cmake --build build --target translations-check --config Release
+      - name: Deploy
         run: cmake --build build --target deploy --config Release
-      - name: Build native installers
+      - name: Package
         run: cmake --build build --target installer --config Release
-      - name: Launch deployed Windows GUI
+      - name: Launch deployed Windows application
         if: runner.os == 'Windows'
-        run: python tools/smoke_launch.py build/deployment.noindex/VeyraIDE.exe
-      - name: Launch deployed macOS GUI
+        run: .\build\Release\veyra_devtools.exe smoke build/deployment.noindex/VeyraIDE.exe
+      - name: Launch deployed macOS application
         if: runner.os == 'macOS'
-        run: python3 tools/smoke_launch.py build/deployment.noindex/VeyraIDE.app/Contents/MacOS/VeyraIDE
-      - name: Install Linux DEB and launch installed GUI
+        run: ./build/veyra_devtools smoke build/deployment.noindex/VeyraIDE.app/Contents/MacOS/VeyraIDE
+      - name: Install and launch Linux package
         if: runner.os == 'Linux'
         run: |
           sudo apt-get install -y ./build/packages.noindex/*.deb
-          python3 tools/smoke_launch.py /usr/bin/VeyraIDE --platform offscreen
-      - name: Retain evidence on success or failure
+          ./build/veyra_devtools smoke /usr/bin/VeyraIDE offscreen
+      - name: Upload test logs and packages
         if: always()
         uses: actions/upload-artifact@v4
         with:
@@ -72,8 +78,8 @@ jobs:
         with:
           lfs: true
       - run: sudo apt-get update && sudo apt-get install -y clang lldb qt6-base-dev libgl1-mesa-dev libxkbcommon-dev clangd
-      - run: cmake -S . -B build -DCMAKE_CXX_COMPILER=clang++ -DTS_REQUIRE_GUI=ON -DTS_BUILD_TESTS=ON -DTS_ENABLE_SANITIZERS=ON -DCMAKE_BUILD_TYPE=Debug
-      - name: Run ASan and UBSan (Qt process lifetime allocations excluded from LSan)
+      - run: cmake -S . -B build -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DTS_REQUIRE_GUI=ON -DTS_BUILD_TESTS=ON -DTS_ENABLE_SANITIZERS=ON -DCMAKE_BUILD_TYPE=Debug
+      - name: Build and test with ASan and UBSan
         env:
           ASAN_OPTIONS: detect_leaks=0
         run: cmake --build build --target check --parallel 2
@@ -87,11 +93,15 @@ jobs:
           lfs: true
       - run: cmake -S . -B build -DTS_BUILD_GUI=OFF -DTS_BUILD_TESTS=ON -DCMAKE_BUILD_TYPE=Release
       - run: cmake --build build --target check --parallel 2
-
   formatting:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
-      - run: pipx install clang-format==22.1.0
-      - run: python3 tools/format_sources.py --check
-      - run: python3 tools/check_translations.py
+      - name: Install Qt Core and clang-format 22
+        run: |
+          curl -fsSL https://apt.llvm.org/llvm-snapshot.gpg.key | sudo tee /etc/apt/trusted.gpg.d/apt.llvm.org.asc > /dev/null
+          echo 'deb https://apt.llvm.org/noble/ llvm-toolchain-noble-22 main' | sudo tee /etc/apt/sources.list.d/llvm22.list
+          sudo apt-get update
+          sudo apt-get install -y clang-format-22 qt6-base-dev
+      - run: cmake -S . -B build -DTS_BUILD_GUI=OFF -DTS_BUILD_TESTS=OFF -DTS_LOCAL_MODEL=OFF -DTS_CLANG_FORMAT=/usr/bin/clang-format-22
+      - run: cmake --build build --target format-check translations-check --parallel 2

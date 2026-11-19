@@ -92,6 +92,9 @@ void MainWindow::requestPredictiveCompletion() {
 }
 
 void MainWindow::reviewThreadWithModel(bool interactive) {
+#if !TS_HAS_LOCAL_MODEL
+    Q_UNUSED(interactive);
+#endif
 #if TS_HAS_LOCAL_MODEL
     if (closing_ || editor_->isReadOnly() || qEnvironmentVariableIsSet("TS_DISABLE_LOCAL_MODEL") ||
         !QSettings().value("assistant/review", true).toBool())

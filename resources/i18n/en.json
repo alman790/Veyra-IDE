@@ -398,5 +398,7 @@
   "Проверьте, какие данные разделяются между исполнителями и как синхронизируется каждое обращение.": "Check which data is shared between workers and how each access is synchronized.",
   "Перед изменением синхронизации проверьте время жизни потоков и задач.": "Check thread and task lifetimes before changing synchronization.",
   "Проверьте отмену и блокирующие вызовы по документации выбранного SDK.": "Inspect cancellation and blocking calls in the selected SDK documentation.",
-  "Не удалось ограничить формат ответа локальной модели.": "Unable to constrain the local model output."
+  "Не удалось ограничить формат ответа локальной модели.": "Unable to constrain the local model output.",
+  "Исполняемый файл LLDB DAP": "LLDB DAP executable",
+  "Перед отладкой выберите исполняемый файл LLDB DAP в настройках.": "Select an LLDB DAP executable in Settings before debugging."
 }
