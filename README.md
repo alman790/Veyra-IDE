@@ -205,3 +205,14 @@ Refactoring support follows the connected language server. The integrated debugg
 ## License
 
 Copyright (c) 2026 alman790. The application source is distributed under the [MIT License](LICENSE). Bundled dependencies retain their own licenses.
+
+Third-party components retain their respective licenses.
+
+- **Qt 6** — licensed under applicable Qt licensing terms.
+- **llama.cpp** — MIT License.
+- **Qwen2.5-Coder** — Apache License 2.0.
+- **Beamcore** — optional, separately installed integration;
+  subject to its own licensing terms.
+
+See [Third-Party Notices](licenses/THIRD_PARTY_NOTICES.txt)
+for additional information.
