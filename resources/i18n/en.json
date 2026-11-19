@@ -401,5 +401,6 @@
   "Не удалось ограничить формат ответа локальной модели.": "Unable to constrain the local model output.",
   "Исполняемый файл LLDB DAP": "LLDB DAP executable",
   "Перед отладкой выберите исполняемый файл LLDB DAP в настройках.": "Select an LLDB DAP executable in Settings before debugging.",
-  "Исполняемый файл для отладки не найден.": "The debug executable was not found."
+  "Исполняемый файл для отладки не найден.": "The debug executable was not found.",
+  "Не удалось запустить адаптер отладки: %1": "Debug adapter could not start: %1"
 }

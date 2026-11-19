@@ -160,22 +160,67 @@ DebuggerPanel::~DebuggerPanel() {
     }
 }
 
-QString DebuggerPanel::adapterPath() {
-    const auto configured = QSettings().value("debugger/adapter").toString();
-    if (!configured.isEmpty())
-        return ToolDiscovery::find(configured);
-    for (const auto& name : {"lldb-dap", "lldb-vscode", "lldb-dap-22", "lldb-dap-21", "lldb-dap-20",
-                             "lldb-dap-19", "lldb-vscode-18"}) {
-        const auto path = ToolDiscovery::find(name);
-        if (!path.isEmpty())
-            return path;
-    }
-#ifdef Q_OS_MACOS
-    QProcess xcrun;
-    xcrun.start("/usr/bin/xcrun", {"--find", "lldb-dap"});
-    if (xcrun.waitForFinished(3000) && xcrun.exitCode() == 0)
-        return QString::fromUtf8(xcrun.readAllStandardOutput()).trimmed();
+QString DebuggerPanel::adapterPath(QString* detail) {
+    if (detail)
+        detail->clear();
+    QSet<QString> checked;
+    QStringList failures;
+    const auto usable = [&](const QString& path) {
+        if (path.isEmpty())
+            return false;
+        auto key = QFileInfo(path).canonicalFilePath();
+#ifdef Q_OS_WIN
+        key = key.toCaseFolded();
 #endif
+        if (key.isEmpty() || checked.contains(key))
+            return false;
+        checked.insert(key);
+        QProcess probe;
+        probe.setProcessEnvironment(ToolDiscovery::environment());
+        probe.start(path, {"--help"});
+        const bool completed = probe.waitForStarted(1500) && probe.waitForFinished(2000);
+        if (completed && probe.exitStatus() == QProcess::NormalExit && probe.exitCode() == 0)
+            return true;
+        const auto reason =
+            path + ": " + probe.errorString() + " (" + QString::number(probe.exitCode()) + ')';
+        failures << reason;
+        if (probe.state() != QProcess::NotRunning) {
+            probe.kill();
+            probe.waitForFinished(500);
+        }
+        return false;
+    };
+    const auto configured = QSettings().value("debugger/adapter").toString();
+    if (!configured.isEmpty()) {
+        const auto path = ToolDiscovery::find(configured);
+        if (usable(path))
+            return path;
+        if (failures.isEmpty())
+            failures << configured;
+    } else {
+        const auto directories = ToolDiscovery::paths();
+        for (const auto& name : {"lldb-dap", "lldb-vscode", "lldb-dap-22", "lldb-dap-21", "lldb-dap-20",
+                                 "lldb-dap-19", "lldb-vscode-18"}) {
+            for (const auto& directory : directories) {
+                if (directory.isEmpty())
+                    continue;
+                const auto path = QStandardPaths::findExecutable(name, {directory});
+                if (usable(path))
+                    return path;
+            }
+        }
+#ifdef Q_OS_MACOS
+        QProcess xcrun;
+        xcrun.start("/usr/bin/xcrun", {"--find", "lldb-dap"});
+        if (xcrun.waitForFinished(3000) && xcrun.exitCode() == 0) {
+            const auto path = QString::fromUtf8(xcrun.readAllStandardOutput()).trimmed();
+            if (usable(path))
+                return path;
+        }
+#endif
+    }
+    if (detail)
+        *detail = failures.join('\n');
     return {};
 }
 
@@ -189,9 +234,12 @@ bool DebuggerPanel::start(const QString& executable, const QString& directory, c
         error = "The debug executable was not found.";
         return false;
     }
-    const auto adapter = adapterPath();
+    QString adapterError;
+    const auto adapter = adapterPath(&adapterError);
     if (adapter.isEmpty()) {
-        error = "Select an LLDB DAP executable in Settings before debugging.";
+        error = adapterError.isEmpty()
+                    ? UiLanguage::tr("Select an LLDB DAP executable in Settings before debugging.")
+                    : UiLanguage::tr("Debug adapter could not start: %1").arg(adapterError);
         return false;
     }
     closeTerminal();

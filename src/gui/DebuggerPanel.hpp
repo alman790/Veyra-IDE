@@ -51,7 +51,7 @@ class DebuggerPanel final : public QWidget {
   public:
     explicit DebuggerPanel(QWidget* parent, std::function<void(const QString&, int)> location);
     ~DebuggerPanel() override;
-    static QString adapterPath();
+    static QString adapterPath(QString* detail = nullptr);
     bool start(const QString& executable, const QString& directory, const QJsonObject& breakpoints,
                QString& error);
     void send(QJsonObject command);

@@ -7,6 +7,7 @@
 #include <QListWidget>
 #include <QPlainTextEdit>
 #include <QProcess>
+#include <QSettings>
 #include <QTemporaryDir>
 #include <QTest>
 #include <QTreeWidget>
@@ -14,16 +15,45 @@
 #include <stdexcept>
 
 int main(int argc, char** argv) {
+    if (argc == 2 && QByteArray(argv[1]) == "--help")
+        return 9;
     QApplication app(argc, argv);
-    const auto adapter = DebuggerPanel::adapterPath();
+    app.setOrganizationName("VeyraTests");
+    app.setApplicationName("NativeDebugger");
+    QTemporaryDir settings, tools;
+    QSettings::setDefaultFormat(QSettings::IniFormat);
+    QSettings::setPath(QSettings::IniFormat, QSettings::UserScope, settings.path());
+    QSettings().setValue("debugger/adapter", QCoreApplication::applicationFilePath());
+    QString detail;
+    if (!DebuggerPanel::adapterPath(&detail).isEmpty() || !detail.contains("(9)")) {
+        std::cerr << "Reject an adapter that cannot start: " << detail.toStdString() << '\n';
+        return 1;
+    }
+    QSettings().remove("debugger/adapter");
+    auto invalid = tools.path() + "/lldb-dap";
+#ifdef Q_OS_WIN
+    invalid += ".exe";
+#endif
+    if (!QFile::copy(QCoreApplication::applicationFilePath(), invalid))
+        return 1;
+    const auto originalPath = qgetenv("PATH");
+    qputenv("PATH", tools.path().toUtf8() + QDir::listSeparator().toLatin1() + originalPath);
+    const auto adapter = DebuggerPanel::adapterPath(&detail);
+    qputenv("PATH", originalPath);
+    if (QFileInfo(adapter).canonicalFilePath() == QFileInfo(invalid).canonicalFilePath()) {
+        std::cerr << "Auto-detection selected a broken adapter\n";
+        return 1;
+    }
     auto compilerPath = ToolDiscovery::find("c++");
 #ifdef Q_OS_WIN
     const auto sdkCompiler = QStandardPaths::findExecutable("clang++", {QFileInfo(adapter).absolutePath()});
     if (!sdkCompiler.isEmpty())
         compilerPath = sdkCompiler;
 #endif
-    if (adapter.isEmpty() || compilerPath.isEmpty())
+    if (adapter.isEmpty() || compilerPath.isEmpty()) {
+        std::cout << "SKIP: no working native debugger SDK: " << detail.toStdString() << '\n';
         return 77;
+    }
     QTemporaryDir temporary;
     try {
         const auto file = temporary.path() + "/main.cpp";

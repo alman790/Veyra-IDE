@@ -237,6 +237,13 @@ if(TS_BUILD_GUI)
                 COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_CURRENT_SOURCE_DIR}/resources/models/code-model.gguf" "${TS_MODEL_OUTPUT}/code-model.gguf"
                 COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_CURRENT_SOURCE_DIR}/resources/models/manifest.json" "${TS_MODEL_OUTPUT}/manifest.json")
         endif()
+        if(APPLE)
+            set(TS_LEGACY_TOOL "$<TARGET_FILE_DIR:VeyraIDE>/../Resources/tools/debug_bridge.py")
+        else()
+            set(TS_LEGACY_TOOL "$<TARGET_FILE_DIR:VeyraIDE>/tools/debug_bridge.py")
+        endif()
+        add_custom_command(TARGET VeyraIDE POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E rm -f "${TS_LEGACY_TOOL}" VERBATIM)
         install(TARGETS VeyraIDE BUNDLE DESTINATION . RUNTIME DESTINATION bin)
         if(NOT APPLE)
             if(TS_LOCAL_MODEL)
