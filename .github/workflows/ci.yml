@@ -51,6 +51,7 @@ jobs:
         run: cmake --build build --target installer --config Release
       - name: Launch deployed Windows application
         if: runner.os == 'Windows'
+        shell: pwsh
         run: .\build\Release\veyra_devtools.exe smoke build/deployment.noindex/VeyraIDE.exe
       - name: Launch deployed macOS application
         if: runner.os == 'macOS'

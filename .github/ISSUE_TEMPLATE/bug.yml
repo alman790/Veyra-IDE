@@ -1,0 +1,41 @@
+name: Bug report
+description: Report a reproducible failure.
+labels: [bug]
+body:
+  - type: input
+    id: version
+    attributes:
+      label: Veyra version
+      placeholder: Release version or commit
+    validations:
+      required: true
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Platform
+      options: [Windows x86-64, macOS Apple Silicon, macOS Intel, Linux x86-64]
+    validations:
+      required: true
+  - type: textarea
+    id: toolchain
+    attributes:
+      label: SDK and language server
+      description: Include tool names and versions if relevant.
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to reproduce
+      description: Include a minimal code sample where it helps reproduce the failure.
+    validations:
+      required: true
+  - type: textarea
+    id: behavior
+    attributes:
+      label: Expected and actual behavior
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs or screenshots
+      description: Remove credentials and private project data before attaching logs.

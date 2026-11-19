@@ -1,0 +1,119 @@
+name: Release
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Version tag matching CMake, for example v2.0.0
+        required: true
+        type: string
+      run_id:
+        description: Successful CI run on main providing the native packages
+        required: true
+        type: string
+      publish:
+        description: Publish after uploading and verifying the packages
+        default: false
+        type: boolean
+permissions:
+  contents: write
+  actions: read
+concurrency:
+  group: release-${{ inputs.tag }}
+  cancel-in-progress: false
+jobs:
+  publish:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    env:
+      GH_TOKEN: ${{ github.token }}
+      REPO: ${{ github.repository }}
+      TAG: ${{ inputs.tag }}
+      RUN_ID: ${{ inputs.run_id }}
+      PUBLISH: ${{ inputs.publish }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Validate source and prepare draft
+        shell: bash
+        run: |
+          set -euo pipefail
+          [[ "$TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]
+          [[ "$RUN_ID" =~ ^[0-9]+$ ]]
+          run="$(gh api "repos/$REPO/actions/runs/$RUN_ID")"
+          jq -e --arg repo "$REPO" '.name == "CI" and .status == "completed" and .conclusion == "success" and .event == "push" and .head_branch == "main" and .head_repository.full_name == $repo' <<< "$run" > /dev/null
+          source_sha="$(jq -r .head_sha <<< "$run")"
+          version="$(gh api "repos/$REPO/contents/CMakeLists.txt?ref=$source_sha" --jq .content | base64 --decode | sed -nE 's/^project\(VeyraIDE VERSION ([0-9.]+).*/\1/p')"
+          [[ "${TAG#v}" == "$version" ]]
+          if existing="$(gh api "repos/$REPO/commits/$TAG" --jq .sha 2>/dev/null)"; then
+            [[ "$existing" == "$source_sha" ]]
+          else
+            gh api --method POST "repos/$REPO/git/refs" -f ref="refs/tags/$TAG" -f sha="$source_sha" > /dev/null
+          fi
+          if release="$(gh release view "$TAG" --repo "$REPO" --json isDraft 2>/dev/null)"; then
+            jq -e '.isDraft == true' <<< "$release" > /dev/null
+          else
+            notes="$RUNNER_TEMP/release-notes.md"
+            if [[ -f "docs/releases/$TAG.md" ]]; then
+              cp "docs/releases/$TAG.md" "$notes"
+            else
+              printf 'Veyra IDE %s\n' "$version" > "$notes"
+            fi
+            printf '\nBuild provenance: [%s](https://github.com/%s/commit/%s), [CI run](https://github.com/%s/actions/runs/%s).\n' "$source_sha" "$REPO" "$source_sha" "$REPO" "$RUN_ID" >> "$notes"
+            gh release create "$TAG" --repo "$REPO" --verify-tag --draft --title "Veyra IDE $version" --notes-file "$notes"
+          fi
+          release_id="$(gh release view "$TAG" --repo "$REPO" --json databaseId --jq .databaseId)"
+          printf 'SOURCE_SHA=%s\nVERSION=%s\nRELEASE_ID=%s\n' "$source_sha" "$version" "$release_id" >> "$GITHUB_ENV"
+      - name: Upload verified native packages
+        shell: bash
+        run: |
+          set -euo pipefail
+          sums="$RUNNER_TEMP/SHA256SUMS.txt"
+          info="$RUNNER_TEMP/build-info.txt"
+          : > "$sums"
+          printf 'Version: %s\nCommit: %s\nCI: https://github.com/%s/actions/runs/%s\n' "$TAG" "$SOURCE_SHA" "$REPO" "$RUN_ID" > "$info"
+          work=''
+          trap 'if [[ -n "$work" ]]; then rm -rf "$work"; fi' EXIT
+          for pair in 'qa-ubuntu-24.04 linux-x86_64' 'qa-windows-2022 windows-x86_64' 'qa-macos-15 macos-arm64' 'qa-macos-15-intel macos-x86_64'; do
+            read -r artifact platform <<< "$pair"
+            work="$(mktemp -d "$RUNNER_TEMP/veyra-release.XXXXXX")"
+            TMPDIR="$work" gh run download "$RUN_ID" --repo "$REPO" --name "$artifact" --dir "$work/artifact"
+            if [[ "$platform" == macos-* ]]; then
+              directory="$work/artifact/deployment.noindex"
+              extensions=(dmg pkg)
+            elif [[ "$platform" == windows-* ]]; then
+              directory="$work/artifact/packages.noindex"
+              extensions=(exe zip)
+            else
+              directory="$work/artifact/packages.noindex"
+              extensions=(deb rpm tar.gz)
+            fi
+            for extension in "${extensions[@]}"; do
+              mapfile -d '' files < <(find "$directory" -maxdepth 1 -type f -name "*.$extension" -print0)
+              [[ "${#files[@]}" == 1 ]]
+              source_file="${files[0]}"
+              [[ "$(basename "$source_file")" == *"$VERSION"* ]]
+              name="VeyraIDE-$VERSION-$platform.$extension"
+              if [[ "$extension" == exe ]]; then name="VeyraIDE-$VERSION-$platform-setup.exe"; fi
+              asset="$work/$name"
+              mv "$source_file" "$asset"
+              [[ "$(stat -c %s "$asset")" -lt 2147483648 ]]
+              (cd "$work" && sha256sum "$name") >> "$sums"
+              gh release upload "$TAG" "$asset" --repo "$REPO" --clobber
+              expected="$(tail -n 1 "$sums" | cut -d ' ' -f 1)"
+              actual="$(gh api "repos/$REPO/releases/$RELEASE_ID" --jq ".assets[] | select(.name == \"$name\") | .digest")"
+              [[ "$actual" == "sha256:$expected" ]]
+              rm "$asset"
+            done
+            rm -rf "$work"
+            work=''
+          done
+          sort -k2 "$sums" -o "$sums"
+          gh release upload "$TAG" "$sums" "$info" --repo "$REPO" --clobber
+          assets="$(gh api "repos/$REPO/releases/$RELEASE_ID" --jq '.assets | length')"
+          [[ "$assets" == 11 ]]
+          printf 'Uploaded nine native packages, checksums, and build provenance.\n' >> "$GITHUB_STEP_SUMMARY"
+      - name: Publish release
+        if: inputs.publish
+        run: gh release edit "$TAG" --repo "$REPO" --draft=false --latest

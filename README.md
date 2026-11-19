@@ -6,13 +6,37 @@
 
 <p align="center">
   <a href="CMakeLists.txt"><img src="https://img.shields.io/badge/C%2B%2B-20-00599C?style=flat-square" alt="C++20"></a>
-  <a href="#requirements"><img src="https://img.shields.io/badge/Qt-6-41CD52?style=flat-square" alt="Qt 6"></a>
+  <a href="#source-build-requirements"><img src="https://img.shields.io/badge/Qt-6-41CD52?style=flat-square" alt="Qt 6"></a>
   <a href="https://github.com/alman790/Veyra-IDE/actions/workflows/ci.yml"><img src="https://github.com/alman790/Veyra-IDE/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <a href="https://github.com/alman790/Veyra-IDE/releases/latest"><img src="https://img.shields.io/github/v/release/alman790/Veyra-IDE?style=flat-square" alt="Latest release"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-22A699?style=flat-square" alt="MIT License"></a>
   <a href="#contributing"><img src="https://img.shields.io/badge/Contributions-welcome-22A699?style=flat-square" alt="Contributions welcome"></a>
 </p>
 
 Veyra is a desktop IDE built with C++20 and Qt 6. It connects the editor to local SDKs and language servers, builds and runs projects, and provides native debugging through LLDB. Code completion and thread review can also use a small model bundled with the application.
+
+## Screenshots
+
+The editor with live thread feedback:
+
+![Veyra editor with live thread diagnostics](docs/screenshots/editor.png)
+
+The welcome screen after closing the last document:
+
+![Veyra welcome screen](docs/screenshots/welcome.png)
+
+## Install a release
+
+Download a package from [Releases](https://github.com/alman790/Veyra-IDE/releases/latest). All packages include the local model. Windows and macOS packages also include Qt; Linux packages use distribution libraries. A source checkout and Git LFS are not required to run a release build.
+
+| Platform | Package |
+| --- | --- |
+| Windows x86-64 | [Installer](https://github.com/alman790/Veyra-IDE/releases/download/v2.0.0/VeyraIDE-2.0.0-windows-x86_64-setup.exe) · [ZIP](https://github.com/alman790/Veyra-IDE/releases/download/v2.0.0/VeyraIDE-2.0.0-windows-x86_64.zip) |
+| macOS Apple Silicon | [DMG](https://github.com/alman790/Veyra-IDE/releases/download/v2.0.0/VeyraIDE-2.0.0-macos-arm64.dmg) · [PKG](https://github.com/alman790/Veyra-IDE/releases/download/v2.0.0/VeyraIDE-2.0.0-macos-arm64.pkg) |
+| macOS Intel | [DMG](https://github.com/alman790/Veyra-IDE/releases/download/v2.0.0/VeyraIDE-2.0.0-macos-x86_64.dmg) · [PKG](https://github.com/alman790/Veyra-IDE/releases/download/v2.0.0/VeyraIDE-2.0.0-macos-x86_64.pkg) |
+| Linux x86-64 | [DEB](https://github.com/alman790/Veyra-IDE/releases/download/v2.0.0/VeyraIDE-2.0.0-linux-x86_64.deb) · [RPM](https://github.com/alman790/Veyra-IDE/releases/download/v2.0.0/VeyraIDE-2.0.0-linux-x86_64.rpm) · [tar.gz](https://github.com/alman790/Veyra-IDE/releases/download/v2.0.0/VeyraIDE-2.0.0-linux-x86_64.tar.gz) |
+
+Verify downloads against `SHA256SUMS.txt` attached to the release. Linux packages use system Qt libraries and were built on Ubuntu 24.04. macOS bundles are ad-hoc signed, not notarized; Windows installers are not code-signed. SDKs, language servers, and LLDB adapters are connected separately.
 
 ## Features
 
@@ -27,7 +51,7 @@ Veyra is a desktop IDE built with C++20 and Qt 6. It connects the editor to loca
 
 Language adapters describe file types, project templates, compiler recipes, and language-server configuration. SDK discovery is read-only; connecting an SDK or installing language tooling requires an explicit action. Adapters can be imported without rebuilding the IDE.
 
-## Requirements
+## Source build requirements
 
 | Component | Requirement |
 | --- | --- |
@@ -125,6 +149,8 @@ Project configuration is stored in `.veyra/`. Custom SDK adapters may be supplie
 
 Open an issue for substantial changes before implementing them. For a bug report, include the operating system, compiler/Qt versions, selected SDK and language server, and steps to reproduce the problem.
 
+See the [contribution guide](.github/CONTRIBUTING.md), [community guidelines](.github/CODE_OF_CONDUCT.md), and [security policy](.github/SECURITY.md). Use [Issues](https://github.com/alman790/Veyra-IDE/issues/new/choose) for reproducible bugs and proposals, or [Discussions](https://github.com/alman790/Veyra-IDE/discussions) for questions.
+
 Keep pull requests focused. Include a regression test when behavior changes, and describe the checks you ran. Preserve the licenses and provenance of bundled dependencies.
 
 ```sh
@@ -137,6 +163,12 @@ The formatter requires clang-format 22 or later. Run `cmake --build <build-direc
 ## Continuous integration
 
 The [CI workflow](.github/workflows/ci.yml) defines native build, test, deployment, and installer jobs for Linux, macOS, and Windows. Separate jobs cover ASan/UBSan, the Fedora core build, formatting, and translation coverage. Tool-dependent integration tests report a skip when their required backend is unavailable.
+
+## Contributors
+
+<a href="https://github.com/alman790"><img src="https://github.com/alman790.png?size=80" width="48" height="48" alt="alman790"></a>
+
+Created and maintained by [alman790](https://github.com/alman790). The [contributors graph](https://github.com/alman790/Veyra-IDE/graphs/contributors) records contributions from repository history.
 
 ## Dependencies and scope
 

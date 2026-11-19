@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Questions and setup
+    url: https://github.com/alman790/Veyra-IDE/discussions
+    about: Ask about setup, SDK configuration, and editor workflows.
+  - name: Security report
+    url: https://github.com/alman790/Veyra-IDE/security/advisories/new
+    about: Report vulnerabilities privately.

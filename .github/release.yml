@@ -1,0 +1,14 @@
+changelog:
+  exclude:
+    labels: [duplicate, invalid, wontfix]
+  categories:
+    - title: Features
+      labels: [enhancement]
+    - title: Fixes
+      labels: [bug]
+    - title: Build and tooling
+      labels: [build, ci, toolchains]
+    - title: Documentation
+      labels: [documentation]
+    - title: Other changes
+      labels: ['*']
