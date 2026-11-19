@@ -61,7 +61,7 @@ jobs:
               printf 'Veyra IDE %s\n' "$version" > "$notes"
             fi
             printf '\nBuild provenance: [%s](https://github.com/%s/commit/%s), [CI run](https://github.com/%s/actions/runs/%s).\n' "$source_sha" "$REPO" "$source_sha" "$REPO" "$RUN_ID" >> "$notes"
-            gh release create "$TAG" --repo "$REPO" --verify-tag --draft --title "Veyra IDE $version" --notes-file "$notes"
+            gh release create "$TAG" --repo "$REPO" --verify-tag --target "$source_sha" --draft --title "Veyra IDE $version" --notes-file "$notes"
           fi
           release_id="$(gh release view "$TAG" --repo "$REPO" --json databaseId --jq .databaseId)"
           printf 'SOURCE_SHA=%s\nVERSION=%s\nRELEASE_ID=%s\n' "$source_sha" "$version" "$release_id" >> "$GITHUB_ENV"
