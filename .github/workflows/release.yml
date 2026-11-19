@@ -46,11 +46,11 @@ jobs:
           source_sha="$(jq -r .head_sha <<< "$run")"
           version="$(gh api "repos/$REPO/contents/CMakeLists.txt?ref=$source_sha" --jq .content | base64 --decode | sed -nE 's/^project\(VeyraIDE VERSION ([0-9.]+).*/\1/p')"
           [[ "${TAG#v}" == "$version" ]]
-          if existing="$(gh api "repos/$REPO/commits/$TAG" --jq .sha 2>/dev/null)"; then
-            [[ "$existing" == "$source_sha" ]]
-          else
-            gh api --method POST "repos/$REPO/git/refs" -f ref="refs/tags/$TAG" -f sha="$source_sha" > /dev/null
+          if ! existing="$(gh api "repos/$REPO/commits/$TAG" --jq .sha 2>/dev/null)"; then
+            printf '::error::Create tag %s at the tested commit %s before running this workflow.\n' "$TAG" "$source_sha"
+            exit 1
           fi
+          [[ "$existing" == "$source_sha" ]]
           if release="$(gh release view "$TAG" --repo "$REPO" --json isDraft 2>/dev/null)"; then
             jq -e '.isDraft == true' <<< "$release" > /dev/null
           else
