@@ -40,9 +40,9 @@ Verify downloads against `SHA256SUMS.txt` attached to the release. Linux package
 
 ## Features
 
-- **Editing:** document tabs, session recovery, split views, automatic bracket and quote pairing, completion menus, inline continuations, and Markdown preview.
+- **Editing:** document tabs, session recovery, whole-line gutter selection, bookmarks, navigation history, automatic bracket and quote pairing, completion menus, inline continuations, and Markdown preview. Documents up to 32 MiB are supported.
 - **Language tooling:** SDK discovery and selection, LSP diagnostics, semantic highlighting, completion, definitions, references, rename, hover documentation, and formatting. Availability depends on the connected language server.
-- **Project workflow:** project creation, a searchable file tree, project-wide search and replace, an integrated terminal, and Git status and diff tools.
+- **Project workflow:** project creation, a searchable file tree, project-wide search and replace, an integrated terminal, and Git status and diff tools. Optional editor annotations show line authors and commits, including the effect of unsaved changes.
 - **Build and run:** adapter-defined compiler commands and CMake project support, including target discovery through the CMake File API and Debug/Release configurations.
 - **Native debugging:** LLDB breakpoints, stepping, call stacks, local variables, expression evaluation, and program input/output.
 - **Thread review:** live source diagnostics and localized recommendations, with optional local model ranking.
@@ -50,6 +50,17 @@ Verify downloads against `SHA256SUMS.txt` attached to the release. Linux package
 - **Interface:** dark theme, configurable shortcuts, and English/Russian localization. A fresh installation starts in English.
 
 Language adapters describe file types, project templates, compiler recipes, and language-server configuration. SDK discovery is read-only; connecting an SDK or installing language tooling requires an explicit action. Adapters can be imported without rebuilding the IDE.
+
+Click the outer gutter to toggle a bookmark, the adjacent lane to toggle a breakpoint, or drag over line numbers to select complete lines. Markers follow edits and are restored with the document session. Use **Code → Show Git annotations** or the gutter context menu to display authorship. Hover an annotation for the author, date, commit and subject; click it to open the commit diff in the Git tool window. Annotations use the current buffer, so inserted or modified lines appear as uncommitted until they are committed.
+
+| Navigation | Shortcut |
+| --- | --- |
+| Back / forward, including document tabs | Alt+Left / Alt+Right |
+| Toggle bookmark | F11 |
+| Next / previous bookmark | Ctrl+F11 / Ctrl+Shift+F11 |
+| Completion menu | Ctrl+Space |
+
+The completion menu supports arrows, Page Up/Down, Enter or Tab to accept, and Escape to dismiss. Local word suggestions use nearby code; project-wide semantic candidates come from the connected language server.
 
 ## Source build requirements
 

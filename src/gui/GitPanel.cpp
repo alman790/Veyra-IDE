@@ -88,7 +88,8 @@ GitPanel::~GitPanel() {
 }
 
 void GitPanel::run(QProcess& process, const QStringList& args,
-                   const std::function<void(const QByteArray&, const QString&)>& result) {
+                   const std::function<void(const QByteArray&, const QString&)>& result,
+                   const QString& directory) {
     process.disconnect(this);
     if (process.state() != QProcess::NotRunning) {
         process.kill();
@@ -135,7 +136,7 @@ void GitPanel::run(QProcess& process, const QStringList& args,
     environment.insert("GIT_OPTIONAL_LOCKS", "0");
     environment.insert("GIT_TERMINAL_PROMPT", "0");
     process.setProcessEnvironment(environment);
-    process.setWorkingDirectory(root_.isEmpty() ? project_ : root_);
+    process.setWorkingDirectory(directory.isEmpty() ? (root_.isEmpty() ? project_ : root_) : directory);
     process.start("git", QStringList{"--no-pager", "--no-optional-locks", "-c", "core.quotepath=false", "-c",
                                      "core.fsmonitor=false"} +
                              args);
@@ -283,6 +284,19 @@ void GitPanel::setFile(const QString& path, int line) {
         blame_->setCurrentRow(line - 1);
         blame_->scrollToItem(blame_->currentItem());
     }
+}
+
+void GitPanel::showCommitDetails(const QString& hash, const QString& file) {
+    static const QRegularExpression commit("\\A(?:[0-9a-f]{40}|[0-9a-f]{64})\\z");
+    if ((root_.isEmpty() && file.isEmpty()) || !commit.match(hash).hasMatch())
+        return;
+    run(
+        detailProcess_,
+        {"show", "--no-ext-diff", "--no-textconv", "--format=fuller", "--stat", "--patch", hash, "--"},
+        [this](const QByteArray& data, const QString& error) {
+            diff_->setPlainText(error.isEmpty() ? QString::fromUtf8(data) : error);
+        },
+        file.isEmpty() ? root_ : QFileInfo(file).absolutePath());
 }
 
 void GitPanel::blameFile() {

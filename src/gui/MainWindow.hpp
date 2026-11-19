@@ -6,6 +6,7 @@
 #include "ThemeManager.hpp"
 #include "ts/Analyzer.hpp"
 #include <QMainWindow>
+#include <QPointer>
 #include <QTemporaryDir>
 
 class QStackedWidget;
@@ -33,6 +34,18 @@ class DebuggerPanel;
 class QSplitter;
 
 class MainWindow final : public QMainWindow {
+    struct NavigationLocation {
+        QPointer<QTextDocument> document;
+        QTextCursor cursor;
+        QString path;
+        int position, anchor, vertical, horizontal;
+    };
+
+    QList<NavigationLocation> navigationBack_, navigationForward_;
+    bool restoringNavigation_ = false;
+    NavigationLocation currentLocation() const;
+    void rememberNavigation();
+    void navigateHistory(bool forward);
     QWidget* emptyEditor_ = nullptr;
     QTextDocument* emptyDocument_ = nullptr;
     QStackedWidget* pages_ = nullptr;

@@ -31,11 +31,17 @@ void MainWindow::navigateSymbol(bool references) {
     if (!prepareLanguageRequest())
         return;
     const auto cursor = editor_->textCursor();
+    const QPointer<QTextDocument> origin = editor_->document();
+    const int revision = origin->revision(), position = cursor.position();
     const auto extra =
         references ? QJsonObject{{"context", QJsonObject{{"includeDeclaration", true}}}} : QJsonObject{};
     lsp_->requestDocument(
         references ? "textDocument/references" : "textDocument/definition", cursor.blockNumber(),
-        cursor.positionInBlock(), extra, [this, references](const QJsonValue& result) {
+        cursor.positionInBlock(), extra,
+        [this, references, origin, revision, position](const QJsonValue& result) {
+            if (!origin || editor_->document() != origin || origin->revision() != revision ||
+                editor_->textCursor().position() != position)
+                return;
             const auto locations = result.isArray() ? result.toArray() : QJsonArray{result};
             struct Location {
                 QString file;
@@ -61,6 +67,7 @@ void MainWindow::navigateSymbol(bool references) {
                 const auto block = editor_->document()->findBlockByNumber(target.line);
                 if (!block.isValid())
                     return;
+                editor_->invalidateViewRestore();
                 QTextCursor cursor(block);
                 cursor.setPosition(block.position() + std::min(target.column, int(block.text().size())));
                 editor_->setTextCursor(cursor);
@@ -242,22 +249,22 @@ void MainWindow::showSymbolInfo() {
     if (!prepareLanguageRequest())
         return;
     const auto cursor = editor_->textCursor();
-    lsp_->requestDocument("textDocument/hover", cursor.blockNumber(), cursor.positionInBlock(), {},
-                          [this](const QJsonValue& result) {
-                              const auto contents = result.toObject().value("contents");
-                              QString text;
-                              if (contents.isString())
-                                  text = contents.toString();
-                              else if (contents.isObject())
-                                  text = contents.toObject().value("value").toString();
-                              else
-                                  for (const auto& value : contents.toArray())
-                                      text += value.isString() ? value.toString()
-                                                               : value.toObject().value("value").toString();
-                              if (!text.isEmpty())
-                                  QToolTip::showText(editor_->mapToGlobal(editor_->cursorRect().bottomLeft()),
-                                                     text.toHtmlEscaped().replace('\n', "<br>"), editor_);
-                          });
+    lsp_->requestDocument(
+        "textDocument/hover", cursor.blockNumber(), cursor.positionInBlock(), {},
+        [this](const QJsonValue& result) {
+            const auto contents = result.toObject().value("contents");
+            QString text;
+            if (contents.isString())
+                text = contents.toString();
+            else if (contents.isObject())
+                text = contents.toObject().value("value").toString();
+            else
+                for (const auto& value : contents.toArray())
+                    text += value.isString() ? value.toString() : value.toObject().value("value").toString();
+            if (!text.isEmpty())
+                QToolTip::showText(editor_->viewport()->mapToGlobal(editor_->cursorRect().bottomLeft()),
+                                   text.toHtmlEscaped().replace('\n', "<br>"), editor_);
+        });
 }
 
 void MainWindow::refreshSemanticTokens() {

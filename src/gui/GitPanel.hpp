@@ -23,7 +23,8 @@ class GitPanel final : public QWidget {
     std::function<void(const QString&, int)> open_;
     std::function<void(bool)> availability_;
     void run(QProcess& process, const QStringList& args,
-             const std::function<void(const QByteArray&, const QString&)>& result);
+             const std::function<void(const QByteArray&, const QString&)>& result,
+             const QString& directory = {});
     void showChange();
     void showCommit();
     void blameFile();
@@ -34,6 +35,7 @@ class GitPanel final : public QWidget {
     void setProject(const QString& path);
     void setFile(const QString& path, int line);
     void refresh();
+    void showCommitDetails(const QString& hash, const QString& file = {});
 
     bool hasRepository() const {
         return !root_.isEmpty();

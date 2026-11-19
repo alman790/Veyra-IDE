@@ -56,6 +56,8 @@ int main(int argc, char** argv) {
         check(first->path == renamed && QFile::exists(renamed) && !QFile::exists(file),
               "Rename updates open document");
         edit(first, " // dirty again");
+        first->text->setProperty("bookmarks", QVariantList{1});
+        first->text->setProperty("breakpoints", QVariantList{1});
         const auto session = temp.path() + "/session.json";
         check(docs.saveSession(session, error), error);
         DocumentController restored;
@@ -64,6 +66,9 @@ int main(int argc, char** argv) {
                   restored.document(0)->text->toPlainText() == first->text->toPlainText() &&
                   restored.document(1)->text->isModified(),
               "Recover unsaved text and dirty flags");
+        check(restored.document(0)->text->property("bookmarks").toList() == QVariantList{1} &&
+                  restored.document(0)->text->property("breakpoints").toList() == QVariantList{1},
+              "Recover document bookmarks and breakpoints");
         int decisions = 0;
         check(!docs.prepareClose(
                   [&](const auto&) {

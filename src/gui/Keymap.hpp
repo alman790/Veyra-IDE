@@ -10,11 +10,20 @@ struct WorkspaceShortcut {
 };
 
 inline constexpr WorkspaceShortcut workspaceShortcuts[] = {
-    {"build", "Build", "Ctrl+B"},       {"run", "Run code", "Ctrl+F5"},
-    {"stop", "Stop", "Shift+F5"},       {"commands", "Find action", "Ctrl+K"},
-    {"find", "Find in file", "Ctrl+F"}, {"replace", "Find and replace", "Ctrl+H"},
-    {"line", "Go to line", "Ctrl+G"},   {"project", "Project tree", "Alt+1"},
-    {"settings", "Settings", "Ctrl+,"}};
+    {"build", "Build", "Ctrl+B"},
+    {"run", "Run code", "Ctrl+F5"},
+    {"stop", "Stop", "Shift+F5"},
+    {"commands", "Find action", "Ctrl+K"},
+    {"find", "Find in file", "Ctrl+F"},
+    {"replace", "Find and replace", "Ctrl+H"},
+    {"line", "Go to line", "Ctrl+G"},
+    {"project", "Project tree", "Alt+1"},
+    {"settings", "Settings", "Ctrl+,"},
+    {"back", "Navigate back", "Alt+Left"},
+    {"forward", "Navigate forward", "Alt+Right"},
+    {"bookmark", "Toggle bookmark", "F11"},
+    {"nextBookmark", "Next bookmark", "Ctrl+F11"},
+    {"previousBookmark", "Previous bookmark", "Ctrl+Shift+F11"}};
 
 inline QString shortcutKey(const char* id) {
     for (const auto& spec : workspaceShortcuts)

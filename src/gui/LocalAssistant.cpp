@@ -65,9 +65,13 @@ void MainWindow::requestPredictiveCompletion() {
     const auto cursor = editor_->textCursor();
     const int position = cursor.position(), revision = document->revision();
     const auto generation = ++localGeneration_;
-    const auto text = editor_->toPlainText();
-    const auto before = text.left(position).right(2000).toStdString();
-    const auto after = text.mid(position, 350).toStdString();
+    auto context = cursor;
+    context.setPosition(std::max(0, position - 2000));
+    context.setPosition(position, QTextCursor::KeepAnchor);
+    const auto before = context.selectedText().replace(QChar::ParagraphSeparator, '\n').toStdString();
+    context.setPosition(position);
+    context.setPosition(std::min(document->characterCount() - 1, position + 350), QTextCursor::KeepAnchor);
+    const auto after = context.selectedText().replace(QChar::ParagraphSeparator, '\n').toStdString();
     const auto language =
         ts::languageForPath((sourcePath_.isEmpty() ? sourceDisplayName_ : sourcePath_).toStdString()).name +
         "\nSDK completions at the cursor: " +
@@ -116,7 +120,10 @@ void MainWindow::reviewThreadWithModel(bool interactive) {
     const int revision = document->revision();
     const auto generation = ++localGeneration_;
     const int position = editor_->textCursor().position();
-    const auto source = editor_->toPlainText().mid(std::max(0, position - 1600), 3200).toStdString();
+    auto context = editor_->textCursor();
+    context.setPosition(std::max(0, position - 1600));
+    context.setPosition(std::min(document->characterCount() - 1, position + 1600), QTextCursor::KeepAnchor);
+    const auto source = context.selectedText().replace(QChar::ParagraphSeparator, '\n').toStdString();
     std::vector<std::string> candidates;
     QStringList labels;
     const int line = editor_->textCursor().blockNumber() + 1;

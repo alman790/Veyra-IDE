@@ -131,6 +131,7 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
             lsp_->changeText(editor_->toPlainText());
     });
     editor_->setCompletionRequest([this] { requestCodeCompletion(); });
+    connect(editor_, &CodeEditor::navigationRequested, this, &MainWindow::rememberNavigation);
     workspaceRoot_ = QSettings().value("workspace/root").toString();
     if (!workspaceRoot_.isEmpty() && !QDir(workspaceRoot_).exists())
         workspaceRoot_.clear();
@@ -211,6 +212,11 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
             gitDock_->hide();
     });
     gitPanel_->setProject(workspaceRoot_);
+    connect(editor_, &CodeEditor::commitInspectionRequested, this, [this](const QString& hash) {
+        gitDock_->show();
+        gitDock_->raise();
+        gitPanel_->showCommitDetails(hash, sourcePath_);
+    });
     connect(editor_, &QPlainTextEdit::cursorPositionChanged, this,
             [this] { gitPanel_->setFile(sourcePath_, editor_->textCursor().blockNumber() + 1); });
     installDocumentWorkspace();
@@ -239,6 +245,30 @@ void MainWindow::buildNativeMenus() {
     settings->setMenuRole(QAction::PreferencesRole);
     file->addAction(UiLanguage::tr("Exit"), this, &QWidget::close);
     auto* code = menuBar()->addMenu(UiLanguage::tr("&Code"));
+    auto* back = code->addAction(UiLanguage::tr("Navigate back"), this, [this] { navigateHistory(false); });
+    back->setObjectName("navigateBack");
+    workspaceActionShortcut(back, "back");
+    auto* forward =
+        code->addAction(UiLanguage::tr("Navigate forward"), this, [this] { navigateHistory(true); });
+    forward->setObjectName("navigateForward");
+    workspaceActionShortcut(forward, "forward");
+    auto* bookmark = code->addAction(UiLanguage::tr("Toggle bookmark"), this, [this] {
+        editor_->toggleBookmark(editor_->textCursor().blockNumber() + 1);
+    });
+    workspaceActionShortcut(bookmark, "bookmark");
+    auto* nextBookmark =
+        code->addAction(UiLanguage::tr("Next bookmark"), this, [this] { editor_->navigateBookmark(true); });
+    workspaceActionShortcut(nextBookmark, "nextBookmark");
+    auto* previousBookmark = code->addAction(UiLanguage::tr("Previous bookmark"), this,
+                                             [this] { editor_->navigateBookmark(false); });
+    workspaceActionShortcut(previousBookmark, "previousBookmark");
+    auto* annotations = code->addAction(UiLanguage::tr("Show Git annotations"));
+    annotations->setObjectName("showGitAnnotations");
+    annotations->setCheckable(true);
+    annotations->setChecked(editor_->annotations()->enabled());
+    connect(annotations, &QAction::triggered, editor_, &CodeEditor::setAnnotationsVisible);
+    connect(editor_, &CodeEditor::annotationsVisibilityChanged, annotations, &QAction::setChecked);
+    code->addSeparator();
     code->addAction(UiLanguage::tr("Find project file…"), this, &MainWindow::findProjectFiles);
     code->addAction(UiLanguage::tr("Find text in project…"), this, &MainWindow::findProjectText);
     workspaceActionShortcut(

@@ -90,6 +90,7 @@ void MainWindow::findNext() {
 void MainWindow::syncLanguage(bool restartLsp) {
     if (!editor_)
         return;
+    editor_->setFilePath(sourcePath_);
     const auto lang =
         ts::languageForPath((sourcePath_.isEmpty() ? sourceDisplayName_ : sourcePath_).toStdString());
     editor_->setLanguage(lang.id == ts::LanguageId::Unknown ? ts::LanguageId::PlainText : lang.id);

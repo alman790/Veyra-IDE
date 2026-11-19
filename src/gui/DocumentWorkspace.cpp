@@ -22,6 +22,7 @@
 #include <QPlainTextDocumentLayout>
 #include <QPointer>
 #include <QPushButton>
+#include <QScopedValueRollback>
 #include <QScrollBar>
 #include <QSettings>
 #include <QSignalBlocker>
@@ -165,6 +166,7 @@ void MainWindow::installDocumentWorkspace() {
         editor_->useDocument(value->text.get());
         sourcePath_ = value->path;
         sourceDisplayName_ = value->name;
+        editor_->setFilePath(sourcePath_);
         trustedToRun_ = value->trusted;
         sourcePathLabel_->setText(
             (value->path.isEmpty() ? value->name : QDir(workspaceRoot_).relativeFilePath(value->path)) +
@@ -177,12 +179,18 @@ void MainWindow::installDocumentWorkspace() {
         editor_->setTextCursor(cursor);
         const QPointer<QTextDocument> document = value->text.get();
         const int vertical = value->verticalScroll, horizontal = value->horizontalScroll;
-        QTimer::singleShot(0, this, [this, document, vertical, horizontal] {
-            if (document && editor_->document() == document) {
-                editor_->verticalScrollBar()->setValue(vertical);
-                editor_->horizontalScrollBar()->setValue(horizontal);
-            }
-        });
+        const int restoredPosition = cursor.position(), restoredAnchor = cursor.anchor();
+        editor_->invalidateViewRestore();
+        const auto generation = editor_->viewGeneration();
+        QTimer::singleShot(
+            0, this, [this, document, vertical, horizontal, restoredPosition, restoredAnchor, generation] {
+                if (document && editor_->document() == document && editor_->viewGeneration() == generation &&
+                    editor_->textCursor().position() == restoredPosition &&
+                    editor_->textCursor().anchor() == restoredAnchor) {
+                    editor_->verticalScrollBar()->setValue(vertical);
+                    editor_->horizontalScrollBar()->setValue(horizontal);
+                }
+            });
         syncLanguage(true);
         updateMarkdown(true);
         analyzeCode();
@@ -212,6 +220,7 @@ void MainWindow::openCode() {
 }
 
 bool MainWindow::loadCodeFile(const QString& path) {
+    rememberNavigation();
     QString error;
     if (!documents_->open(path, error)) {
         QMessageBox::warning(this, UiLanguage::tr("Open"), UiLanguage::text(error));
@@ -219,6 +228,66 @@ bool MainWindow::loadCodeFile(const QString& path) {
     }
     goToPage(2);
     return true;
+}
+
+MainWindow::NavigationLocation MainWindow::currentLocation() const {
+    const auto cursor = editor_->textCursor();
+    return {editor_->document(),
+            cursor,
+            sourcePath_,
+            cursor.position(),
+            cursor.anchor(),
+            editor_->verticalScrollBar()->value(),
+            editor_->horizontalScrollBar()->value()};
+}
+
+void MainWindow::rememberNavigation() {
+    if (restoringNavigation_ || !documents_ || !documents_->activeDocument())
+        return;
+    const auto location = currentLocation();
+    navigationForward_.clear();
+    if (!navigationBack_.isEmpty() && navigationBack_.last().document == location.document &&
+        navigationBack_.last().cursor.position() == location.position &&
+        navigationBack_.last().cursor.anchor() == location.anchor)
+        return;
+    navigationBack_.append(location);
+    if (navigationBack_.size() > 200)
+        navigationBack_.removeFirst();
+}
+
+void MainWindow::navigateHistory(bool forward) {
+    auto& source = forward ? navigationForward_ : navigationBack_;
+    auto& destination = forward ? navigationBack_ : navigationForward_;
+    while (!source.isEmpty()) {
+        const auto target = source.takeLast();
+        if (!target.document && (target.path.isEmpty() || !QFileInfo::exists(target.path)))
+            continue;
+        const auto origin = currentLocation();
+        const bool hadDocument = documents_->activeDocument() != nullptr;
+        QScopedValueRollback<bool> restoring(restoringNavigation_, true);
+        int index = -1;
+        for (int i = 0; i < documents_->count(); ++i)
+            if (documents_->document(i)->text.get() == target.document)
+                index = i;
+        if (index >= 0)
+            documents_->activate(index);
+        else if (!loadCodeFile(target.path))
+            continue;
+        if (hadDocument)
+            destination.append(origin);
+        editor_->invalidateViewRestore();
+        auto cursor = target.document ? target.cursor : editor_->textCursor();
+        if (!target.document) {
+            const int end = editor_->document()->characterCount() - 1;
+            cursor.setPosition(std::clamp(target.anchor, 0, end));
+            cursor.setPosition(std::clamp(target.position, 0, end), QTextCursor::KeepAnchor);
+        }
+        editor_->setTextCursor(cursor);
+        editor_->verticalScrollBar()->setValue(target.vertical);
+        editor_->horizontalScrollBar()->setValue(target.horizontal);
+        editor_->setFocus();
+        return;
+    }
 }
 
 void MainWindow::newCode() {

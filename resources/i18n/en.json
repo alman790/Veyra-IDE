@@ -402,5 +402,20 @@
   "Исполняемый файл LLDB DAP": "LLDB DAP executable",
   "Перед отладкой выберите исполняемый файл LLDB DAP в настройках.": "Select an LLDB DAP executable in Settings before debugging.",
   "Исполняемый файл для отладки не найден.": "The debug executable was not found.",
-  "Не удалось запустить адаптер отладки: %1": "Debug adapter could not start: %1"
+  "Не удалось запустить адаптер отладки: %1": "Debug adapter could not start: %1",
+  "Git недоступен.": "Git is not available.",
+  "Git-аннотации недоступны.": "Git annotations are unavailable.",
+  "Загрузка Git-аннотаций…": "Loading Git annotations…",
+  "Незакоммиченные изменения": "Uncommitted changes",
+  "Перейти вперёд": "Navigate forward",
+  "Перейти назад": "Navigate back",
+  "Переключить закладку": "Toggle bookmark",
+  "Переключить точку останова": "Toggle breakpoint",
+  "Показать Git-аннотации": "Show Git annotations",
+  "Потяните для выделения строк": "Drag to select lines",
+  "Предыдущая закладка": "Previous bookmark",
+  "Следующая закладка": "Next bookmark",
+  "Редактор ограничен 32 МиБ на документ.": "The editor is limited to 32 MiB per document.",
+  "Документ сеанса превышает 32 МиБ.": "A session document exceeds 32 MiB.",
+  "Сохраните файл для просмотра Git-аннотаций.": "Save this file to view Git annotations."
 }

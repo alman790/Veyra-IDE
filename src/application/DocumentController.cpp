@@ -65,8 +65,8 @@ bool DocumentController::readUtf8(const QString& path, QString& text, QString& e
         error = file.errorString();
         return false;
     }
-    if (file.size() > 2 * 1024 * 1024) {
-        error = "The editor is limited to 2 MiB per document.";
+    if (file.size() > 32 * 1024 * 1024) {
+        error = "The editor is limited to 32 MiB per document.";
         return false;
     }
     const auto bytes = file.readAll();
@@ -274,13 +274,16 @@ bool DocumentController::saveSession(const QString& path, QString& error) const 
     QJsonArray entries;
     for (const auto& pointer : documents_) {
         const auto& value = *pointer;
-        QJsonObject entry{{"path", value.path},
-                          {"name", value.name},
-                          {"modified", value.text->isModified()},
-                          {"position", value.position},
-                          {"anchor", value.anchor},
-                          {"vertical", value.verticalScroll},
-                          {"horizontal", value.horizontalScroll}};
+        QJsonObject entry{
+            {"path", value.path},
+            {"name", value.name},
+            {"modified", value.text->isModified()},
+            {"position", value.position},
+            {"anchor", value.anchor},
+            {"bookmarks", QJsonArray::fromVariantList(value.text->property("bookmarks").toList())},
+            {"breakpoints", QJsonArray::fromVariantList(value.text->property("breakpoints").toList())},
+            {"vertical", value.verticalScroll},
+            {"horizontal", value.horizontalScroll}};
         if (value.path.isEmpty() || value.text->isModified())
             entry["text"] = value.text->toPlainText();
         entries.append(entry);
@@ -353,14 +356,16 @@ bool DocumentController::restoreSession(const QString& path, QString& error) {
         }
         if (currentIndex == wanted)
             restoredActive = static_cast<int>(restored.size());
-        if (text.toUtf8().size() > 2 * 1024 * 1024) {
-            error = "A session document exceeds 2 MiB.";
+        if (text.toUtf8().size() > 32 * 1024 * 1024) {
+            error = "A session document exceeds 32 MiB.";
             return false;
         }
         auto value = makeDocument(name, text, object.value("name").toString());
         value->text->setModified(object.value("modified").toBool());
         value->position = object.value("position").toInt();
         value->anchor = object.value("anchor").toInt();
+        value->text->setProperty("bookmarks", object.value("bookmarks").toArray().toVariantList());
+        value->text->setProperty("breakpoints", object.value("breakpoints").toArray().toVariantList());
         value->verticalScroll = object.value("vertical").toInt();
         value->horizontalScroll = object.value("horizontal").toInt();
         restored.pushBack(std::move(value));

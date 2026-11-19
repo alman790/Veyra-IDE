@@ -126,6 +126,8 @@ if(TS_BUILD_GUI)
             src/gui/MainWindow.hpp
             src/gui/CodeEditor.cpp
             src/gui/CodeEditor.hpp
+            src/gui/GitAnnotations.cpp
+            src/gui/GitAnnotations.hpp
             src/platform/ProcessTree.cpp
             src/platform/ProcessTree.hpp
             src/gui/TerminalWidget.cpp
@@ -284,7 +286,7 @@ if(TS_BUILD_TESTS)
     endforeach()
     if(TARGET veyra_gui)
         find_package(Qt6 REQUIRED COMPONENTS Test)
-        foreach(name IN ITEMS editor_tools document cmake_file_api lsp_integration process_integration ide_workflow debugger sdk_installer)
+        foreach(name IN ITEMS editor_tools editor_navigation git_annotations document cmake_file_api lsp_integration process_integration ide_workflow debugger sdk_installer)
             add_executable(veyra_${name}_tests tests/${name}_tests.cpp)
             target_link_libraries(veyra_${name}_tests PRIVATE veyra_gui Qt6::Test)
             if(name STREQUAL "process_integration")

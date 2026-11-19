@@ -4,6 +4,7 @@
 #include "MainWindow.hpp"
 #include "ToolDiscovery.hpp"
 #include "UiLanguage.hpp"
+#include <QAction>
 #include <QApplication>
 #include <QElapsedTimer>
 #include <QFile>
@@ -82,6 +83,33 @@ int main(int argc, char** argv) {
         editor->document()->setModified(false);
         if (qEnvironmentVariableIsSet("TS_IDE_PREVIEW"))
             window.grab().save(qEnvironmentVariable("TS_IDE_PREVIEW"));
+        editor->jumpToLine(3);
+        auto selectedCursor = editor->textCursor();
+        selectedCursor.movePosition(QTextCursor::EndOfBlock, QTextCursor::KeepAnchor);
+        editor->setTextCursor(selectedCursor);
+        const int selectionAnchor = selectedCursor.anchor(), selectionPosition = selectedCursor.position();
+        editor->jumpToLine(12);
+        window.findChild<QAction*>("navigateBack")->trigger();
+        check(editor->textCursor().anchor() == selectionAnchor &&
+                  editor->textCursor().position() == selectionPosition,
+              "Navigation back restores the selection");
+        window.findChild<QAction*>("navigateForward")->trigger();
+        check(editor->textCursor().blockNumber() == 11, "Navigation forward returns to the target");
+        QFile other(root + "/other.cpp");
+        check(other.open(QIODevice::WriteOnly), "Create navigation target");
+        other.write("int other = 1;\n");
+        other.close();
+        editor->openFileRequested(other.fileName());
+        app.processEvents();
+        window.findChild<QAction*>("navigateBack")->trigger();
+        app.processEvents();
+        check(editor->textCursor().blockNumber() == 11 && editor->toPlainText().contains("std::thread"),
+              "Back crosses document tabs without losing the target position");
+        window.findChild<QAction*>("navigateForward")->trigger();
+        app.processEvents();
+        check(editor->toPlainText() == "int other = 1;\n", "Forward reactivates the other file");
+        window.findChild<QTabBar*>("documentTabs")->tabCloseRequested(1);
+        app.processEvents();
         window.findChild<QTabBar*>("documentTabs")->tabCloseRequested(0);
         app.processEvents();
         check(window.findChild<QTabBar*>("documentTabs")->count() == 0 &&

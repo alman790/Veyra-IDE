@@ -1,13 +1,19 @@
 #include "CodeEditor.hpp"
 #include "ThemeManager.hpp"
+#include "UiLanguage.hpp"
 #include "ts/SourceMask.hpp"
 #include <QAbstractItemView>
 #include <QCompleter>
+#include <QContextMenuEvent>
+#include <QDateTime>
 #include <QDragEnterEvent>
 #include <QDropEvent>
 #include <QFocusEvent>
 #include <QFontDatabase>
+#include <QHelpEvent>
+#include <QInputMethodEvent>
 #include <QKeyEvent>
+#include <QMenu>
 #include <QMimeData>
 #include <QMouseEvent>
 #include <QPainter>
@@ -22,7 +28,59 @@
 #include <QToolTip>
 #include <QUrl>
 
+namespace {
+class DocumentMarkers final : public QObject {
+  public:
+    QList<QTextCursor> bookmarks, breakpoints;
+
+    explicit DocumentMarkers(QTextDocument* document) : QObject(document) {
+        setObjectName("editorMarkers");
+        for (const auto& value : document->property("breakpoints").toList()) {
+            const auto block = document->findBlockByNumber(value.toInt() - 1);
+            if (block.isValid())
+                breakpoints.append(QTextCursor(block));
+        }
+        for (const auto& value : document->property("bookmarks").toList()) {
+            const auto block = document->findBlockByNumber(value.toInt() - 1);
+            if (block.isValid())
+                bookmarks.append(QTextCursor(block));
+        }
+    }
+};
+
+DocumentMarkers* markers(QTextDocument* document) {
+    for (auto* child : document->children())
+        if (child->objectName() == "editorMarkers")
+            return static_cast<DocumentMarkers*>(child);
+    return new DocumentMarkers(document);
+}
+
+void toggleMarker(QList<QTextCursor>& list, const QTextBlock& block) {
+    const auto end = std::remove_if(list.begin(), list.end(),
+                                    [&block](const auto& cursor) { return cursor.block() == block; });
+    const bool found = end != list.end();
+    list.erase(end, list.end());
+    if (!found)
+        list.append(QTextCursor(block));
+}
+
+bool identifierPart(QChar value) {
+    return value.isLetterOrNumber() || value == '_' || value.isMark();
+}
+}
+
 LineNumberArea::LineNumberArea(CodeEditor* editor) : QWidget(editor), editor_(editor) {
+    setObjectName("editorGutter");
+    setMouseTracking(true);
+    scrollTimer_.setInterval(30);
+    connect(&scrollTimer_, &QTimer::timeout, this, [this] {
+        auto* scroll = editor_->verticalScrollBar();
+        const int distance = dragPosition_.y() < 0 ? dragPosition_.y() : dragPosition_.y() - height();
+        scroll->setValue(scroll->value() +
+                         (distance < 0 ? -1 : 1) * std::clamp(std::abs(distance) / 12, 1, 20));
+        const int line = editor_->lineAtY(std::clamp(dragPosition_.y(), 0, height() - 1));
+        editor_->selectLines(anchorLine_, line > 0 ? line : editor_->blockCount());
+    });
 }
 
 QSize LineNumberArea::sizeHint() const {
@@ -34,11 +92,108 @@ void LineNumberArea::paintEvent(QPaintEvent* e) {
 }
 
 void LineNumberArea::mousePressEvent(QMouseEvent* event) {
-    if (event->button() == Qt::LeftButton)
+    if (event->button() != Qt::LeftButton)
+        return;
+    const int line = editor_->lineAtY(event->position().y());
+    if (line < 1)
+        return;
+    const int x = event->position().x() - editor_->annotationWidth();
+    if (x < 0) {
+        const auto& lines = editor_->annotations_->lines();
+        if (line <= lines.size()) {
+            const auto hash = lines[line - 1].commit;
+            if (!hash.isEmpty() && hash != QString(hash.size(), '0'))
+                emit editor_->commitInspectionRequested(hash);
+        }
+        return;
+    }
+    if (x < 18)
+        editor_->toggleBookmark(line);
+    else if (x < 36)
         editor_->toggleBreakpointAt(event->position().y());
+    else {
+        selecting_ = true;
+        anchorLine_ = event->modifiers().testFlag(Qt::ShiftModifier)
+                          ? editor_->document()->findBlock(editor_->textCursor().anchor()).blockNumber() + 1
+                          : line;
+        editor_->setFocus();
+        editor_->selectLines(anchorLine_, line);
+    }
+    event->accept();
 }
 
-CodeHighlighter::CodeHighlighter(QTextDocument* doc) : QSyntaxHighlighter(doc) {
+void LineNumberArea::mouseMoveEvent(QMouseEvent* event) {
+    if (!selecting_)
+        return;
+    dragPosition_ = event->position().toPoint();
+    const bool outside = dragPosition_.y() < 0 || dragPosition_.y() >= height();
+    if (outside)
+        scrollTimer_.start();
+    else {
+        scrollTimer_.stop();
+        const int line = editor_->lineAtY(dragPosition_.y());
+        editor_->selectLines(anchorLine_, line > 0 ? line : editor_->blockCount());
+    }
+}
+
+void LineNumberArea::mouseReleaseEvent(QMouseEvent* event) {
+    if (event->button() == Qt::LeftButton) {
+        selecting_ = false;
+        scrollTimer_.stop();
+    }
+}
+
+bool LineNumberArea::event(QEvent* event) {
+    if (event->type() == QEvent::ToolTip) {
+        auto* help = static_cast<QHelpEvent*>(event);
+        const int line = editor_->lineAtY(help->pos().y());
+        QString text;
+        const int x = help->pos().x() - editor_->annotationWidth();
+        if (x < 0) {
+            const auto& lines = editor_->annotations_->lines();
+            if (line > 0 && line <= lines.size()) {
+                const auto& info = lines[line - 1];
+                text = info.commit == QString(info.commit.size(), '0')
+                           ? UiLanguage::tr("Uncommitted changes")
+                           : info.author + "\n" +
+                                 QDateTime::fromSecsSinceEpoch(info.timestamp).toString(Qt::ISODate) + "\n" +
+                                 info.commit + "\n" + info.summary;
+            } else
+                text = editor_->annotations_->error().isEmpty() ? UiLanguage::tr("Loading Git annotations…")
+                                                                : editor_->annotations_->error();
+        } else if (x < 18)
+            text = UiLanguage::tr("Toggle bookmark");
+        else if (x < 36)
+            text = UiLanguage::tr("Toggle breakpoint");
+        else
+            text = UiLanguage::tr("Drag to select lines");
+        QToolTip::showText(help->globalPos(), text.toHtmlEscaped().replace('\n', "<br>"), this);
+        return true;
+    }
+    return QWidget::event(event);
+}
+
+void LineNumberArea::contextMenuEvent(QContextMenuEvent* event) {
+    const int line = editor_->lineAtY(event->pos().y());
+    QMenu menu;
+    auto* bookmark = menu.addAction(UiLanguage::tr("Toggle bookmark"));
+    bookmark->setEnabled(line > 0);
+    auto* breakpoint = menu.addAction(UiLanguage::tr("Toggle breakpoint"));
+    breakpoint->setEnabled(line > 0);
+    auto* authors = menu.addAction(UiLanguage::tr("Show Git annotations"));
+    authors->setCheckable(true);
+    authors->setChecked(editor_->annotations_->enabled());
+    const auto* chosen = menu.exec(event->globalPos());
+    if (chosen == bookmark)
+        editor_->toggleBookmark(line);
+    else if (chosen == breakpoint)
+        editor_->toggleBreakpointAt(event->pos().y());
+    else if (chosen == authors)
+        editor_->setAnnotationsVisible(authors->isChecked());
+}
+
+CodeHighlighter::CodeHighlighter(QTextDocument* doc, ts::LanguageId language)
+    : QSyntaxHighlighter(doc), language_(language) {
     refreshTheme();
 }
 
@@ -54,6 +209,7 @@ void CodeHighlighter::refreshTheme() {
         rules_.pushBack(Rule{QRegularExpression(pattern), format});
     };
     const auto profile = ts::profileFor(language_);
+    blockComments_ = profile.blockComments;
     QStringList keywordsList;
     for (const auto& word : profile.keywords)
         keywordsList << QString::fromStdString(word);
@@ -81,15 +237,16 @@ void CodeHighlighter::highlightBlock(const QString& text) {
     QTextCharFormat base;
     base.setFont(document()->defaultFont());
     setFormat(0, text.size(), base);
+    const auto highlighted = text.left(32768);
     for (const auto& rule : rules_) {
-        auto it = rule.pattern.globalMatch(text);
+        auto it = rule.pattern.globalMatch(highlighted);
         while (it.hasNext()) {
             auto match = it.next();
             setFormat(match.capturedStart(), match.capturedLength(), rule.format);
         }
     }
     setCurrentBlockState(0);
-    if (ts::profileFor(language_).blockComments) {
+    if (blockComments_) {
         int from = previousBlockState() == 1 ? 0 : text.indexOf("/*");
         while (from >= 0) {
             int to = text.indexOf("*/", from);
@@ -134,6 +291,9 @@ void CodeHighlighter::highlightBlock(const QString& text) {
 
 CodeEditor::CodeEditor(QWidget* parent) : QPlainTextEdit(parent) {
     lineNumbers_ = new LineNumberArea(this);
+    annotations_ = new GitAnnotations(this);
+    annotations_->setEnabled(QSettings().value("editor/gitAnnotations", false).toBool());
+    connect(annotations_, &GitAnnotations::updated, lineNumbers_, qOverload<>(&QWidget::update));
     highlighter_ = new CodeHighlighter(document());
     completer_ = new QCompleter(this);
     completer_->setCaseSensitivity(Qt::CaseInsensitive);
@@ -151,7 +311,7 @@ CodeEditor::CodeEditor(QWidget* parent) : QPlainTextEdit(parent) {
         serverEdits_.clear();
         completionAllowed_ = false;
         wordsRevision_ = -1;
-        if (autoCompletion_ && editingKey_ && document()->characterCount() <= 2000000)
+        if (autoCompletion_ && editingKey_ && !isReadOnly())
             completionTimer_.start();
         else
             dismissCompletion();
@@ -162,6 +322,7 @@ CodeEditor::CodeEditor(QWidget* parent) : QPlainTextEdit(parent) {
     setFont(font);
     setTabStopDistance(QFontMetrics(font).horizontalAdvance(' ') * 4);
     setLineWrapMode(QPlainTextEdit::NoWrap);
+    setCenterOnScroll(false);
     setMouseTracking(true);
     setObjectName("codeEditor");
     connect(this, &CodeEditor::blockCountChanged, this, &CodeEditor::updateLineNumberAreaWidth);
@@ -176,7 +337,12 @@ CodeEditor::CodeEditor(QWidget* parent) : QPlainTextEdit(parent) {
         if (!editingKey_)
             dismissCompletion();
     });
+    connect(horizontalScrollBar(), &QScrollBar::valueChanged, this, [this] {
+        if (!editingKey_)
+            dismissCompletion();
+    });
     updateLineNumberAreaWidth(0);
+    wireDocument();
     highlightCurrentLine();
     setLanguage(ts::LanguageId::Cpp);
 }
@@ -188,11 +354,13 @@ int CodeEditor::lineNumberAreaWidth() const {
         max /= 10;
         ++digits;
     }
-    return 19 + fontMetrics().horizontalAdvance(QLatin1Char('9')) * digits;
+    return annotationWidth() + 54 + fontMetrics().horizontalAdvance(QLatin1Char('9')) * digits;
 }
 
 void CodeEditor::updateLineNumberAreaWidth(int) {
     setViewportMargins(lineNumberAreaWidth(), 0, 0, 0);
+    const auto rectangle = contentsRect();
+    lineNumbers_->setGeometry(rectangle.left(), rectangle.top(), lineNumberAreaWidth(), rectangle.height());
 }
 
 void CodeEditor::updateLineNumberArea(const QRect& r, int dy) {
@@ -215,33 +383,60 @@ void CodeEditor::lineNumberAreaPaintEvent(QPaintEvent* e) {
     painter.fillRect(e->rect(), tsui::ThemeManager::color(tsui::Role::Editor));
     QTextBlock block = firstVisibleBlock();
     int blockNumber = block.blockNumber();
-    int top = static_cast<int>(blockBoundingGeometry(block).translated(contentOffset()).top());
-    int bottom = top + static_cast<int>(blockBoundingRect(block).height());
-    while (block.isValid() && top <= e->rect().bottom()) {
+    const int annotation = annotationWidth();
+    QSet<int> breakpointLines;
+    for (const auto& cursor : markers(document())->breakpoints)
+        breakpointLines.insert(cursor.blockNumber() + 1);
+    const auto bookmarks = bookmarkedLines();
+    while (block.isValid()) {
+        const auto geometry = blockBoundingGeometry(block).translated(contentOffset());
+        const qreal top = geometry.top(), bottom = geometry.bottom();
+        if (top > e->rect().bottom())
+            break;
         if (block.isVisible() && bottom >= e->rect().top()) {
             painter.setPen(tsui::ThemeManager::color(tsui::Role::Muted));
-            painter.drawText(0, top, lineNumbers_->width() - 9, fontMetrics().height(), Qt::AlignRight,
-                             QString::number(blockNumber + 1));
-            if (breakpoints_.contains(blockNumber + 1)) {
+            painter.drawText(annotation + 44, qRound(top), lineNumbers_->width() - annotation - 53,
+                             fontMetrics().height(), Qt::AlignRight, QString::number(blockNumber + 1));
+            const qreal middle = top + fontMetrics().height() / 2.0;
+            if (bookmarks.contains(blockNumber + 1)) {
+                painter.setPen(Qt::NoPen);
+                painter.setBrush(tsui::ThemeManager::color(tsui::Role::Accent));
+                painter.drawRoundedRect(QRectF(annotation + 5, middle - 5, 8, 11), 2, 2);
+            }
+            if (breakpointLines.contains(blockNumber + 1)) {
                 painter.setPen(Qt::NoPen);
                 painter.setBrush(tsui::ThemeManager::color(tsui::Role::Error));
-                painter.drawEllipse(3, top + 4, 9, 9);
+                painter.drawEllipse(QPointF(annotation + 27, middle), 4.5, 4.5);
             }
-            for (const auto& d : diagnostics_)
-                if (d.line == blockNumber + 1) {
-                    painter.setBrush(d.severity == ts::RiskLevel::Critical
-                                         ? tsui::ThemeManager::color(tsui::Role::Error)
-                                         : (d.severity == ts::RiskLevel::Warning
-                                                ? tsui::ThemeManager::color(tsui::Role::Warning)
-                                                : tsui::ThemeManager::color(tsui::Role::Good)));
-                    painter.setPen(Qt::NoPen);
-                    painter.drawEllipse(4, top + 5, 6, 6);
-                    break;
-                }
+            if (diagnosticLines_.contains(blockNumber + 1)) {
+                const auto& d = diagnostics_[diagnosticLines_.value(blockNumber + 1)];
+                painter.setBrush(d.severity == ts::RiskLevel::Critical
+                                     ? tsui::ThemeManager::color(tsui::Role::Error)
+                                     : (d.severity == ts::RiskLevel::Warning
+                                            ? tsui::ThemeManager::color(tsui::Role::Warning)
+                                            : tsui::ThemeManager::color(tsui::Role::Good)));
+                painter.setPen(Qt::NoPen);
+                painter.drawEllipse(QPointF(annotation + 39, middle), 2, 2);
+            }
+            if (annotation > 0) {
+                const auto& lines = annotations_->lines();
+                QString text;
+                if (blockNumber < lines.size()) {
+                    const auto& info = lines[blockNumber];
+                    if (!info.commit.isEmpty())
+                        text = info.commit == QString(info.commit.size(), '0')
+                                   ? UiLanguage::tr("Uncommitted changes")
+                                   : info.commit.left(8) + "  " + info.author;
+                } else if (blockNumber == firstVisibleBlock().blockNumber())
+                    text = annotations_->error().isEmpty()
+                               ? UiLanguage::tr("Loading Git annotations…")
+                               : UiLanguage::tr("Git annotations are unavailable.");
+                painter.setPen(tsui::ThemeManager::color(tsui::Role::Muted));
+                painter.drawText(6, qRound(top), annotation - 14, fontMetrics().height(), Qt::AlignLeft,
+                                 fontMetrics().elidedText(text, Qt::ElideRight, annotation - 14));
+            }
         }
         block = block.next();
-        top = bottom;
-        bottom = top + static_cast<int>(blockBoundingRect(block).height());
         ++blockNumber;
     }
 }
@@ -254,37 +449,41 @@ void CodeEditor::highlightCurrentLine() {
     current.cursor = textCursor();
     current.cursor.clearSelection();
     selections.append(current);
-    for (const auto& d : diagnostics_) {
-        if (d.severity == ts::RiskLevel::Info)
-            continue;
-        QTextBlock block = document()->findBlockByNumber(d.line - 1);
-        if (!block.isValid())
-            continue;
-        QTextEdit::ExtraSelection issue;
-        issue.format.setBackground(d.severity == ts::RiskLevel::Critical ? QColor(149, 53, 73, 55)
-                                                                         : QColor(149, 104, 40, 40));
-        issue.format.setProperty(QTextFormat::FullWidthSelection, true);
-        issue.cursor = QTextCursor(block);
-        issue.cursor.clearSelection();
-        selections.append(issue);
-    }
-    if (document()->characterCount() <= 150000) {
-        if (bracketRevision_ != document()->revision()) {
-            const auto source = toPlainText();
-            std::string ascii;
-            ascii.reserve(source.size());
+    selections.append(diagnosticSelections_);
+    {
+        const int caret = textCursor().position();
+        if (bracketRevision_ != document()->revision() || caret < bracketOffset_ ||
+            caret >= bracketOffset_ + static_cast<int>(bracketMask_.size())) {
+            auto window = QTextCursor(document());
+            const auto first = document()->findBlock(std::max(0, caret - 32768));
+            bracketOffset_ = std::max(first.position(), caret - 32768);
+            window.setPosition(bracketOffset_);
+            window.setPosition(std::min(document()->characterCount() - 1, caret + 32768),
+                               QTextCursor::KeepAnchor);
+            auto source = window.selectedText().replace(QChar::ParagraphSeparator, '\n');
+            const bool comment = bracketOffset_ == first.position() ? first.previous().userState() == 1
+                                                                    : first.userState() == 1;
+            if (bracketOffset_ != first.position()) {
+                const auto newline = source.indexOf('\n');
+                std::fill(source.begin(), source.begin() + (newline < 0 ? source.size() : newline),
+                          QChar(' '));
+            }
+            std::string ascii = comment ? "/*" : "";
+            ascii.reserve(source.size() + 2);
             for (const auto ch : source)
                 ascii.push_back(ch.unicode() < 128 ? static_cast<char>(ch.unicode()) : 'x');
             bracketMask_ = ts::maskCommentsAndStrings(ascii);
+            if (comment)
+                bracketMask_.erase(0, 2);
             bracketRevision_ = document()->revision();
         }
-        int position = textCursor().position() - 1;
+        int position = caret - bracketOffset_ - 1;
         const auto bracket = [](char value) {
             return std::string("()[]{}").find(value) != std::string::npos;
         };
         if (position < 0 || position >= static_cast<int>(bracketMask_.size()) ||
             !bracket(bracketMask_[position]))
-            position = textCursor().position();
+            position = caret - bracketOffset_;
         if (position >= 0 && position < static_cast<int>(bracketMask_.size()) &&
             bracket(bracketMask_[position])) {
             const char value = bracketMask_[position];
@@ -305,7 +504,7 @@ void CodeEditor::highlightCurrentLine() {
                 if (index >= 0) {
                     QTextEdit::ExtraSelection pair;
                     pair.cursor = QTextCursor(document());
-                    pair.cursor.setPosition(index);
+                    pair.cursor.setPosition(index + bracketOffset_);
                     pair.cursor.movePosition(QTextCursor::Right, QTextCursor::KeepAnchor);
                     pair.format.setBackground(
                         tsui::ThemeManager::color(match < 0 ? tsui::Role::Warning : tsui::Role::AccentSoft));
@@ -330,6 +529,24 @@ void CodeEditor::highlightCurrentLine() {
 
 void CodeEditor::setDiagnostics(const ts::Array<ts::Diagnostic>& diagnostics) {
     diagnostics_ = diagnostics;
+    diagnosticSelections_.clear();
+    diagnosticLines_.clear();
+    for (std::size_t index = 0; index < diagnostics_.size(); ++index) {
+        const auto& d = diagnostics_[index];
+        diagnosticLines_.insert(d.line, static_cast<int>(index));
+        if (d.severity == ts::RiskLevel::Info)
+            continue;
+        QTextBlock block = document()->findBlockByNumber(d.line - 1);
+        if (!block.isValid())
+            continue;
+        QTextEdit::ExtraSelection issue;
+        issue.format.setBackground(d.severity == ts::RiskLevel::Critical ? QColor(149, 53, 73, 55)
+                                                                         : QColor(149, 104, 40, 40));
+        issue.format.setProperty(QTextFormat::FullWidthSelection, true);
+        issue.cursor = QTextCursor(block);
+        issue.cursor.clearSelection();
+        diagnosticSelections_.append(issue);
+    }
     highlightCurrentLine();
 }
 
@@ -349,6 +566,8 @@ void CodeEditor::jumpToLine(int line) {
     QTextBlock b = document()->findBlockByNumber(line - 1);
     if (!b.isValid())
         return;
+    invalidateViewRestore();
+    emit navigationRequested();
     QTextCursor c(b);
     setTextCursor(c);
     centerCursor();
@@ -379,13 +598,18 @@ void CodeEditor::useDocument(QTextDocument* document) {
     delete highlighter_;
     highlighter_ = nullptr;
     bracketRevision_ = -1;
+    diagnosticSelections_.clear();
+    diagnosticLines_.clear();
+    setExtraSelections({});
+    document->setDefaultFont(font());
     QPlainTextEdit::setDocument(document);
-    highlighter_ = new CodeHighlighter(document);
-    highlighter_->setLanguage(language_);
+    highlighter_ = new CodeHighlighter(document, language_);
     diagnostics_.clear();
-    breakpoints_.clear();
-    for (const auto& value : document->property("breakpoints").toList())
-        breakpoints_.insert(value.toInt());
+    diagnosticSelections_.clear();
+    diagnosticLines_.clear();
+    wireDocument();
+    annotations_->setDocument(document, {});
+    setGhostText({});
     executionLine_ = -1;
     document->setProperty("analysisCurrent", false);
     document->setDefaultFont(font());
@@ -394,6 +618,8 @@ void CodeEditor::useDocument(QTextDocument* document) {
 }
 
 void CodeEditor::setLanguage(ts::LanguageId language) {
+    if (language_ == language)
+        return;
     dismissCompletion();
     language_ = language;
     highlighter_->setLanguage(language);
@@ -424,7 +650,7 @@ QString CodeEditor::completionPrefix() const {
     const auto cursor = textCursor();
     const auto text = cursor.block().text().left(cursor.positionInBlock());
     int from = text.size();
-    while (from > 0 && (text[from - 1].isLetterOrNumber() || text[from - 1] == '_'))
+    while (from > 0 && identifierPart(text[from - 1]))
         --from;
     return text.mid(from);
 }
@@ -466,6 +692,11 @@ void CodeEditor::requestSuggestions() {
 }
 
 void CodeEditor::insertSuggestion(const QString& suggestion) {
+    if (isReadOnly() || textCursor().hasSelection() || !completionAllowed_ ||
+        completionPosition_ != textCursor().position() || completionRevision_ != document()->revision()) {
+        dismissCompletion();
+        return;
+    }
     QTextCursor cursor = textCursor();
     if (serverEdits_.contains(suggestion)) {
         const auto details = serverEdits_.value(suggestion);
@@ -525,7 +756,7 @@ void CodeEditor::insertSuggestion(const QString& suggestion) {
     const auto prefix = completionPrefix();
     const int wordStart = cursor.position() - prefix.size();
     int wordEnd = cursor.position();
-    while (document()->characterAt(wordEnd).isLetterOrNumber() || document()->characterAt(wordEnd) == '_')
+    while (identifierPart(document()->characterAt(wordEnd)))
         ++wordEnd;
     cursor.beginEditBlock();
     cursor.setPosition(wordStart);
@@ -569,6 +800,7 @@ void CodeEditor::showCompletion() {
         return;
     }
     QRect rect = cursorRect();
+    rect.moveTopLeft(viewport()->mapTo(this, rect.topLeft()));
     rect.setWidth(std::clamp(completer_->popup()->sizeHintForColumn(0) + 32, 240, 640));
     completer_->complete(rect);
     int selectedRow = 0;
@@ -590,19 +822,24 @@ void CodeEditor::dismissCompletion() {
 }
 
 void CodeEditor::updateDocumentWords() {
-    if (wordsRevision_ == document()->revision())
+    const int block = textCursor().blockNumber();
+    if (wordsRevision_ == document()->revision() && wordsBlock_ == block)
         return;
     wordsRevision_ = document()->revision();
+    wordsBlock_ = block;
     documentWords_.clear();
-    if (document()->characterCount() > 2000000)
-        return;
-    const auto text = toPlainText();
+    auto window = QTextCursor(document());
+    window.setPosition(std::max(0, textCursor().position() - 32768));
+    window.setPosition(std::min(document()->characterCount() - 1, textCursor().position() + 32768),
+                       QTextCursor::KeepAnchor);
+    const auto text = window.selectedText().replace(QChar::ParagraphSeparator, '\n');
     const auto masked = QString::fromStdString(ts::maskCommentsAndStrings(text.toStdString()));
-    auto matches = QRegularExpression("\\b[A-Za-z_][A-Za-z_0-9]*\\b").globalMatch(masked);
+    static const QRegularExpression identifiers(R"([\p{L}_][\p{L}\p{M}\p{N}_]*)");
+    auto matches = identifiers.globalMatch(masked);
     QSet<QString> seen;
     while (matches.hasNext() && seen.size() < 20000) {
         const auto word = matches.next().captured();
-        if (word.size() > 1)
+        if (word.size() > 1 && word.size() <= 256)
             seen.insert(word);
     }
     documentWords_ = seen.values();
@@ -610,6 +847,7 @@ void CodeEditor::updateDocumentWords() {
 }
 
 void CodeEditor::mousePressEvent(QMouseEvent* event) {
+    invalidateViewRestore();
     dismissCompletion();
     QPlainTextEdit::mousePressEvent(event);
 }
@@ -641,8 +879,10 @@ void CodeEditor::indentSelection(bool outdent) {
                 ++remove;
             if (remove == 0 && text.startsWith('\t'))
                 remove = 1;
-            work.movePosition(QTextCursor::Right, QTextCursor::KeepAnchor, remove);
-            work.removeSelectedText();
+            if (remove > 0) {
+                work.movePosition(QTextCursor::Right, QTextCursor::KeepAnchor, remove);
+                work.removeSelectedText();
+            }
         } else
             work.insertText(QString(tabWidth_, ' '));
         if (block == last)
@@ -654,8 +894,14 @@ void CodeEditor::indentSelection(bool outdent) {
 }
 
 void CodeEditor::keyPressEvent(QKeyEvent* event) {
+    invalidateViewRestore();
+    if (isReadOnly()) {
+        QPlainTextEdit::keyPressEvent(event);
+        return;
+    }
     QScopedValueRollback<bool> editing(editingKey_, true);
-    if (!ghostText_.isEmpty() && event->key() == Qt::Key_Tab && !completer_->popup()->isVisible()) {
+    if (!ghostText_.isEmpty() && event->key() == Qt::Key_Tab && event->modifiers() == Qt::NoModifier &&
+        !textCursor().hasSelection() && !completer_->popup()->isVisible()) {
         auto cursor = textCursor();
         auto suggestion = ghostText_;
         const auto next = document()->characterAt(cursor.position());
@@ -679,7 +925,9 @@ void CodeEditor::keyPressEvent(QKeyEvent* event) {
             event->accept();
             return;
         }
-        if (event->key() == Qt::Key_Return || event->key() == Qt::Key_Enter || event->key() == Qt::Key_Tab) {
+        if ((event->key() == Qt::Key_Return || event->key() == Qt::Key_Enter ||
+             event->key() == Qt::Key_Tab) &&
+            (event->modifiers() == Qt::NoModifier || event->modifiers() == Qt::KeypadModifier)) {
             const auto selected = completer_->popup()->currentIndex().data().toString();
             if (!selected.isEmpty())
                 insertSuggestion(selected);
@@ -687,12 +935,19 @@ void CodeEditor::keyPressEvent(QKeyEvent* event) {
             event->accept();
             return;
         }
-        if ((event->key() == Qt::Key_Up || event->key() == Qt::Key_Down) &&
+        if ((event->key() == Qt::Key_Up || event->key() == Qt::Key_Down || event->key() == Qt::Key_PageUp ||
+             event->key() == Qt::Key_PageDown) &&
             event->modifiers() == Qt::NoModifier) {
             const int count = completer_->completionCount();
             const int row = completer_->popup()->currentIndex().row();
-            const int next = (row + (event->key() == Qt::Key_Down ? 1 : -1) + count) % std::max(1, count);
-            completer_->popup()->setCurrentIndex(completer_->completionModel()->index(next, 0));
+            const bool down = event->key() == Qt::Key_Down || event->key() == Qt::Key_PageDown;
+            const bool page = event->key() == Qt::Key_PageUp || event->key() == Qt::Key_PageDown;
+            const int next = page ? std::clamp(row + (down ? 1 : -1) * completer_->maxVisibleItems(), 0,
+                                               std::max(0, count - 1))
+                                  : (row + (down ? 1 : -1) + count) % std::max(1, count);
+            const auto index = completer_->completionModel()->index(next, 0);
+            completer_->popup()->setCurrentIndex(index);
+            completer_->popup()->scrollTo(index);
             event->accept();
             return;
         }
@@ -719,6 +974,7 @@ void CodeEditor::keyPressEvent(QKeyEvent* event) {
         case Qt::Key_PageUp:
         case Qt::Key_PageDown:
         case Qt::Key_Escape:
+        case Qt::Key_Backtab:
             dismissCompletion();
             break;
     }
@@ -787,11 +1043,19 @@ void CodeEditor::keyPressEvent(QKeyEvent* event) {
             !quote || (!escaped && (!previous.isLetterOrNumber() || cursor.hasSelection() || prefixedQuote) &&
                        !next.isLetterOrNumber());
         if (autoPairs_ && quoteContext && text.size() == 1 && opens.contains(text)) {
+            const bool hadSelection = cursor.hasSelection();
+            const bool backwards = cursor.position() < cursor.anchor();
+            const int start = cursor.selectionStart();
             const auto selected = cursor.selectedText().replace(QChar::ParagraphSeparator, '\n');
             cursor.beginEditBlock();
             const int index = opens.indexOf(text);
             cursor.insertText(text + selected + closing[index]);
             cursor.movePosition(QTextCursor::Left);
+            if (hadSelection) {
+                cursor.setPosition(backwards ? start + 1 + selected.size() : start + 1);
+                cursor.setPosition(backwards ? start + 1 : start + 1 + selected.size(),
+                                   QTextCursor::KeepAnchor);
+            }
             cursor.endEditBlock();
             setTextCursor(cursor);
             event->accept();
@@ -894,33 +1158,148 @@ void CodeEditor::paintEvent(QPaintEvent* event) {
 }
 
 void CodeEditor::setGhostText(const QString& text) {
+    if (ghostText_ == text)
+        return;
     ghostText_ = text;
     setProperty("ghostText", text);
     viewport()->update();
 }
 
 void CodeEditor::toggleBreakpointAt(int y) {
+    const auto block = document()->findBlockByNumber(lineAtY(y) - 1);
+    if (block.isValid()) {
+        toggleMarker(markers(document())->breakpoints, block);
+        syncMarkers();
+    }
+}
+
+int CodeEditor::annotationWidth() const {
+    return annotations_->enabled() ? std::clamp(fontMetrics().horizontalAdvance('M') * 27, 180, 340) : 0;
+}
+
+int CodeEditor::lineAtY(int y) const {
     auto block = firstVisibleBlock();
     while (block.isValid()) {
         const auto rectangle = blockBoundingGeometry(block).translated(contentOffset());
         if (rectangle.top() > y)
             break;
-        if (rectangle.bottom() >= y) {
-            const int line = block.blockNumber() + 1;
-            if (breakpoints_.contains(line))
-                breakpoints_.remove(line);
-            else
-                breakpoints_.insert(line);
-            QVariantList points;
-            for (const auto point : breakpoints_)
-                points.append(point);
-            document()->setProperty("breakpoints", points);
-            lineNumbers_->update();
-            emit breakpointChanged();
-            return;
-        }
+        if (block.isVisible() && rectangle.bottom() > y)
+            return block.blockNumber() + 1;
         block = block.next();
     }
+    return -1;
+}
+
+void CodeEditor::selectLines(int anchorLine, int line) {
+    if (line < 1 || anchorLine < 1)
+        return;
+    dismissCompletion();
+    const auto first = document()->findBlockByNumber(std::min(anchorLine, line) - 1);
+    const auto last = document()->findBlockByNumber(std::max(anchorLine, line) - 1);
+    if (!first.isValid() || !last.isValid())
+        return;
+    const int start = first.position();
+    const int end = last.next().isValid() ? last.next().position() : document()->characterCount() - 1;
+    QTextCursor cursor(document());
+    cursor.setPosition(line < anchorLine ? end : start);
+    cursor.setPosition(line < anchorLine ? start : end, QTextCursor::KeepAnchor);
+    setTextCursor(cursor);
+}
+
+void CodeEditor::toggleBookmark(int line) {
+    const auto block = document()->findBlockByNumber(line - 1);
+    if (!block.isValid())
+        return;
+    toggleMarker(markers(document())->bookmarks, block);
+    syncMarkers();
+}
+
+QList<int> CodeEditor::bookmarkedLines() const {
+    QSet<int> lines;
+    for (const auto& cursor : markers(document())->bookmarks)
+        lines.insert(cursor.blockNumber() + 1);
+    auto result = lines.values();
+    std::sort(result.begin(), result.end());
+    return result;
+}
+
+void CodeEditor::navigateBookmark(bool forward) {
+    const auto lines = bookmarkedLines();
+    if (lines.isEmpty())
+        return;
+    const int current = textCursor().blockNumber() + 1;
+    if (forward) {
+        const auto next = std::upper_bound(lines.begin(), lines.end(), current);
+        jumpToLine(next == lines.end() ? lines.first() : *next);
+    } else {
+        const auto next = std::lower_bound(lines.begin(), lines.end(), current);
+        jumpToLine(next == lines.begin() ? lines.last() : *std::prev(next));
+    }
+}
+
+void CodeEditor::syncMarkers() {
+    QVariantList bookmarks;
+    for (int line : bookmarkedLines())
+        bookmarks.append(line);
+    document()->setProperty("bookmarks", bookmarks);
+    QVariantList points;
+    QSet<int> unique;
+    for (const auto& cursor : markers(document())->breakpoints)
+        unique.insert(cursor.blockNumber() + 1);
+    auto lines = unique.values();
+    std::sort(lines.begin(), lines.end());
+    for (int line : lines)
+        points.append(line);
+    if (document()->property("breakpoints").toList() != points) {
+        document()->setProperty("breakpoints", points);
+        emit breakpointChanged();
+    }
+    lineNumbers_->update();
+}
+
+void CodeEditor::wireDocument() {
+    disconnect(markerConnection_);
+    markers(document());
+    markerConnection_ =
+        connect(document(), &QTextDocument::contentsChange, this, [this](int, int removed, int added) {
+            if (removed || added)
+                syncMarkers();
+        });
+}
+
+void CodeEditor::setFilePath(const QString& path) {
+    annotations_->setDocument(document(), path);
+}
+
+void CodeEditor::setAnnotationsVisible(bool visible) {
+    annotations_->setEnabled(visible);
+    QSettings().setValue("editor/gitAnnotations", visible);
+    updateLineNumberAreaWidth(0);
+    lineNumbers_->update();
+    emit annotationsVisibilityChanged(visible);
+}
+
+void CodeEditor::changeEvent(QEvent* event) {
+    QPlainTextEdit::changeEvent(event);
+    if (event->type() == QEvent::FontChange && lineNumbers_) {
+        document()->setDefaultFont(font());
+        if (highlighter_)
+            highlighter_->refreshTheme();
+        setTabStopDistance(QFontMetricsF(font()).horizontalAdvance(' ') * tabWidth_);
+        updateLineNumberAreaWidth(0);
+    }
+}
+
+void CodeEditor::inputMethodEvent(QInputMethodEvent* event) {
+    dismissCompletion();
+    const QScopedValueRollback<bool> editing(editingKey_, true);
+    QPlainTextEdit::inputMethodEvent(event);
+}
+
+void CodeEditor::insertFromMimeData(const QMimeData* source) {
+    dismissCompletion();
+    const QScopedValueRollback<bool> editing(editingKey_, true);
+    QPlainTextEdit::insertFromMimeData(source);
 }
 
 void CodeEditor::setExecutionLine(int line) {
