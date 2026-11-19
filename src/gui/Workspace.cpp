@@ -272,6 +272,8 @@ void MainWindow::resetWorkspace() {
     outputDock_->hide();
     if (inspectionDock_)
         inspectionDock_->hide();
+    if (agentDock_)
+        agentDock_->hide();
     resizeDocks({projectDock_}, {240}, Qt::Horizontal);
     resizeDocks({outputDock_}, {200}, Qt::Vertical);
 }

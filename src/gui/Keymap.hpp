@@ -10,6 +10,7 @@ struct WorkspaceShortcut {
 };
 
 inline constexpr WorkspaceShortcut workspaceShortcuts[] = {
+    {"agent", "Project agent", "Alt+7"},
     {"build", "Build", "Ctrl+B"},
     {"run", "Run code", "Ctrl+F5"},
     {"stop", "Stop", "Shift+F5"},

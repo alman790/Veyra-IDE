@@ -101,6 +101,9 @@ QListWidget::item {padding:7px 10px;border-bottom:1px solid ${grid};}
 QListWidget::item:selected {background:${selection};color:${text};}
 QPlainTextEdit#codeEditor,QPlainTextEdit#ideConsole {background:${editor};color:${text};border:0;selection-background-color:${selection};padding:10px;font-family:"${mono}";font-size:14px;}
 QPlainTextEdit#codeEditor QWidget {font-family:"${mono}";}
+QPlainTextEdit#agentQuestion,QPlainTextEdit#agentPatchPreview {background:${editor};color:${text};border:1px solid ${border};border-radius:6px;padding:7px;selection-background-color:${selection};}
+QPlainTextEdit#agentPatchPreview {font-family:"${mono}";}
+QPlainTextEdit#agentQuestion:focus {border-color:${accent};}
 QScrollBar:vertical {background:transparent;width:10px;border:0;}
 QScrollBar:horizontal {background:transparent;height:10px;border:0;}
 QScrollBar::handle:vertical,QScrollBar::handle:horizontal {background:${border};border-radius:6px;min-height:28px;min-width:28px;}

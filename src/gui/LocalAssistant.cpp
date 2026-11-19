@@ -1,4 +1,5 @@
 #include "../application/BackgroundJob.hpp"
+#include "AgentPanel.hpp"
 #include "MainWindow.hpp"
 #include "UiLanguage.hpp"
 #if TS_HAS_LOCAL_MODEL
@@ -33,6 +34,8 @@ void MainWindow::setupLocalAssistant() {
             qputenv("TS_CODE_MODEL", QFileInfo(path).absoluteFilePath().toUtf8());
     connect(predictiveTimer_, &QTimer::timeout, this, &MainWindow::requestPredictiveCompletion);
     connect(editor_, &CodeEditor::predictiveCompletionRequested, this, [this] {
+        if (agentPanel_ && agentPanel_->agent()->usesLocalInference())
+            return;
         if (!qEnvironmentVariableIsSet("TS_DISABLE_LOCAL_MODEL") &&
             QSettings().value("assistant/completion", true).toBool())
             predictiveTimer_->start();
@@ -53,8 +56,8 @@ void MainWindow::setupLocalAssistant() {
 
 void MainWindow::requestPredictiveCompletion() {
 #if TS_HAS_LOCAL_MODEL
-    if (closing_ || editor_->isReadOnly() || editor_->textCursor().hasSelection() ||
-        qEnvironmentVariableIsSet("TS_DISABLE_LOCAL_MODEL"))
+    if (closing_ || (agentPanel_ && agentPanel_->agent()->usesLocalInference()) || editor_->isReadOnly() ||
+        editor_->textCursor().hasSelection() || qEnvironmentVariableIsSet("TS_DISABLE_LOCAL_MODEL"))
         return;
     if (localModelJob_->busy()) {
         localModelJob_->cancel();
@@ -100,7 +103,8 @@ void MainWindow::reviewThreadWithModel(bool interactive) {
     Q_UNUSED(interactive);
 #endif
 #if TS_HAS_LOCAL_MODEL
-    if (closing_ || editor_->isReadOnly() || qEnvironmentVariableIsSet("TS_DISABLE_LOCAL_MODEL") ||
+    if (closing_ || (agentPanel_ && agentPanel_->agent()->usesLocalInference()) || editor_->isReadOnly() ||
+        qEnvironmentVariableIsSet("TS_DISABLE_LOCAL_MODEL") ||
         !QSettings().value("assistant/review", true).toBool())
         return;
     if (localModelJob_->busy()) {

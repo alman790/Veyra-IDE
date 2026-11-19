@@ -47,6 +47,7 @@ Verify downloads against `SHA256SUMS.txt` attached to the release. Linux package
 - **Native debugging:** LLDB breakpoints, stepping, call stacks, local variables, expression evaluation, and program input/output.
 - **Thread review:** live source diagnostics and localized recommendations, with optional local model ranking.
 - **Local inference:** Qwen2.5-Coder 0.5B in Q4_K_M format, approximately 491 MB, executed in-process through llama.cpp. No model service is required. Inline suggestions are accepted with Tab and dismissed with Escape.
+- **Project agent:** contextual questions and reviewed repair proposals using the active buffer, selected code, neighboring files, adapter-defined project configuration, SDK information and available compiler/LSP diagnostics. Uses bundled Qwen locally or providers configured in Beamcore.
 - **Interface:** dark theme, configurable shortcuts, and English/Russian localization. A fresh installation starts in English.
 
 Language adapters describe file types, project templates, compiler recipes, and language-server configuration. SDK discovery is read-only; connecting an SDK or installing language tooling requires an explicit action. Adapters can be imported without rebuilding the IDE.
@@ -61,6 +62,20 @@ Click the outer gutter to toggle a bookmark, the adjacent lane to toggle a break
 | Completion menu | Ctrl+Space |
 
 The completion menu supports arrows, Page Up/Down, Enter or Tab to accept, and Escape to dismiss. Local word suggestions use nearby code; project-wide semantic candidates come from the connected language server.
+
+## Project agent
+
+Open **Code → Project agent** (`Alt+7`) or use the chat button in the tool rail. **Ask** requests an explanation; **Propose fix** requests reviewed source changes. Describe the problem or select the code you want reviewed. The agent can read additional project files and search symbols before responding. The context is bounded; large files are supplied as excerpts around the cursor, and related buffers include unsaved changes.
+
+**Bundled Qwen** runs inside Veyra with an 8,192-token context window. It requires no API key or background model server. Identifier corrections are drawn from project code and ranked by Qwen; broader proposals use constrained generation. The 0.5B model is suited to focused questions and small repairs; use a larger model through a provider for difficult refactoring or broad architectural work.
+
+To use [Beamcore](https://github.com/beamcore/agent), install its release runtime and configure providers there. In the agent panel, select **Configure…** if `beamcore` is not on PATH, then **Refresh providers**. Veyra launches the runtime on demand through its `eval` interface and an IDE-owned adapter. It reads an isolated copy of the provider configuration; the original configuration and Beamcore repository are not modified. API keys are not stored in project files. The integration is tested against Beamcore 1.0.0's provider and chat APIs.
+
+When Beamcore is available, the same adapter can route local inference back to Veyra's bundled Qwen. Without a compatible runtime, local mode works directly. External requests use the selected Beamcore provider and model; project context is sent only when a request is submitted with that provider selected. Beamcore itself is an optional, separately installed runtime; its upstream platform support determines where that integration can run.
+
+Review the proposed replacements before choosing **Apply proposal**. Each replacement must match one unique source location, and every affected buffer is checked against its original snapshot before any edit is made. Changes go into editor buffers, with one undo operation per document. They are not saved automatically. **Build to verify** uses the normal build workflow and selected toolchain; the agent does not claim a successful build from a generated answer. Existing build output may describe an earlier saved version of a file.
+
+Context lookup excludes external symlinks, common credential files, dependency/build directories and binary model weights. The agent's tools read and search project code; they do not execute model-generated shell commands or Elixir expressions.
 
 ## Source build requirements
 

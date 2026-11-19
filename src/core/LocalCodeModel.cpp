@@ -47,7 +47,8 @@ Runtime& runtime() {
 }
 
 std::string LocalCodeModel::generate(const std::string& system, const std::string& prompt, int limit,
-                                     const std::function<bool()>& cancelled, const std::string& grammar) {
+                                     const std::function<bool()>& cancelled, const std::string& grammar,
+                                     int contextSize) {
     auto& engine = runtime();
     std::unique_lock lock(engine.mutex, std::defer_lock);
     while (!lock.try_lock()) {
@@ -58,21 +59,42 @@ std::string LocalCodeModel::generate(const std::string& system, const std::strin
     if (cancelled())
         return {};
     engine.load();
-    const llama_chat_message messages[] = {{"system", system.c_str()}, {"user", prompt.c_str()}};
+    contextSize = std::clamp(contextSize, 2048, 16384);
+    limit = std::clamp(limit, 1, contextSize / 2);
+    std::string boundedPrompt = prompt;
     const auto* modelTemplate = llama_model_chat_template(engine.model, nullptr);
-    int length = llama_chat_apply_template(modelTemplate, messages, 2, true, nullptr, 0);
-    if (length <= 0)
-        throw std::runtime_error("Unsupported local model chat template.");
-    std::vector<char> formatted(length + 1);
-    llama_chat_apply_template(modelTemplate, messages, 2, true, formatted.data(), formatted.size());
     const auto* vocabulary = llama_model_get_vocab(engine.model);
-    int count = -llama_tokenize(vocabulary, formatted.data(), length, nullptr, 0, true, true);
-    if (count <= 0 || count > 1800)
-        return {};
+    std::vector<char> formatted;
+    int count = 0, length = 0;
+    for (int attempt = 0; attempt < 8; ++attempt) {
+        const llama_chat_message messages[] = {{"system", system.c_str()}, {"user", boundedPrompt.c_str()}};
+        length = llama_chat_apply_template(modelTemplate, messages, 2, true, nullptr, 0);
+        if (length <= 0)
+            throw std::runtime_error("Unsupported local model chat template.");
+        formatted.resize(length + 1);
+        llama_chat_apply_template(modelTemplate, messages, 2, true, formatted.data(), formatted.size());
+        count = -llama_tokenize(vocabulary, formatted.data(), length, nullptr, 0, true, true);
+        if (count > 0 && count <= contextSize - limit - 16)
+            break;
+        if (count <= 0 || contextSize == 2048 || boundedPrompt.size() < 512 || attempt == 7 || cancelled())
+            return {};
+        const auto keep =
+            std::min(boundedPrompt.size() - 1, boundedPrompt.size() * std::size_t(contextSize - limit - 16) *
+                                                   4 / (std::size_t(count) * 5));
+        auto head = keep * 2 / 3;
+        auto tail = boundedPrompt.size() - keep / 3;
+        while (head > 0 && (static_cast<unsigned char>(boundedPrompt[head]) & 0xc0) == 0x80)
+            --head;
+        while (tail < boundedPrompt.size() &&
+               (static_cast<unsigned char>(boundedPrompt[tail]) & 0xc0) == 0x80)
+            ++tail;
+        boundedPrompt = boundedPrompt.substr(0, head) + "\n[Context shortened to fit the model]\n" +
+                        boundedPrompt.substr(tail);
+    }
     std::vector<llama_token> tokens(count);
     llama_tokenize(vocabulary, formatted.data(), length, tokens.data(), tokens.size(), true, true);
     auto options = llama_context_default_params();
-    options.n_ctx = 2048;
+    options.n_ctx = contextSize;
     options.n_batch = 256;
     options.n_ubatch = 128;
     options.n_threads = std::clamp(int(std::thread::hardware_concurrency()) / 2, 1, 4);

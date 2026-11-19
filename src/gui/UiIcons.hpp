@@ -28,6 +28,13 @@ inline QIcon icon(const QString& name, const QColor& ink = QColor("#A6A9B2")) {
         path.lineTo(2, 16);
         path.closeSubpath();
         p.drawPath(path);
+    } else if (name == "assistant") {
+        p.drawRoundedRect(QRectF(2, 3, 16, 12), 3, 3);
+        p.drawLine(QPointF(5, 15), QPointF(5, 18));
+        p.drawLine(QPointF(5, 18), QPointF(9, 15));
+        p.drawEllipse(QPointF(6, 9), 0.6, 0.6);
+        p.drawEllipse(QPointF(10, 9), 0.6, 0.6);
+        p.drawEllipse(QPointF(14, 9), 0.6, 0.6);
     } else if (name == "console") {
         p.drawRoundedRect(QRectF(2, 3, 16, 14), 1, 1);
         p.drawLine(QPointF(5, 7), QPointF(8, 10));

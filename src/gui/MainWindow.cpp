@@ -1,6 +1,7 @@
 #include "MainWindow.hpp"
 #include "../application/BackgroundJob.hpp"
 #include "../application/DocumentController.hpp"
+#include "AgentPanel.hpp"
 #include "CMakeProjectDialog.hpp"
 #include "DebuggerPanel.hpp"
 #include "GitPanel.hpp"
@@ -142,6 +143,7 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
         QSettings().setValue("workspace/root", workspaceRoot_);
     }
     setupToolWindows();
+    setupProjectAgent();
     buildNativeMenus();
     const QSettings startupSettings;
     const bool migrated = startupSettings.value("appearance/layoutVersion", 0).toInt() >= 3;
@@ -245,6 +247,13 @@ void MainWindow::buildNativeMenus() {
     settings->setMenuRole(QAction::PreferencesRole);
     file->addAction(UiLanguage::tr("Exit"), this, &QWidget::close);
     auto* code = menuBar()->addMenu(UiLanguage::tr("&Code"));
+    auto* projectAgent = code->addAction(UiLanguage::tr("Project agent"), this, [this] {
+        agentDock_->show();
+        agentDock_->raise();
+        if (auto* question = agentPanel_->findChild<QPlainTextEdit*>("agentQuestion"))
+            question->setFocus();
+    });
+    workspaceActionShortcut(projectAgent, "agent");
     auto* back = code->addAction(UiLanguage::tr("Navigate back"), this, [this] { navigateHistory(false); });
     back->setObjectName("navigateBack");
     workspaceActionShortcut(back, "back");
@@ -303,6 +312,7 @@ void MainWindow::buildNativeMenus() {
     view->addAction(projectDock_->toggleViewAction());
     view->addAction(outputDock_->toggleViewAction());
     view->addAction(inspectionDock_->toggleViewAction());
+    view->addAction(agentDock_->toggleViewAction());
     view->addAction(UiLanguage::tr("Find action…"), this, &MainWindow::showCommandPalette);
     view->addAction(UiLanguage::tr("Restore panel layout"), this, &MainWindow::resetWorkspace);
     view->addAction(UiLanguage::tr("Zoom in UI"), QKeySequence::ZoomIn, this,
@@ -332,6 +342,12 @@ void MainWindow::updateWindowTitle() {
 }
 
 void MainWindow::closeEvent(QCloseEvent* event) {
+    if (agentPanel_ && agentPanel_->agent()->busy()) {
+        agentPanel_->agent()->cancel();
+        QTimer::singleShot(50, this, [this] { close(); });
+        event->ignore();
+        return;
+    }
     if (codeRunner_ && codeRunner_->busy()) {
         closing_ = true;
         codeRunner_->stop();
@@ -426,6 +442,18 @@ QWidget* MainWindow::buildSidebar() {
                 gitPanel_->refresh();
             }
         }
+    });
+    auto* assistant = new WorkspaceToolButton;
+    assistant->setObjectName("railAgent");
+    assistant->setProperty("tsIcon", "assistant");
+    assistant->setIcon(tsui::icon("assistant"));
+    assistant->setIconSize(QSize(20, 20));
+    assistant->setToolTip(UiLanguage::tr("Project agent"));
+    assistant->setAccessibleName(UiLanguage::tr("Project agent"));
+    layout->addWidget(assistant);
+    connect(assistant, &QToolButton::clicked, this, [this] {
+        if (agentDock_)
+            agentDock_->setVisible(!agentDock_->isVisible());
     });
     layout->addStretch();
     auto* output = new WorkspaceToolButton;

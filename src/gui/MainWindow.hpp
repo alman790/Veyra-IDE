@@ -32,6 +32,7 @@ class MarkdownPreview;
 class GitPanel;
 class DebuggerPanel;
 class QSplitter;
+class AgentPanel;
 
 class MainWindow final : public QMainWindow {
     struct NavigationLocation {
@@ -72,6 +73,8 @@ class MainWindow final : public QMainWindow {
     QDockWidget* debugDock_ = nullptr;
     QDockWidget* gitDock_ = nullptr;
     QDockWidget* inspectionDock_ = nullptr;
+    QDockWidget* agentDock_ = nullptr;
+    AgentPanel* agentPanel_ = nullptr;
     QListWidget* workbenchProblems_ = nullptr;
     QPlainTextEdit* runConsole_ = nullptr;
     QTimer* codeAuditTimer_ = nullptr;
@@ -184,6 +187,8 @@ class MainWindow final : public QMainWindow {
     void showSettings();
     void showSdkDiscovery();
     void setupLocalAssistant();
+    void setupProjectAgent();
+    void applyAgentProposal();
     void requestPredictiveCompletion();
     void reviewThreadWithModel(bool interactive = false);
     void navigateSymbol(bool references);

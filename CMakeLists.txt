@@ -108,6 +108,15 @@ if(TS_BUILD_GUI)
             src/application/ProjectSearch.hpp
             src/application/DocumentController.cpp
             src/application/DocumentController.hpp
+            src/application/AgentContext.cpp
+            src/application/AgentContext.hpp
+            src/gui/BeamcoreClient.cpp
+            src/gui/BeamcoreClient.hpp
+            src/gui/ProjectAgent.cpp
+            src/gui/ProjectAgent.hpp
+            src/gui/AgentPanel.cpp
+            src/gui/AgentPanel.hpp
+            src/gui/AgentWorkspace.cpp
             src/gui/WorkspaceControls.hpp
             src/gui/ProjectFileModel.hpp
             src/gui/WorkspaceWidgets.hpp
@@ -299,6 +308,27 @@ if(TS_BUILD_TESTS)
         add_executable(veyra_process_fixture tests/process_fixture.cpp)
         target_link_libraries(veyra_process_fixture PRIVATE Qt6::Core)
         add_dependencies(veyra_process_integration_tests veyra_process_fixture)
+        add_executable(veyra_agent_fixture tests/agent_fixture.cpp)
+        target_link_libraries(veyra_agent_fixture PRIVATE Qt6::Core)
+        add_executable(veyra_project_agent_tests tests/project_agent_tests.cpp)
+        target_link_libraries(veyra_project_agent_tests PRIVATE veyra_gui Qt6::Test)
+        add_dependencies(veyra_project_agent_tests veyra_agent_fixture)
+        add_test(NAME project_agent COMMAND veyra_project_agent_tests $<TARGET_FILE:veyra_agent_fixture>)
+        set_tests_properties(project_agent PROPERTIES TIMEOUT 90 ENVIRONMENT "QT_QPA_PLATFORM=offscreen;TS_DISABLE_LOCAL_MODEL=1")
+        find_package(Qt6 6.2 QUIET COMPONENTS Network)
+        if(TARGET Qt6::Network)
+            add_executable(veyra_beamcore_runtime_tests tests/beamcore_runtime_tests.cpp)
+            target_link_libraries(veyra_beamcore_runtime_tests PRIVATE veyra_gui Qt6::Test Qt6::Network)
+            add_test(NAME beamcore_runtime COMMAND veyra_beamcore_runtime_tests)
+            set_tests_properties(beamcore_runtime PROPERTIES TIMEOUT 90 SKIP_RETURN_CODE 77 ENVIRONMENT "QT_QPA_PLATFORM=offscreen")
+        endif()
+        if(TS_LOCAL_MODEL)
+            add_executable(veyra_agent_model_tests tests/agent_model_tests.cpp)
+            target_link_libraries(veyra_agent_model_tests PRIVATE veyra_gui Qt6::Test)
+            target_compile_definitions(veyra_agent_model_tests PRIVATE TS_TEST_CXX_COMPILER="${CMAKE_CXX_COMPILER}")
+            add_test(NAME agent_model COMMAND veyra_agent_model_tests)
+            set_tests_properties(agent_model PROPERTIES TIMEOUT 150 RUN_SERIAL TRUE ENVIRONMENT "QT_QPA_PLATFORM=offscreen")
+        endif()
         set_tests_properties(lsp_integration debugger PROPERTIES SKIP_RETURN_CODE 77)
         if(TS_LOCAL_MODEL)
             add_executable(veyra_assistant_workflow_tests tests/assistant_workflow_tests.cpp)

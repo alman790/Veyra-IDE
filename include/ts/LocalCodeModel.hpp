@@ -11,6 +11,7 @@ class LocalCodeModel final {
     static int choose(const std::string& source, const std::vector<std::string>& candidates,
                       const std::function<bool()>& cancelled);
     static std::string generate(const std::string& system, const std::string& prompt, int limit,
-                                const std::function<bool()>& cancelled, const std::string& grammar = {});
+                                const std::function<bool()>& cancelled, const std::string& grammar = {},
+                                int contextSize = 2048);
 };
 }
