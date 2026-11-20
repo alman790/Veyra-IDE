@@ -1,3 +1,4 @@
+#include "../application/SourceRevision.hpp"
 #include "GitPanel.hpp"
 #include "GlassSurfaces.hpp"
 #include "Keymap.hpp"
@@ -109,6 +110,6 @@ void MainWindow::requestCodeCompletion(int attempt) {
     const auto cursor = editor_->textCursor();
     editor_->setProperty("completionDocument", QVariant::fromValue<QObject*>(editor_->document()));
     editor_->setProperty("completionPosition", cursor.position());
-    editor_->setProperty("completionRevision", editor_->document()->revision());
+    editor_->setProperty("completionRevision", sourceRevision(editor_->document()));
     lsp_->requestCompletion(cursor.blockNumber(), cursor.positionInBlock());
 }

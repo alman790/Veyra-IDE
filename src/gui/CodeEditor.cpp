@@ -1,4 +1,5 @@
 #include "CodeEditor.hpp"
+#include "../application/SourceRevision.hpp"
 #include "ThemeManager.hpp"
 #include "UiLanguage.hpp"
 #include "ts/SourceMask.hpp"
@@ -259,7 +260,7 @@ void CodeHighlighter::highlightBlock(const QString& text) {
             from = text.indexOf("/*", from + length);
         }
     }
-    if (semanticRevision_ == document()->revision()) {
+    if (semanticRevision_ == sourceRevision(document())) {
         for (const auto& token : semantic_.value(currentBlock().blockNumber())) {
             if (token.start < 0 || token.length < 0 || token.start + token.length > text.size())
                 continue;
@@ -290,6 +291,7 @@ void CodeHighlighter::highlightBlock(const QString& text) {
 }
 
 CodeEditor::CodeEditor(QWidget* parent) : QPlainTextEdit(parent) {
+    sourceRevision(document());
     lineNumbers_ = new LineNumberArea(this);
     annotations_ = new GitAnnotations(this);
     annotations_->setEnabled(QSettings().value("editor/gitAnnotations", false).toBool());
@@ -306,7 +308,7 @@ CodeEditor::CodeEditor(QWidget* parent) : QPlainTextEdit(parent) {
             [this](const QString& word) { insertSuggestion(word); });
     completionTimer_.setSingleShot(true);
     connect(&completionTimer_, &QTimer::timeout, this, &CodeEditor::requestSuggestions);
-    connect(this, &QPlainTextEdit::textChanged, this, [this] {
+    connect(this, &CodeEditor::sourceTextChanged, this, [this] {
         serverWords_.clear();
         serverEdits_.clear();
         completionAllowed_ = false;
@@ -452,7 +454,7 @@ void CodeEditor::highlightCurrentLine() {
     selections.append(diagnosticSelections_);
     {
         const int caret = textCursor().position();
-        if (bracketRevision_ != document()->revision() || caret < bracketOffset_ ||
+        if (bracketRevision_ != sourceRevision(document()) || caret < bracketOffset_ ||
             caret >= bracketOffset_ + static_cast<int>(bracketMask_.size())) {
             auto window = QTextCursor(document());
             const auto first = document()->findBlock(std::max(0, caret - 32768));
@@ -475,7 +477,7 @@ void CodeEditor::highlightCurrentLine() {
             bracketMask_ = ts::maskCommentsAndStrings(ascii);
             if (comment)
                 bracketMask_.erase(0, 2);
-            bracketRevision_ = document()->revision();
+            bracketRevision_ = sourceRevision(document());
         }
         int position = caret - bracketOffset_ - 1;
         const auto bracket = [](char value) {
@@ -602,6 +604,7 @@ void CodeEditor::useDocument(QTextDocument* document) {
     diagnosticLines_.clear();
     setExtraSelections({});
     document->setDefaultFont(font());
+    sourceRevision(document);
     QPlainTextEdit::setDocument(document);
     highlighter_ = new CodeHighlighter(document, language_);
     diagnostics_.clear();
@@ -658,7 +661,7 @@ QString CodeEditor::completionPrefix() const {
 void CodeEditor::setCompletionWords(const QStringList& suggestions,
                                     const QHash<QString, QJsonObject>& edits) {
     if (!completionAllowed_ || completionPosition_ != textCursor().position() ||
-        completionRevision_ != document()->revision())
+        completionRevision_ != sourceRevision(document()))
         return;
     serverWords_ = suggestions;
     serverEdits_ = edits;
@@ -684,7 +687,7 @@ void CodeEditor::requestSuggestions() {
     setProperty("completionState", "requested");
     completionAllowed_ = true;
     completionPosition_ = textCursor().position();
-    completionRevision_ = document()->revision();
+    completionRevision_ = sourceRevision(document());
     updateDocumentWords();
     if (completionRequest_)
         completionRequest_();
@@ -693,7 +696,7 @@ void CodeEditor::requestSuggestions() {
 
 void CodeEditor::insertSuggestion(const QString& suggestion) {
     if (isReadOnly() || textCursor().hasSelection() || !completionAllowed_ ||
-        completionPosition_ != textCursor().position() || completionRevision_ != document()->revision()) {
+        completionPosition_ != textCursor().position() || completionRevision_ != sourceRevision(document())) {
         dismissCompletion();
         return;
     }
@@ -823,9 +826,9 @@ void CodeEditor::dismissCompletion() {
 
 void CodeEditor::updateDocumentWords() {
     const int block = textCursor().blockNumber();
-    if (wordsRevision_ == document()->revision() && wordsBlock_ == block)
+    if (wordsRevision_ == sourceRevision(document()) && wordsBlock_ == block)
         return;
-    wordsRevision_ = document()->revision();
+    wordsRevision_ = sourceRevision(document());
     wordsBlock_ = block;
     documentWords_.clear();
     auto window = QTextCursor(document());
@@ -922,6 +925,7 @@ void CodeEditor::keyPressEvent(QKeyEvent* event) {
     if (completer_ && completer_->popup()->isVisible()) {
         if (event->key() == Qt::Key_Escape) {
             dismissCompletion();
+            setFocus(Qt::OtherFocusReason);
             event->accept();
             return;
         }
@@ -956,7 +960,7 @@ void CodeEditor::keyPressEvent(QKeyEvent* event) {
         completionTimer_.stop();
         completionAllowed_ = true;
         completionPosition_ = textCursor().position();
-        completionRevision_ = document()->revision();
+        completionRevision_ = sourceRevision(document());
         updateDocumentWords();
         if (completionRequest_)
             completionRequest_();
@@ -1262,8 +1266,10 @@ void CodeEditor::wireDocument() {
     markers(document());
     markerConnection_ =
         connect(document(), &QTextDocument::contentsChange, this, [this](int, int removed, int added) {
-            if (removed || added)
+            if (removed || added) {
                 syncMarkers();
+                emit sourceTextChanged();
+            }
         });
 }
 
@@ -1319,7 +1325,7 @@ void CodeHighlighter::setSemanticTokens(const QJsonArray& data, const QStringLis
             continue;
         semantic_[line].append({column, data[index + 2].toInt(), legend[type]});
     }
-    semanticRevision_ = document()->revision();
+    semanticRevision_ = sourceRevision(document());
     rehighlight();
 }
 

@@ -99,7 +99,7 @@ void MainWindow::setupProjectAgent() {
             editor_->setGhostText({});
         }
     });
-    connect(editor_, &QPlainTextEdit::textChanged, agentPanel_, &AgentPanel::invalidateProposal);
+    connect(editor_, &CodeEditor::sourceTextChanged, agentPanel_, &AgentPanel::invalidateProposal);
 }
 
 void MainWindow::applyAgentProposal() {

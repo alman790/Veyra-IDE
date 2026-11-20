@@ -112,6 +112,7 @@ int main(int argc, char** argv) {
         const auto before = QCryptographicHash::hash(read(config), QCryptographicHash::Sha256);
         QSettings().setValue("agent/beamcoreExecutable", executable);
         QSettings().setValue("agent/beamcoreConfig", config);
+        QSettings().setValue("agent/providerStore", temporary.filePath("private/providers.dets"));
         BeamcoreClient client;
         QJsonArray providers;
         QString error, answer;
@@ -146,6 +147,28 @@ int main(int argc, char** argv) {
         check(waitFor([&] { return !answer.isEmpty() || !error.isEmpty(); }) && error.isEmpty() &&
                   nativeInference && answer.contains("Native fixture response") && apiCalls == 1,
               "Local bridge requests native inference without calling a network provider");
+        providers = {};
+        client.saveProvider({{"name", "veyra-added"},
+                             {"endpoint", QString("http://127.0.0.1:%1/v1").arg(server.serverPort())},
+                             {"model", "added-model"},
+                             {"auth", "bearer"},
+                             {"api_key", "private-fixture-token"}});
+        check(waitFor([&] { return providers.size() == 2 || !error.isEmpty(); }) && error.isEmpty(),
+              "Create an API provider directly through the IDE bridge");
+        check(!QJsonDocument(providers).toJson().contains("private-fixture-token"),
+              "Provider listings never expose authentication secrets");
+        client.stop();
+        check(waitFor([&] { return !client.running(); }), "Stop provider runtime before reopening it");
+        providers = {};
+        client.requestProviders();
+        check(waitFor([&] { return providers.size() == 2 || !error.isEmpty(); }) && error.isEmpty(),
+              "IDE provider settings persist across runtime restarts");
+        check(!read(temporary.filePath("private/providers.dets")).contains("private-fixture-token"),
+              "Provider credentials are encrypted on disk");
+        providers = {};
+        client.removeProvider("veyra-added");
+        check(waitFor([&] { return providers.size() == 1 || !error.isEmpty(); }) && error.isEmpty(),
+              "Remove an IDE provider without changing the imported configuration");
         client.stop();
         check(QCryptographicHash::hash(read(config), QCryptographicHash::Sha256) == before,
               "Beamcore's original provider configuration remains byte-for-byte unchanged");

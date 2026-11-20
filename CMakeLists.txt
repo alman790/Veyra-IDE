@@ -104,6 +104,8 @@ if(TS_BUILD_GUI)
             src/application/CMakeFileApi.hpp
             src/application/BackgroundJob.cpp
             src/application/BackgroundJob.hpp
+            src/application/ProjectRules.cpp
+            src/application/ProjectRules.hpp
             src/application/ProjectSearch.cpp
             src/application/ProjectSearch.hpp
             src/application/DocumentController.cpp

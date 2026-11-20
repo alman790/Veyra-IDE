@@ -17,6 +17,7 @@ int main(int argc, char** argv) {
     if (!root.isEmpty() && QDir(root).exists())
         QDir::setCurrent(root);
     MainWindow window;
+    QApplication::setWindowIcon(window.windowIcon());
     window.show();
     return app.exec();
 }

@@ -1,4 +1,5 @@
 #include "../application/BackgroundJob.hpp"
+#include "../application/SourceRevision.hpp"
 #include "AgentPanel.hpp"
 #include "MainWindow.hpp"
 #include "UiLanguage.hpp"
@@ -48,7 +49,7 @@ void MainWindow::setupLocalAssistant() {
         editor_->setGhostText({});
     };
     connect(editor_, &CodeEditor::assistantDismissed, this, cancel);
-    connect(editor_, &QPlainTextEdit::textChanged, this, cancel);
+    connect(editor_, &CodeEditor::sourceTextChanged, this, cancel);
     connect(editor_, &QPlainTextEdit::cursorPositionChanged, this, cancel);
     connect(new QShortcut(QKeySequence("Alt+\\"), this), &QShortcut::activated, this,
             &MainWindow::requestPredictiveCompletion);
@@ -66,7 +67,7 @@ void MainWindow::requestPredictiveCompletion() {
     }
     const QPointer<QTextDocument> document = editor_->document();
     const auto cursor = editor_->textCursor();
-    const int position = cursor.position(), revision = document->revision();
+    const int position = cursor.position(), revision = sourceRevision(document);
     const auto generation = ++localGeneration_;
     auto context = cursor;
     context.setPosition(std::max(0, position - 2000));
@@ -86,7 +87,7 @@ void MainWindow::requestPredictiveCompletion() {
         },
         [this, document, position, revision, generation, result](const QString& error, bool cancelled) {
             if (closing_ || cancelled || !document || generation != localGeneration_ ||
-                document != editor_->document() || document->revision() != revision ||
+                document != editor_->document() || sourceRevision(document) != revision ||
                 editor_->textCursor().position() != position)
                 return;
             if (!error.isEmpty()) {
@@ -121,7 +122,7 @@ void MainWindow::reviewThreadWithModel(bool interactive) {
         return;
     }
     const QPointer<QTextDocument> document = editor_->document();
-    const int revision = document->revision();
+    const int revision = sourceRevision(document);
     const auto generation = ++localGeneration_;
     const int position = editor_->textCursor().position();
     auto context = editor_->textCursor();
@@ -156,7 +157,7 @@ void MainWindow::reviewThreadWithModel(bool interactive) {
         },
         [this, document, revision, generation, result, labels](const QString& error, bool cancelled) {
             if (closing_ || cancelled || !document || document != editor_->document() ||
-                document->revision() != revision || generation != localGeneration_)
+                sourceRevision(document) != revision || generation != localGeneration_)
                 return;
             if (!error.isEmpty()) {
                 statusBar()->showMessage(UiLanguage::text(error), 6000);

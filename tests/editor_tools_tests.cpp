@@ -8,6 +8,7 @@
 #include <QTemporaryDir>
 #include <QTest>
 #include <QTextCursor>
+#include <QTimer>
 #include <iostream>
 #include <stdexcept>
 
@@ -32,6 +33,9 @@ int main(int argc, char** argv) {
     try {
         CodeEditor editor;
         editor.show();
+        editor.activateWindow();
+        editor.raise();
+        app.processEvents();
         editor.setFocus();
         key(editor, Qt::Key_BraceLeft, "{");
         check(editor.toPlainText() == "{}" && editor.textCursor().position() == 1, "Paired braces");
@@ -96,7 +100,13 @@ int main(int argc, char** argv) {
         QTest::keyClick(&editor, Qt::Key_Space, Qt::ControlModifier);
         auto* completion = editor.findChild<QCompleter*>();
         check(completion && completion->popup()->isVisible(), "Completion below the current cursor");
+        int sourceChanges = 0;
+        QObject::connect(&editor, &CodeEditor::sourceTextChanged, &editor, [&] { ++sourceChanges; });
+        editor.setSemanticTokens(QJsonArray{0, 0, 10, 0, 0}, {"variable"});
+        check(sourceChanges == 0 && completion->popup()->isVisible(),
+              "Semantic highlighting preserves live completion without reporting source edits");
         const int position = editor.textCursor().position();
+
         QTest::keyClick(&editor, Qt::Key_Down);
         const auto selected = completion->popup()->currentIndex().data().toString();
         check(editor.textCursor().position() == position, "Popup arrows preserve caret");
@@ -154,6 +164,11 @@ int main(int argc, char** argv) {
         QTest::qWait(300);
         check(requests > 0 && completion->popup()->isVisible(),
               "Suggestions appear automatically while typing");
+        QTimer::singleShot(30, &editor,
+                           [&] { editor.setSemanticTokens(QJsonArray{0, 0, 10, 0, 0}, {"variable"}); });
+        QTest::qWait(100);
+        check(completion->popup()->isVisible(),
+              "Delayed semantic responses do not dismiss the live completion popup");
         QTest::keyClick(&editor, Qt::Key_Escape);
         QString large;
         for (int line = 0; line < 12000; ++line)

@@ -1,4 +1,5 @@
 #include "../application/BackgroundJob.hpp"
+#include "../application/SourceRevision.hpp"
 #include "MainWindow.hpp"
 #include "SourceInspector.hpp"
 #include "UiLanguage.hpp"
@@ -28,7 +29,7 @@ void MainWindow::analyzeCode() {
     analysisPending_ = false;
     const auto source = editor_->toPlainText().toStdString();
     const QPointer<QTextDocument> document = editor_->document();
-    const int revision = document->revision();
+    const int revision = sourceRevision(document);
     auto result = std::make_shared<ts::CodeReport>();
     analysisJob_->start(
         [source, result](const auto& cancelled, const auto&) {
@@ -39,7 +40,7 @@ void MainWindow::analyzeCode() {
             if (closing_)
                 return;
             if (error.isEmpty() && !cancelled && document && editor_->document() == document &&
-                document->revision() == revision)
+                sourceRevision(document) == revision)
                 applyCodeAnalysis(*result);
             if (analysisPending_)
                 QTimer::singleShot(0, this, &MainWindow::analyzeCode);
@@ -49,7 +50,7 @@ void MainWindow::analyzeCode() {
 void MainWindow::applyCodeAnalysis(const ts::CodeReport& report) {
     currentCodeReport_ = report;
     editor_->setProperty("analysisCurrent", true);
-    editor_->setProperty("analysisRevision", editor_->document()->revision());
+    editor_->setProperty("analysisRevision", sourceRevision(editor_->document()));
     findings_->clear();
     for (const auto& hint : report.diagnostics) {
         auto* item = new QListWidgetItem(QString("%1 · %2\n%3\n%4")
@@ -72,7 +73,7 @@ void MainWindow::updateThreadHint() {
     if (!threadHint_ || !editor_)
         return;
     if (!editor_->property("analysisCurrent").toBool() ||
-        editor_->property("analysisRevision").toInt() != editor_->document()->revision()) {
+        editor_->property("analysisRevision").toInt() != sourceRevision(editor_->document())) {
         threadHint_->hide();
         return;
     }
@@ -88,11 +89,12 @@ void MainWindow::updateThreadHint() {
 
 void MainWindow::startDeepInspection() {
     const QPointer<QTextDocument> document = editor_->document();
-    const int revision = document->revision();
+    const int revision = sourceRevision(document);
     sourceInspector_->inspect(
         editor_->toPlainText(), sourcePath_.isEmpty() ? sourceDisplayName_ : sourcePath_,
         [this, document, revision](const InspectionResult& result) {
-            if (closing_ || !document || editor_->document() != document || document->revision() != revision)
+            if (closing_ || !document || editor_->document() != document ||
+                sourceRevision(document) != revision)
                 return;
             compilerIssues_.clear();
             for (const auto& issue : result.diagnostics)

@@ -15,28 +15,24 @@
 bool AgentContext::allowedPath(const QString& relative) {
     if (relative.isEmpty() || QDir::isAbsolutePath(relative) || relative.contains('\\'))
         return false;
-    static const QSet<QString> excluded{".beamcore",   ".config",     ".gnupg", ".kube",        ".docker",
-                                        ".git",        ".hg",         ".svn",   ".idea",        ".veyra",
-                                        ".ssh",        ".aws",        ".azure", "node_modules", "vendor",
-                                        "third_party", "deps",        "_build", "build",        "dist",
-                                        "target",      "__pycache__", ".venv",  "venv",         ".cache"};
+    static const QSet<QString> excluded{".beamcore", ".config", ".gnupg", ".kube", ".docker", ".git",
+                                        ".hg",       ".svn",    ".veyra", ".ssh",  ".aws",    ".azure"};
     const auto parts = relative.split('/');
     for (const auto& part : parts)
-        if (part.isEmpty() || part == "." || part == ".." || excluded.contains(part.toLower()) ||
-            part.startsWith("build-") || part.startsWith("cmake-build") || part.endsWith(".noindex"))
+        if (part.isEmpty() || part == "." || part == ".." || excluded.contains(part.toLower()))
             return false;
     const auto name = parts.last().toLower();
     if (name == ".erlang.cookie" || name == ".netrc" || name == ".npmrc" || name == ".pypirc" ||
         name == ".git-credentials" || name == ".env" || name.startsWith(".env.") ||
         name.contains("credentials") || name.contains("secrets") || name == "id_rsa" ||
         name == "id_ed25519" || name.endsWith(".pem") || name.endsWith(".key") || name.endsWith(".p12") ||
-        name.endsWith(".pfx") || name.endsWith(".gguf") || name.endsWith(".dets"))
+        name.endsWith(".pfx") || name.endsWith(".gguf") || name.endsWith(".dets") || name.endsWith(".lnk"))
         return false;
     return true;
 }
 
 QString AgentContext::canonicalPath(const QString& relative) const {
-    if (!allowedPath(relative))
+    if (!allowedPath(relative) || (rules_ && rules_->excludes(relative)))
         return {};
     const auto canonical = QFileInfo(QDir(input_.root).filePath(relative)).canonicalFilePath();
     if (canonical.isEmpty() || !canonical.startsWith(input_.root + '/') || !QFileInfo(canonical).isFile())
@@ -62,8 +58,9 @@ AgentContext AgentContext::collect(const AgentInput& input, const BackgroundJob:
     const auto active = QFileInfo(input.path).canonicalFilePath();
     if (result.input_.root.isEmpty() || active.isEmpty() || !active.startsWith(result.input_.root + '/'))
         throw std::runtime_error("Open a saved file inside the project before starting the agent.");
+    result.rules_ = std::make_shared<ProjectRules>(result.input_.root);
     result.input_.path = QDir(result.input_.root).relativeFilePath(active);
-    if (!allowedPath(result.input_.path))
+    if (!allowedPath(result.input_.path) || result.rules_->excludes(result.input_.path))
         throw std::runtime_error("This file is excluded from agent context.");
     result.snapshots_[result.input_.path] = input.text;
     result.exposed_.insert(result.input_.path);
@@ -86,11 +83,16 @@ AgentContext AgentContext::collect(const AgentInput& input, const BackgroundJob:
             entries.next();
             const auto entry = entries.fileInfo();
             const auto relative = QDir(result.input_.root).relativeFilePath(entry.filePath());
-            if (!allowedPath(relative) || entry.isSymLink())
+            if (!allowedPath(relative) || result.rules_->excludes(relative, entry.isDir()) ||
+                entry.isSymLink() || entry.isShortcut())
                 continue;
             if (entry.isDir()) {
-                if (relative.count('/') < 12)
-                    directories.append(entry.filePath());
+                if (relative.count('/') < 12) {
+                    if (active.startsWith(entry.filePath() + '/'))
+                        directories.append(entry.filePath());
+                    else
+                        directories.prepend(entry.filePath());
+                }
             } else if (entry.size() <= 1024 * 1024 && result.files_.size() < 3000)
                 result.files_.append(relative);
         }

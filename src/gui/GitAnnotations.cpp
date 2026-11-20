@@ -1,4 +1,5 @@
 #include "GitAnnotations.hpp"
+#include "../application/SourceRevision.hpp"
 #include "UiLanguage.hpp"
 #include <QFileInfo>
 #include <QFutureWatcher>
@@ -118,7 +119,7 @@ void GitAnnotations::request() {
     if (!enabled_ || !document_ || path_.isEmpty())
         return;
     const auto generation = ++generation_;
-    const int revision = document_->revision(), count = document_->blockCount();
+    const int revision = sourceRevision(document_), count = document_->blockCount();
     auto* process = new QProcess(this);
     process_ = process;
     process->setWorkingDirectory(QFileInfo(path_).absolutePath());
@@ -143,7 +144,7 @@ void GitAnnotations::request() {
                 const auto output = process->readAllStandardOutput();
                 const auto error = process->readAllStandardError();
                 process->deleteLater();
-                if (generation != generation_ || !document_ || document_->revision() != revision)
+                if (generation != generation_ || !document_ || sourceRevision(document_) != revision)
                     return;
                 process_.clear();
                 if (code != 0 || status != QProcess::NormalExit) {
@@ -156,7 +157,7 @@ void GitAnnotations::request() {
                 }
                 auto* watcher = new QFutureWatcher<QVector<LineAttribution>>(this);
                 connect(watcher, &QFutureWatcherBase::finished, this, [this, watcher, generation, revision] {
-                    if (generation == generation_ && document_ && document_->revision() == revision) {
+                    if (generation == generation_ && document_ && sourceRevision(document_) == revision) {
                         lines_ = watcher->result();
                         error_.clear();
                         emit updated();

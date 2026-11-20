@@ -1,4 +1,5 @@
 #include "../application/DocumentController.hpp"
+#include "../application/SourceRevision.hpp"
 #include "MainWindow.hpp"
 #include "UiLanguage.hpp"
 #include <QDialog>
@@ -32,14 +33,14 @@ void MainWindow::navigateSymbol(bool references) {
         return;
     const auto cursor = editor_->textCursor();
     const QPointer<QTextDocument> origin = editor_->document();
-    const int revision = origin->revision(), position = cursor.position();
+    const int revision = sourceRevision(origin), position = cursor.position();
     const auto extra =
         references ? QJsonObject{{"context", QJsonObject{{"includeDeclaration", true}}}} : QJsonObject{};
     lsp_->requestDocument(
         references ? "textDocument/references" : "textDocument/definition", cursor.blockNumber(),
         cursor.positionInBlock(), extra,
         [this, references, origin, revision, position](const QJsonValue& result) {
-            if (!origin || editor_->document() != origin || origin->revision() != revision ||
+            if (!origin || editor_->document() != origin || sourceRevision(origin) != revision ||
                 editor_->textCursor().position() != position)
                 return;
             const auto locations = result.isArray() ? result.toArray() : QJsonArray{result};
@@ -272,12 +273,12 @@ void MainWindow::refreshSemanticTokens() {
         !documents_->activeDocument())
         return;
     const QPointer<QTextDocument> document = editor_->document();
-    const int revision = document->revision();
+    const int revision = sourceRevision(document);
     const auto legend = lsp_->semanticTypes();
     lsp_->requestDocument(
         "textDocument/semanticTokens/full", -1, -1, {},
         [this, document, revision, legend](const QJsonValue& result) {
-            if (document && editor_->document() == document && document->revision() == revision)
+            if (document && editor_->document() == document && sourceRevision(document) == revision)
                 editor_->setSemanticTokens(result.toObject().value("data").toArray(), legend);
         });
 }

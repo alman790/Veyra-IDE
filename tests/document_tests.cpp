@@ -1,4 +1,5 @@
 #include "../src/application/DocumentController.hpp"
+#include "../src/application/ProjectRules.hpp"
 #include "../src/application/ProjectSearch.hpp"
 #include "CodeEditor.hpp"
 #include <QApplication>
@@ -7,6 +8,8 @@
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <QProcess>
+#include <QStandardPaths>
 #include <QTemporaryDir>
 #include <QTextCursor>
 #include <iostream>
@@ -98,7 +101,54 @@ int main(int argc, char** argv) {
         corrupt.write(QByteArray::fromHex("ff00fe"));
         corrupt.close();
         check(!docs.open(corrupt.fileName(), error), "Reject invalid UTF-8/binary source");
+        QFile rules(temp.filePath(".gitignore"));
+        check(rules.open(QIODevice::WriteOnly), "Create project ignore rules");
+        rules.write("/build-ignored/\n*.generated\n!keep.generated\n");
+        rules.close();
+        const ProjectRules exclusions(temp.path());
+        check(exclusions.excludes("build-ignored/source.cpp") && exclusions.excludes("src/code.generated") &&
+                  !exclusions.excludes("src/keep.generated") && !exclusions.excludes("builder/source.cpp") &&
+                  !exclusions.excludes("node_modules/source.cpp"),
+              "Project rules use patterns and negation without language-specific directory names");
+        QDir().mkpath(temp.filePath("nested"));
+        QFile nestedRules(temp.filePath("nested/.gitignore"));
+        check(nestedRules.open(QIODevice::WriteOnly), "Create nested ignore rules");
+        nestedRules.write("/cache/**/item?.[ch]\n!cache/keep.h\n");
+        nestedRules.close();
+        check(exclusions.excludes("nested/cache/item1.c") &&
+                  exclusions.excludes("nested/cache/deep/item2.h") &&
+                  !exclusions.excludes("nested/cache/keep.h") && !exclusions.excludes("other/cache/item1.c"),
+              "Nested patterns support anchoring, globstar and character classes");
+        QFile customRules(temp.filePath(".veyraignore"));
+        check(customRules.open(QIODevice::WriteOnly), "Create IDE-specific rules");
+        customRules.write("private-output/\n");
+        customRules.close();
+        check(exclusions.excludes("private-output/data.cpp"),
+              "Ignore rules added after opening a project take effect");
+        if (!QStandardPaths::findExecutable("git").isEmpty()) {
+            QTemporaryDir repository;
+            const auto git = [&](const QStringList& arguments) {
+                QProcess process;
+                process.setWorkingDirectory(repository.path());
+                process.start("git", arguments);
+                return process.waitForFinished(5000) && process.exitCode() == 0;
+            };
+            check(git({"init", "--quiet"}), "Create ignore semantics repository");
+            QFile tracked(repository.filePath("tracked.generated"));
+            check(tracked.open(QIODevice::WriteOnly), "Create tracked source fixture");
+            tracked.write("source");
+            tracked.close();
+            check(git({"add", "tracked.generated"}), "Track fixture before adding ignore rule");
+            QFile gitRules(repository.filePath(".gitignore"));
+            check(gitRules.open(QIODevice::WriteOnly), "Create tracked ignore fixture");
+            gitRules.write("*.generated\n");
+            gitRules.close();
+            const ProjectRules trackedRules(repository.path());
+            check(!trackedRules.excludes("tracked.generated") && trackedRules.excludes("other.generated"),
+                  "Git ignore patterns preserve tracked source files");
+        }
         QDir().mkpath(temp.path() + "/build-ignored");
+
         QFile ignored(temp.path() + "/build-ignored/ignored.cpp");
         check(ignored.open(QIODevice::WriteOnly), "Create ignored search fixture");
         ignored.write("SEARCH_TOKEN");

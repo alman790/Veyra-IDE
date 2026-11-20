@@ -176,16 +176,20 @@ SettingsDialog::SettingsDialog(QWidget* parent, std::function<void()> applied)
     });
     auto* languages = page(UiLanguage::tr("Languages and SDKs"));
     auto* languageInfo = new QLabel(UiLanguage::tr(
-        "Compiler and runtime fields accept executable paths without arguments. LSP commands accept "
-        "arguments. Empty fields use the default tool. Checks cannot guarantee the absence of all errors."));
+        "Tool overrides for registered language adapters. An entry does not mean its SDK is installed. "
+        "Choose an SDK in Build and tools or Custom SDKs first. Leave fields empty to use the adapter "
+        "defaults. Compiler and runtime fields accept executable paths; LSP commands also accept "
+        "arguments."));
     languageInfo->setWordWrap(true);
     languages->addRow(languageInfo);
     auto* matrix = new QTableWidget(0, 5);
     matrix->setObjectName("settingsLanguageTools");
-    matrix->setHorizontalHeaderLabels({"Language", "Build / check", "Run", "LSP", "SDK status"});
+    matrix->setHorizontalHeaderLabels({UiLanguage::tr("Language"), UiLanguage::tr("Build / check"),
+                                       UiLanguage::tr("Run"), "LSP", UiLanguage::tr("SDK status")});
     matrix->horizontalHeader()->setSectionResizeMode(QHeaderView::Interactive);
     matrix->verticalHeader()->hide();
     matrix->setMinimumHeight(340);
+    matrix->verticalHeader()->setDefaultSectionSize(42);
     matrix->setColumnWidth(0, 90);
     for (int column = 1; column < 4; ++column)
         matrix->setColumnWidth(column, 180);

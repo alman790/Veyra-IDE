@@ -1,4 +1,5 @@
 #include "ProjectSearch.hpp"
+#include "ProjectRules.hpp"
 #include <QDir>
 #include <QFile>
 #include <QFileInfo>
@@ -13,8 +14,7 @@ ProjectSearchResult ProjectSearch::scan(const QString& root, const QString& quer
     }
     QList<QString> pending{QDir(root).absolutePath()};
     qint64 bytes = 0;
-    const QStringList ignored = {".git", ".veyra", ".idea", "node_modules", "target",
-                                 "dist", "venv",   ".venv", "__pycache__"};
+    const ProjectRules rules(root);
     while (!pending.isEmpty()) {
         if (cancelled && cancelled()) {
             result.cancelled = true;
@@ -22,16 +22,16 @@ ProjectSearchResult ProjectSearch::scan(const QString& root, const QString& quer
         }
         const auto directory = pending.takeLast();
         const auto entries = QDir(directory).entryInfoList(
-            QDir::Files | QDir::Dirs | QDir::NoDotAndDotDot | QDir::NoSymLinks, QDir::Name);
+            QDir::Files | QDir::Dirs | QDir::NoDotAndDotDot | QDir::NoSymLinks | QDir::Hidden, QDir::Name);
         for (const auto& entry : entries) {
             if (cancelled && cancelled()) {
                 result.cancelled = true;
                 return result;
             }
+            if (rules.excludes(QDir(root).relativeFilePath(entry.filePath()), entry.isDir()))
+                continue;
             if (entry.isDir()) {
-                if (!ignored.contains(entry.fileName()) && !entry.fileName().startsWith("build") &&
-                    !entry.fileName().startsWith("cmake-build"))
-                    pending.append(entry.absoluteFilePath());
+                pending.append(entry.absoluteFilePath());
                 continue;
             }
             if (++result.files > 6000 || result.matches.size() >= 2000) {

@@ -1,10 +1,12 @@
 #pragma once
 
 #include "BackgroundJob.hpp"
+#include "ProjectRules.hpp"
 #include <QJsonArray>
 #include <QMap>
 #include <QSet>
 #include <QStringList>
+#include <memory>
 #include <string>
 
 struct AgentInput {
@@ -29,6 +31,7 @@ struct AgentProposal {
 
 class AgentContext final {
     AgentInput input_;
+    std::shared_ptr<ProjectRules> rules_;
     QStringList files_;
     QMap<QString, QString> snapshots_;
     QStringList related_;

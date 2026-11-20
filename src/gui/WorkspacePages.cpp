@@ -197,7 +197,7 @@ QWidget* MainWindow::buildCodePage() {
     markdownTimer_->setSingleShot(true);
     markdownTimer_->setInterval(180);
     connect(markdownTimer_, &QTimer::timeout, this, [this] { updateMarkdown(); });
-    connect(editor_, &QPlainTextEdit::textChanged, markdownTimer_, qOverload<>(&QTimer::start));
+    connect(editor_, &CodeEditor::sourceTextChanged, markdownTimer_, qOverload<>(&QTimer::start));
     connect(editor_->verticalScrollBar(), &QScrollBar::valueChanged, this, [this](int value) {
         if (!markdownPreview_->isVisible() || !QSettings().value("markdown/syncScroll", true).toBool())
             return;

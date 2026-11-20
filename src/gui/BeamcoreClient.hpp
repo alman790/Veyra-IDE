@@ -21,6 +21,7 @@ class BeamcoreClient final : public QObject {
     QJsonObject queued_;
     void send(const QJsonObject& message);
     void consume();
+    void request(const QJsonObject& message);
 
   public:
     explicit BeamcoreClient(QObject* parent = nullptr);
@@ -28,6 +29,8 @@ class BeamcoreClient final : public QObject {
     static QString executable();
     bool start(QString& error);
     void requestProviders();
+    void saveProvider(const QJsonObject& provider);
+    void removeProvider(const QString& name);
     void chat(const QJsonArray& messages, const QString& provider, const QString& model);
     void inferenceResult(int id, const QString& content);
     void stop();

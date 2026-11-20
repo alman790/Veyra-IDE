@@ -1,5 +1,6 @@
 #include "../application/BackgroundJob.hpp"
 #include "../application/DocumentController.hpp"
+#include "../application/SourceRevision.hpp"
 #include "CMakeProjectDialog.hpp"
 #include "DebuggerPanel.hpp"
 #include "GlassSurfaces.hpp"
@@ -144,7 +145,7 @@ void MainWindow::syncLanguage(bool restartLsp) {
             if (!editor_ ||
                 editor_->property("completionDocument").value<QObject*>() != editor_->document() ||
                 editor_->property("completionPosition").toInt() != editor_->textCursor().position() ||
-                editor_->property("completionRevision").toInt() != editor_->document()->revision())
+                editor_->property("completionRevision").toInt() != sourceRevision(editor_->document()))
                 return;
             editor_->setCompletionWords(items, lsp_->completionEdits());
         },

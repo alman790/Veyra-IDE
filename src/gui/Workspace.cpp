@@ -441,6 +441,7 @@ void MainWindow::updateProjectTree() {
         runContext_->setProperty("root", absolute);
         runContext_->setCurrentIndex(QFileInfo::exists(QDir(absolute).filePath("CMakeLists.txt")) ? 1 : 0);
     }
+    projectFilter_->setProjectRoot(absolute);
     const auto source = projectFiles_->setRootPath(absolute);
     projectTree_->setRootIndex(projectFilter_->mapFromSource(source));
     if (projectName_) {

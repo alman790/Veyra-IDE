@@ -1,11 +1,15 @@
 #pragma once
+#include "../application/ProjectRules.hpp"
 #include "UiIcons.hpp"
 #include <QFileSystemModel>
 #include <QSortFilterProxyModel>
+#include <QTimer>
+#include <memory>
 
 class ProjectFileFilter final : public QSortFilterProxyModel {
     bool focused_ = true;
-    QString query_, active_;
+    QString query_, active_, root_;
+    std::unique_ptr<ProjectRules> rules_;
 
     template <typename Change> void changeFilter(Change change) {
 #if QT_VERSION >= QT_VERSION_CHECK(6, 10, 0)
@@ -19,7 +23,37 @@ class ProjectFileFilter final : public QSortFilterProxyModel {
     }
 
   public:
+    void setSourceModel(QAbstractItemModel* model) override {
+        if (sourceModel())
+            disconnect(sourceModel(), nullptr, this, nullptr);
+        QSortFilterProxyModel::setSourceModel(model);
+        connect(model, &QAbstractItemModel::dataChanged, this,
+                [this](const QModelIndex& first, const QModelIndex& last) {
+                    auto* files = qobject_cast<QFileSystemModel*>(sourceModel());
+                    if (!files)
+                        return;
+                    for (int row = first.row(); row <= last.row(); ++row) {
+                        const auto name = files->fileName(files->index(row, 0, first.parent()));
+                        if (name == ".gitignore" || name == ".veyraignore") {
+                            QTimer::singleShot(0, this, [this] { changeFilter([] {}); });
+                            break;
+                        }
+                    }
+                });
+    }
+
+    void setProjectRoot(const QString& root) {
+
+        if (root_ == root)
+            return;
+        changeFilter([&] {
+            root_ = root;
+            rules_ = std::make_unique<ProjectRules>(root);
+        });
+    }
+
     void setFocused(bool value) {
+
         changeFilter([&] { focused_ = value; });
     }
 
@@ -69,14 +103,9 @@ class ProjectFileFilter final : public QSortFilterProxyModel {
             return true;
         if (path == active_ || active_.startsWith(path + '/'))
             return true;
-        if (focused_ && !files->isDir(index) && name.endsWith(".log"))
-            return false;
         if (!query_.isEmpty() && !files->isDir(index) && !name.contains(query_, Qt::CaseInsensitive))
             return false;
-        if (focused_ && files->isDir(index) &&
-            (name == ".git" || name == ".idea" || name == ".veyra" || name == "node_modules" ||
-             name == "__pycache__" || name == ".venv" || name == "build" || name.startsWith("build-") ||
-             name.startsWith("cmake-build")))
+        if (focused_ && rules_ && rules_->excludes(QDir(root).relativeFilePath(path), files->isDir(index)))
             return false;
         return true;
     }

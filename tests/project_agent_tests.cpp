@@ -4,16 +4,19 @@
 #include "UiLanguage.hpp"
 #include <QApplication>
 #include <QComboBox>
+#include <QDialog>
 #include <QDockWidget>
 #include <QElapsedTimer>
 #include <QFile>
 #include <QLabel>
+#include <QLineEdit>
 #include <QPlainTextEdit>
 #include <QPushButton>
 #include <QSettings>
 #include <QTemporaryDir>
 #include <QTest>
 #include <QTextBrowser>
+#include <QTimer>
 #include <iostream>
 #include <stdexcept>
 
@@ -48,6 +51,8 @@ int main(int argc, char** argv) {
         write(project.filePath("Counter.cpp"),
               "#include \"Counter.hpp\"\nint Counter::next() const { return missing; }\n");
         write(project.filePath(".env"), "private_token=do-not-include\n");
+        write(project.filePath(".gitignore"), "/generated.cpp\n");
+        write(project.filePath("generated.cpp"), "generated source outside agent context\n");
         write(outside.filePath("outside.cpp"), "private outside source\n");
         QFile::link(outside.filePath("outside.cpp"), project.filePath("outside-link.cpp"));
         AgentInput input;
@@ -64,6 +69,9 @@ int main(int argc, char** argv) {
               "Context contains neighboring classes, actual diagnostics and SDK information");
         check(!context.files().contains(".env") && !context.files().contains("outside-link.cpp"),
               "Context omits secret files and external symlinks");
+        check(!context.files().contains("generated.cpp") &&
+                  context.read("generated.cpp").startsWith("Error:"),
+              "Project ignore rules govern both context enumeration and explicit agent reads");
         check(context.read("../outside.cpp").startsWith("Error:") &&
                   context.read(".env").startsWith("Error:") &&
                   context.read("outside-link.cpp").startsWith("Error:"),
@@ -146,6 +154,18 @@ int main(int argc, char** argv) {
         window.findChild<QDockWidget*>("projectAgentDock")->show();
         check(waitFor([&] { return panel->findChild<QComboBox*>("agentProvider")->count() == 2; }),
               "Provider list arrives through the Beamcore transport");
+        bool providerSettings = false;
+        QTimer::singleShot(0, panel, [&] {
+            if (auto* dialog = panel->findChild<QDialog*>("agentProviderSettings")) {
+                const auto* key = dialog->findChild<QLineEdit*>("providerSettingsKey");
+                providerSettings = dialog->findChild<QLineEdit*>("providerSettingsEndpoint") &&
+                                   dialog->findChild<QLineEdit*>("providerSettingsModel") && key &&
+                                   key->echoMode() == QLineEdit::Password;
+                dialog->reject();
+            }
+        });
+        panel->findChild<QPushButton*>("agentConfigureProviders")->click();
+        check(providerSettings, "API endpoint, model and protected key are configurable inside the IDE");
         panel->findChild<QComboBox*>("agentProvider")->setCurrentIndex(1);
         const auto send = [&] {
             panel->findChild<QPlainTextEdit*>("agentQuestion")

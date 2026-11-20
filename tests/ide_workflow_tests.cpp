@@ -68,6 +68,16 @@ int main(int argc, char** argv) {
         editor->openFileRequested(entry);
         app.processEvents();
         check(!editor->isReadOnly(), "Opening a file activates the editor");
+        ts::Array<ts::Diagnostic> diagnostics;
+        diagnostics.pushBack(
+            {ts::RiskLevel::Critical, 1, "test", "Unresolved symbol", "Compiler diagnostic", ""});
+        editor->setDiagnostics(diagnostics);
+        const auto diagnosticSelections = editor->extraSelections().size();
+        check(diagnosticSelections > 1, "Diagnostic underline is visible in the IDE");
+        editor->setSemanticTokens(QJsonArray{0, 0, 3, 0, 0}, {"type"});
+        app.processEvents();
+        check(editor->extraSelections().size() == diagnosticSelections,
+              "Asynchronous semantic highlighting preserves IDE diagnostic underlines");
 
         editor->setPlainText("#include <thread>\n\nint counter = 0;\n\nvoid worker() {\n    "
                              "++counter;\n}\n\nint main() {\n    std::thread first(worker);\n    std::thread "

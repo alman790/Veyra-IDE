@@ -7,6 +7,7 @@
 #include <QFileDialog>
 #include <QFontDatabase>
 #include <QFormLayout>
+#include <QGroupBox>
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QLineEdit>
@@ -17,6 +18,7 @@
 #include <QShowEvent>
 #include <QSplitter>
 #include <QTextBrowser>
+#include <QUrl>
 #include <QVBoxLayout>
 
 AgentPanel::AgentPanel(QWidget* parent) : QWidget(parent) {
@@ -30,6 +32,7 @@ AgentPanel::AgentPanel(QWidget* parent) : QWidget(parent) {
     providers->addWidget(provider_, 1);
     refresh_ = new QPushButton(UiLanguage::tr("Refresh providers"));
     configure_ = new QPushButton(UiLanguage::tr("Configure…"));
+    configure_->setObjectName("agentConfigureProviders");
     providers->addWidget(refresh_);
     providers->addWidget(configure_);
     layout->addLayout(providers);
@@ -216,8 +219,50 @@ void AgentPanel::reportError(const QString& error) {
 
 void AgentPanel::configure() {
     QDialog dialog(this);
-    dialog.setWindowTitle(UiLanguage::tr("Beamcore integration"));
+    dialog.setObjectName("agentProviderSettings");
+    dialog.setWindowTitle(UiLanguage::tr("API providers"));
     auto* form = new QFormLayout(&dialog);
+    auto* note = new QLabel(UiLanguage::tr(
+        "Manage providers here. Beamcore handles API requests; credentials are encrypted in Veyra's "
+        "private configuration. The bundled Qwen works without an API provider."));
+    note->setWordWrap(true);
+    form->addRow(note);
+    auto* providers = new QComboBox;
+    providers->setObjectName("providerSettingsList");
+    auto populate = [this, providers] {
+        const auto current = providers->currentData().toJsonObject().value("name").toString();
+        providers->clear();
+        providers->addItem(UiLanguage::tr("Add provider…"), QJsonObject{});
+        for (int i = 1; i < provider_->count(); ++i) {
+            const auto info = provider_->itemData(i).toJsonObject();
+            providers->addItem(info.value("name").toString(), info);
+            if (info.value("name").toString() == current)
+                providers->setCurrentIndex(providers->count() - 1);
+        }
+    };
+    populate();
+    form->addRow(UiLanguage::tr("Provider"), providers);
+    auto* name = new QLineEdit;
+    name->setObjectName("providerSettingsName");
+    auto* endpoint = new QLineEdit;
+    endpoint->setObjectName("providerSettingsEndpoint");
+    endpoint->setPlaceholderText("https://server.example/v1");
+    auto* model = new QLineEdit;
+    model->setObjectName("providerSettingsModel");
+    auto* auth = new QComboBox;
+    auth->addItem(UiLanguage::tr("Bearer token"), "bearer");
+    auth->addItem(UiLanguage::tr("API key header"), "api_key");
+    auth->addItem(UiLanguage::tr("No authentication"), "none");
+    auto* key = new QLineEdit;
+    key->setObjectName("providerSettingsKey");
+    key->setEchoMode(QLineEdit::Password);
+    form->addRow(UiLanguage::tr("Name"), name);
+    form->addRow(UiLanguage::tr("API endpoint"), endpoint);
+    form->addRow(UiLanguage::tr("Model"), model);
+    form->addRow(UiLanguage::tr("Authentication"), auth);
+    form->addRow(UiLanguage::tr("API key"), key);
+    auto* runtime = new QGroupBox(UiLanguage::tr("Runtime settings"));
+    auto* advanced = new QFormLayout(runtime);
     QSettings settings;
     auto* executable = new QLineEdit(settings.value("agent/beamcoreExecutable").toString());
     executable->setPlaceholderText("beamcore");
@@ -225,29 +270,89 @@ void AgentPanel::configure() {
     auto* row = new QHBoxLayout;
     row->addWidget(executable, 1);
     row->addWidget(browse);
-    form->addRow(UiLanguage::tr("Beamcore executable"), row);
-    auto* config = new QLineEdit(settings.value("agent/beamcoreConfig").toString());
-    config->setPlaceholderText(QDir::homePath() + "/.beamcore/config.dets");
-    form->addRow(UiLanguage::tr("Beamcore provider configuration"), config);
-    auto* note = new QLabel(UiLanguage::tr("Configure API providers in Beamcore. Veyra reads an isolated "
-                                           "copy of its configuration and does not change the original."));
-    note->setWordWrap(true);
-    form->addRow(note);
-    auto* buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
+    advanced->addRow(UiLanguage::tr("Beamcore executable"), row);
+    auto* useRuntime = new QPushButton(UiLanguage::tr("Use runtime"));
+    advanced->addRow(useRuntime);
+    form->addRow(runtime);
+    auto* status = new QLabel;
+    status->setWordWrap(true);
+    status->setTextFormat(Qt::PlainText);
+    form->addRow(status);
+    auto* buttons = new QDialogButtonBox(QDialogButtonBox::Save | QDialogButtonBox::Close);
+    auto* remove = buttons->addButton(UiLanguage::tr("Remove provider"), QDialogButtonBox::DestructiveRole);
+    remove->setEnabled(false);
     form->addRow(buttons);
-    connect(browse, &QPushButton::clicked, &dialog, [this, executable] {
+    auto* client = agent_->beamcore();
+    auto load = [=] {
+        const auto info = providers->currentData().toJsonObject();
+        name->setText(info.value("name").toString());
+        name->setReadOnly(!info.isEmpty());
+        endpoint->setText(info.value("endpoint").toString());
+        model->setText(info.value("model").toString());
+        const auto index = auth->findData(info.value("auth").toString("bearer"));
+        if (index < 0)
+            auth->addItem(info.value("auth").toString(), info.value("auth").toString());
+        auth->setCurrentIndex(index >= 0 ? index : auth->count() - 1);
+        key->clear();
+        key->setPlaceholderText(
+            info.value("has_key").toBool() ? UiLanguage::tr("Leave empty to keep the saved key") : QString());
+        remove->setEnabled(!info.isEmpty());
+    };
+    connect(providers, qOverload<int>(&QComboBox::currentIndexChanged), &dialog, load);
+    auto prepare = [=] {
+        QSettings settings;
+        const auto path = executable->text().trimmed();
+        if (settings.value("agent/beamcoreExecutable").toString() != path)
+            client->stop();
+        settings.setValue("agent/beamcoreExecutable", path);
+        buttons->button(QDialogButtonBox::Save)->setEnabled(false);
+        remove->setEnabled(false);
+        status->setText(UiLanguage::tr("Saving provider configuration…"));
+    };
+    connect(useRuntime, &QPushButton::clicked, &dialog, [=] {
+        if (!buttons->button(QDialogButtonBox::Save)->isEnabled())
+            return;
+        prepare();
+        client->requestProviders();
+    });
+    connect(buttons->button(QDialogButtonBox::Save), &QPushButton::clicked, &dialog, [=] {
+        const QUrl url(endpoint->text().trimmed());
+        if (name->text().trimmed().isEmpty() || model->text().trimmed().isEmpty() || !url.isValid() ||
+            url.host().isEmpty() || !url.userInfo().isEmpty() ||
+            (url.scheme() != "http" && url.scheme() != "https")) {
+            status->setText(UiLanguage::tr("Enter a provider name, HTTP endpoint and model."));
+            return;
+        }
+        prepare();
+        client->saveProvider({{"name", name->text().trimmed()},
+                              {"endpoint", url.toString()},
+                              {"model", model->text().trimmed()},
+                              {"auth", auth->currentData().toString()},
+                              {"api_key", key->text()}});
+    });
+    connect(remove, &QPushButton::clicked, &dialog, [=] {
+        prepare();
+        client->removeProvider(name->text());
+    });
+    connect(client, &BeamcoreClient::providersReceived, &dialog, [=](const QJsonArray&) {
+        populate();
+        key->clear();
+        buttons->button(QDialogButtonBox::Save)->setEnabled(true);
+        status->setText(UiLanguage::tr("Provider configuration updated."));
+    });
+    connect(client, &BeamcoreClient::failed, &dialog, [=](const QString& error) {
+        buttons->button(QDialogButtonBox::Save)->setEnabled(true);
+        remove->setEnabled(providers->currentIndex() > 0);
+        status->setText(UiLanguage::text(error));
+    });
+    connect(browse, &QPushButton::clicked, &dialog, [=, this] {
         const auto file = QFileDialog::getOpenFileName(this, UiLanguage::tr("Beamcore executable"));
         if (!file.isEmpty())
             executable->setText(file);
     });
-    connect(buttons, &QDialogButtonBox::accepted, &dialog, &QDialog::accept);
     connect(buttons, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
-    dialog.resize(650, 220);
-    if (dialog.exec() != QDialog::Accepted)
-        return;
-    agent_->beamcore()->stop();
-    settings.setValue("agent/beamcoreExecutable", executable->text().trimmed());
-    settings.setValue("agent/beamcoreConfig", config->text().trimmed());
-    loadedProviders_ = false;
-    agent_->beamcore()->requestProviders();
+    if (!loadedProviders_ && !BeamcoreClient::executable().isEmpty())
+        client->requestProviders();
+    dialog.resize(650, 480);
+    dialog.exec();
 }

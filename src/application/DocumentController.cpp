@@ -39,10 +39,13 @@ int DocumentController::indexOf(const EditorDocument* document) const {
 void DocumentController::wire(EditorDocument* document) {
     connect(document->text.get(), &QTextDocument::modificationChanged, this,
             [this, document] { emit documentChanged(indexOf(document)); });
-    connect(document->text.get(), &QTextDocument::contentsChanged, this, [this, document] {
-        document->trusted = false;
-        emit documentChanged(indexOf(document));
-    });
+    connect(document->text.get(), &QTextDocument::contentsChange, this,
+            [this, document](int, int removed, int added) {
+                if (!removed && !added)
+                    return;
+                document->trusted = false;
+                emit documentChanged(indexOf(document));
+            });
 }
 
 int DocumentController::create(const QString& text, const QString& name) {

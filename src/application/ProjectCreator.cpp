@@ -63,8 +63,7 @@ bool ProjectCreator::create(const NewProject& project, QString& root, QString& e
                                {"language", QString::fromStdString(language.lspId)},
                                {"sdk", project.sdk},
                                {"entry", relativeEntry}};
-    if (!write(".veyra/project.json", QJsonDocument(metadata).toJson()) ||
-        !write(".gitignore", ".veyra/build/\n.veyra/cmake-*/\n__pycache__/\nnode_modules/\n"))
+    if (!write(".veyra/project.json", QJsonDocument(metadata).toJson()) || !write(".gitignore", ".veyra/\n"))
         return false;
     for (const auto& [name, content] : language.projectFiles) {
         const auto relative = QString::fromStdString(name);

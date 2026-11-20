@@ -5,6 +5,7 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QSettings>
+#include <QStandardPaths>
 
 BeamcoreClient::BeamcoreClient(QObject* parent) : QObject(parent) {
     deadline_.setSingleShot(true);
@@ -34,7 +35,17 @@ BeamcoreClient::BeamcoreClient(QObject* parent) : QObject(parent) {
                 tree_.reset();
                 deadline_.stop();
                 ready_ = false;
+                const bool restart = stopping_ && !queued_.isEmpty();
                 stopping_ = false;
+                if (restart) {
+                    QString error;
+                    if (!start(error)) {
+                        queued_ = {};
+                        emit failed(error);
+                    }
+                    return;
+                }
+
                 if (activeId_ >= 0 || !queued_.isEmpty()) {
                     activeId_ = -1;
                     queued_ = {};
@@ -79,13 +90,15 @@ bool BeamcoreClient::start(QString& error) {
         return false;
     }
     bridge.close();
-    const auto copiedConfig = state_.filePath("config.dets");
-    if (QFile::exists(copiedConfig) && !QFile::remove(copiedConfig)) {
-        error = UiLanguage::tr("The isolated Beamcore configuration could not be refreshed.");
-        return false;
-    }
     auto environment = ToolDiscovery::environment();
     environment.insert("VEYRA_AGENT_STATE", state_.path());
+    const auto store =
+        QSettings()
+            .value("agent/providerStore", QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) +
+                                              "/agent/providers.dets")
+            .toString();
+    environment.insert("VEYRA_AGENT_CONFIG", store);
+
     const auto config = QSettings().value("agent/beamcoreConfig").toString();
     if (!config.isEmpty())
         environment.insert("VEYRA_BEAMCORE_CONFIG", config);
@@ -106,15 +119,32 @@ void BeamcoreClient::send(const QJsonObject& message) {
     process_.write(QJsonDocument(message).toJson(QJsonDocument::Compact) + '\n');
 }
 
-void BeamcoreClient::requestProviders() {
+void BeamcoreClient::request(const QJsonObject& message) {
+    queued_ = message;
+    if (stopping_)
+        return;
     QString error;
     if (!start(error)) {
+        queued_ = {};
         emit failed(error);
         return;
     }
-    queued_ = {{"method", "providers"}};
-    if (ready_)
+    if (ready_) {
+        deadline_.start(20000);
         send(queued_);
+    }
+}
+
+void BeamcoreClient::requestProviders() {
+    request({{"method", "providers"}});
+}
+
+void BeamcoreClient::saveProvider(const QJsonObject& provider) {
+    request({{"method", "save_provider"}, {"provider", provider}});
+}
+
+void BeamcoreClient::removeProvider(const QString& name) {
+    request({{"method", "remove_provider"}, {"name", name}});
 }
 
 void BeamcoreClient::chat(const QJsonArray& messages, const QString& provider, const QString& model) {

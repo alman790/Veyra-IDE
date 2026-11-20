@@ -158,6 +158,7 @@ class CodeEditor final : public QPlainTextEdit {
     }
 
   signals:
+    void sourceTextChanged();
     void breakpointChanged();
     void assistantDismissed();
     void predictiveCompletionRequested();

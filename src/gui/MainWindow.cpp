@@ -158,7 +158,7 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
     codeAuditTimer_->setSingleShot(true);
     codeAuditTimer_->setInterval(250);
     connect(codeAuditTimer_, &QTimer::timeout, this, &MainWindow::analyzeCode);
-    connect(editor_, &QPlainTextEdit::textChanged, this, [this]() {
+    connect(editor_, &CodeEditor::sourceTextChanged, this, [this]() {
         editor_->setDiagnostics({});
         if (sourceInspector_)
             sourceInspector_->cancel();
