@@ -148,12 +148,12 @@ bool ProjectRules::excludes(const QString& relative, bool directory) const {
     if (parts.contains("..") || parts.contains(".git") || parts.contains(".veyra"))
         return true;
     QList<QPair<QString, QList<Rule>>> levels{{QString(), base_}};
+    const bool tracked = tracked_.contains(relative) || (directory && trackedDirectories_.contains(relative));
     QString parent;
     for (int i = 0; i < parts.size(); ++i) {
         levels.append({parent, local(parent)});
         const auto path = parts.mid(0, i + 1).join('/');
         const bool isDirectory = i < parts.size() - 1 || directory;
-        const bool tracked = tracked_.contains(relative) || trackedDirectories_.contains(path);
         bool excluded = false;
         for (const auto& level : levels) {
             const auto scoped = level.first.isEmpty() ? path : path.mid(level.first.size() + 1);

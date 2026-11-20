@@ -138,14 +138,23 @@ int main(int argc, char** argv) {
             check(tracked.open(QIODevice::WriteOnly), "Create tracked source fixture");
             tracked.write("source");
             tracked.close();
+            check(QDir().mkpath(repository.filePath("generated")), "Create mixed tracked directory");
+            QFile nestedTracked(repository.filePath("generated/source.cpp"));
+            check(nestedTracked.open(QIODevice::WriteOnly), "Create nested tracked source");
+            nestedTracked.close();
             check(git({"add", "tracked.generated"}), "Track fixture before adding ignore rule");
+            check(git({"add", "generated/source.cpp"}), "Track source in a subsequently ignored directory");
             QFile gitRules(repository.filePath(".gitignore"));
             check(gitRules.open(QIODevice::WriteOnly), "Create tracked ignore fixture");
-            gitRules.write("*.generated\n");
+            gitRules.write("*.generated\ngenerated/\n");
             gitRules.close();
             const ProjectRules trackedRules(repository.path());
             check(!trackedRules.excludes("tracked.generated") && trackedRules.excludes("other.generated"),
                   "Git ignore patterns preserve tracked source files");
+            check(!trackedRules.excludes("generated", true) &&
+                      !trackedRules.excludes("generated/source.cpp") &&
+                      trackedRules.excludes("generated/untracked.cpp"),
+                  "Tracked descendants keep a directory traversable without exposing ignored siblings");
         }
         QDir().mkpath(temp.path() + "/build-ignored");
 
