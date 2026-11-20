@@ -54,7 +54,13 @@ int main(int argc, char** argv) {
         write(project.filePath(".gitignore"), "/generated.cpp\n");
         write(project.filePath("generated.cpp"), "generated source outside agent context\n");
         write(outside.filePath("outside.cpp"), "private outside source\n");
-        QFile::link(outside.filePath("outside.cpp"), project.filePath("outside-link.cpp"));
+#ifdef Q_OS_WIN
+        const auto externalLink = QStringLiteral("outside-link.cpp.lnk");
+#else
+        const auto externalLink = QStringLiteral("outside-link.cpp");
+#endif
+        check(QFile::link(outside.filePath("outside.cpp"), project.filePath(externalLink)),
+              "Create a valid external link fixture for the current platform");
         AgentInput input;
         input.root = project.path();
         input.path = project.filePath("Counter.cpp");
@@ -67,14 +73,14 @@ int main(int argc, char** argv) {
         check(context.prompt().contains("Counter.hpp") && context.prompt().contains("int value = 7") &&
                   context.prompt().contains("undeclared identifier") && context.prompt().contains("test SDK"),
               "Context contains neighboring classes, actual diagnostics and SDK information");
-        check(!context.files().contains(".env") && !context.files().contains("outside-link.cpp"),
-              "Context omits secret files and external symlinks");
+        check(!context.files().contains(".env"), "Context omits secret files");
+        check(!context.files().contains(externalLink), "Context omits external project links");
         check(!context.files().contains("generated.cpp") &&
                   context.read("generated.cpp").startsWith("Error:"),
               "Project ignore rules govern both context enumeration and explicit agent reads");
         check(context.read("../outside.cpp").startsWith("Error:") &&
                   context.read(".env").startsWith("Error:") &&
-                  context.read("outside-link.cpp").startsWith("Error:"),
+                  context.read(externalLink).startsWith("Error:"),
               "Context reads stay inside the project");
         check(context.search("Counter::next", [] { return false; }).contains("Counter.cpp:2"),
               "Project symbol search returns source locations");
