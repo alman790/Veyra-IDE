@@ -361,7 +361,7 @@ int CodeEditor::lineNumberAreaWidth() const {
 }
 
 void CodeEditor::updateLineNumberAreaWidth(int) {
-    setViewportMargins(lineNumberAreaWidth(), 0, 0, 0);
+    setViewportMargins(lineNumberAreaWidth() + 10, 0, 0, 0);
     const auto rectangle = contentsRect();
     lineNumbers_->setGeometry(rectangle.left(), rectangle.top(), lineNumberAreaWidth(), rectangle.height());
 }

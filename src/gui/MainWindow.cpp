@@ -459,6 +459,23 @@ QWidget* MainWindow::buildSidebar() {
             }
         }
     });
+    auto* database = new WorkspaceToolButton;
+    database->setObjectName("railDatabase");
+    database->setProperty("tsIcon", "database");
+    database->setIcon(tsui::icon("database"));
+    database->setIconSize(QSize(20, 20));
+    database->setToolTip(UiLanguage::tr("Database"));
+    database->setAccessibleName(UiLanguage::tr("Database"));
+    database->setCheckable(true);
+    layout->addWidget(database);
+    connect(database, &QToolButton::clicked, this, [this, database] {
+        if (databaseDock_) {
+            const bool show = database->isChecked();
+            databaseDock_->setVisible(show);
+            if (show)
+                databaseDock_->raise();
+        }
+    });
     auto* assistant = new WorkspaceToolButton;
     assistant->setObjectName("railAgent");
     assistant->setProperty("tsIcon", "assistant");

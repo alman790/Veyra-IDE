@@ -52,10 +52,10 @@ QPushButton[class="toolbarIcon"]:hover,QToolButton:hover {background:${raised};b
 QToolButton:checked {background:${selection};border-color:${border};}
 QToolButton::menu-indicator {image:none;width:0;height:0;}
 QTabBar#documentTabs {background:${sidebar};border-bottom:1px solid ${border};}
-QTabBar#documentTabs::tab {background:${sidebar};padding:9px 16px;margin:5px 3px 0 3px;min-height:18px;border:0;border-top-left-radius:8px;border-top-right-radius:8px;}
+QTabBar#documentTabs::tab {background:${sidebar};padding:8px 16px;margin:5px 3px 5px 3px;min-height:18px;border:1px solid transparent;border-radius:8px;}
 QTabBar::close-button {image:url(:/branding/close.svg);width:12px;height:12px;padding:2px;border-radius:5px;}
 QTabBar#documentTabs::close-button:hover {background:${raised};}
-QTabBar#documentTabs::tab:selected {background:${editor};border-bottom:2px solid ${accent};}
+QTabBar#documentTabs::tab:selected {background:${editor};border:1px solid ${border};color:${text};}
 QTreeView {background:${sidebar};show-decoration-selected:1;}
 QTreeView::item {min-height:25px;padding:2px 8px;border-radius:5px;margin:1px 5px;}
 QFrame#sourceInspection {background:${sidebar};}
@@ -84,6 +84,7 @@ QPushButton:pressed,QToolButton:pressed {background:${selection};}
 QPushButton:disabled,QToolButton:disabled {color:${muted};background:${surface};border-color:${border};}
 QPushButton[class="primary"] {background:${accent};color:${barText};border-color:${accent};font-weight:650;}
 QPushButton[class="primary"]:hover {border-color:${text};}
+QPushButton[class="primary"]:disabled {background:${surface};color:${muted};border-color:${border};}
 QPushButton[class="nav"] {background:transparent;color:${muted};border:1px solid transparent;border-radius:6px;text-align:left;padding:6px 10px;min-height:24px;}
 QPushButton[class="nav"]:hover {background:${raised};color:${text};}
 QPushButton[class="nav"]:checked {background:${accentSoft};border:1px solid ${border};color:${text};font-weight:650;}
@@ -91,7 +92,7 @@ QComboBox,QSpinBox,QLineEdit,QTextEdit {background:${editor};color:${text};borde
 QComboBox {padding-right:24px;}
 QComboBox:focus,QSpinBox:focus,QLineEdit:focus,QTextEdit:focus {border-color:${accent};}
 QComboBox QAbstractItemView {background:${surface};color:${text};selection-background-color:${selection};padding:4px;}
-QTableWidget,QTreeWidget,QTreeView {background:${editor};alternate-background-color:${surface};color:${text};border:0;gridline-color:${grid};selection-background-color:${selection};selection-color:${text};}
+QTableWidget,QTableView,QTreeWidget,QTreeView {background:${editor};alternate-background-color:${surface};color:${text};border:0;gridline-color:${grid};selection-background-color:${selection};selection-color:${text};}
 QHeaderView::section {background:${raised};color:${muted};border:0;border-bottom:1px solid ${border};padding:9px 10px;font-weight:600;}
 QTreeWidget::item,QTreeView::item {min-height:26px;padding:3px 6px;}
 QTreeWidget::item:hover,QTreeView::item:hover {background:${raised};}
@@ -99,7 +100,7 @@ QTreeWidget::item:selected,QTreeView::item:selected {background:${selection};col
 QListWidget {background:${editor};color:${text};border:1px solid ${border};border-radius:6px;outline:0;padding:5px;}
 QListWidget::item {padding:7px 10px;border-bottom:1px solid ${grid};}
 QListWidget::item:selected {background:${selection};color:${text};}
-QPlainTextEdit#codeEditor,QPlainTextEdit#ideConsole {background:${editor};color:${text};border:0;selection-background-color:${selection};padding:10px;font-family:"${mono}";font-size:14px;}
+CodeEditor,QPlainTextEdit#codeEditor,QPlainTextEdit#ideConsole {background:${editor};color:${text};border:0;selection-background-color:${selection};padding:10px;font-family:"${mono}";font-size:14px;}
 QPlainTextEdit#codeEditor QWidget {font-family:"${mono}";}
 QPlainTextEdit#agentQuestion,QPlainTextEdit#agentPatchPreview {background:${editor};color:${text};border:1px solid ${border};border-radius:6px;padding:7px;selection-background-color:${selection};}
 QPlainTextEdit#agentPatchPreview {font-family:"${mono}";}
@@ -126,10 +127,19 @@ QLineEdit#commandSearch {background:${editor};font-size:16px;padding:7px 10px;mi
 QListWidget#commandResults {background:transparent;border:0;padding:4px;}
 QListWidget#commandResults::item {padding:7px 10px;}
 QListWidget#commandResults::item:selected {background:${selection};color:${text};}
-QTabBar::tab {background:transparent;color:${muted};padding:6px 12px;border-bottom:2px solid transparent;min-height:24px;}
-QTabBar::tab:selected {color:${text};border-bottom:2px solid ${accent};font-weight:650;}
+QTabBar::tab {background:transparent;color:${muted};padding:6px 12px;border:1px solid transparent;border-radius:7px;margin:3px 2px;min-height:24px;}
+QTabBar::tab:selected {color:${text};background:${accentSoft};border:1px solid ${border};font-weight:650;}
 QTabBar::tab:hover {background:${accentSoft};}
 QTabWidget::pane {border:0;background:transparent;}
+QWidget#databaseBrowser,QWidget#databaseData,QWidget#databaseConsole {background:${editor};border:1px solid ${border};border-radius:9px;}
+QListWidget#databaseTables {border:0;background:transparent;padding:0;}
+QListWidget#databaseTables::item {border:0;border-radius:5px;margin:2px 0;padding:5px 8px;}
+QListWidget#databaseTables::item:hover {background:${raised};}
+QTableView#databaseGrid {border:0;outline:0;selection-background-color:${selection};}
+QTableView#databaseGrid::item {padding:5px 10px;border-bottom:1px solid ${grid};}
+QWidget#databasePanel QPushButton {padding:3px 9px;min-height:22px;}
+QWidget#databasePanel QHeaderView::section {background:${editor};padding:7px 10px;}
+QWidget#databasePanel QSplitter::handle {width:8px;height:8px;}
 QToolButton#toggleOutput {padding:2px 9px;min-height:18px;font-size:12px;}
 QDockWidget {color:${text};font-weight:600;}
 QDockWidget::title {background:${sidebar};padding:6px 10px;border-bottom:1px solid ${border};text-align:left;}

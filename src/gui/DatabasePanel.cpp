@@ -1,5 +1,6 @@
 #include "DatabasePanel.hpp"
 #include "CodeEditor.hpp"
+#include "UiIcons.hpp"
 #include "UiLanguage.hpp"
 #include <QApplication>
 #include <QClipboard>
@@ -146,9 +147,12 @@ DatabasePanel::DatabasePanel(QWidget* parent) : QWidget(parent) {
     setObjectName("databasePanel");
     session_ = new DatabaseSession(this);
     auto* layout = new QVBoxLayout(this);
+    layout->setContentsMargins(10, 8, 10, 10);
+    layout->setSpacing(8);
     auto* bar = new QHBoxLayout;
     connect_ = new QPushButton(UiLanguage::tr("Connect…"));
     connect_->setObjectName("databaseConnect");
+    connect_->setIcon(tsui::icon("database"));
     disconnect_ = new QPushButton(UiLanguage::tr("Disconnect"));
     refresh_ = new QPushButton(UiLanguage::tr("Refresh page"));
     auto* exportButton = new QPushButton(UiLanguage::tr("Export displayed page…"));
@@ -161,11 +165,25 @@ DatabasePanel::DatabasePanel(QWidget* parent) : QWidget(parent) {
     bar->addWidget(exportButton);
     layout->addLayout(bar);
     auto* split = new QSplitter;
+    split->setChildrenCollapsible(false);
+    auto* browser = new QWidget;
+    browser->setObjectName("databaseBrowser");
+    auto* browserLayout = new QVBoxLayout(browser);
+    browserLayout->setContentsMargins(8, 8, 8, 8);
+    auto* tablesTitle = new QLabel(UiLanguage::tr("Tables"));
+    tablesTitle->setProperty("class", "caption");
+    browserLayout->addWidget(tablesTitle);
     tables_ = new QListWidget;
     tables_->setObjectName("databaseTables");
-    split->addWidget(tables_);
+    browserLayout->addWidget(tables_, 1);
+    split->addWidget(browser);
+    auto* panes = new QSplitter(Qt::Vertical);
+    panes->setObjectName("databasePanes");
+    panes->setChildrenCollapsible(false);
     auto* right = new QWidget;
+    right->setObjectName("databaseData");
     auto* content = new QVBoxLayout(right);
+    content->setContentsMargins(10, 8, 10, 8);
     auto* filter = new QLineEdit;
     filter->setPlaceholderText(UiLanguage::tr("Filter loaded rows…"));
     content->addWidget(filter);
@@ -180,6 +198,13 @@ DatabasePanel::DatabasePanel(QWidget* parent) : QWidget(parent) {
     grid_->setModel(proxy_);
     grid_->setSortingEnabled(true);
     grid_->setAlternatingRowColors(true);
+    grid_->setShowGrid(false);
+    grid_->setWordWrap(false);
+    grid_->verticalHeader()->setDefaultSectionSize(30);
+    grid_->verticalHeader()->setMinimumWidth(38);
+    grid_->horizontalHeader()->setHighlightSections(false);
+    grid_->horizontalHeader()->setDefaultAlignment(Qt::AlignLeft | Qt::AlignVCenter);
+    grid_->horizontalHeader()->setStretchLastSection(true);
     grid_->setMinimumHeight(120);
     grid_->horizontalHeader()->setSectionResizeMode(QHeaderView::Interactive);
     grid_->horizontalHeader()->setDefaultSectionSize(160);
@@ -192,6 +217,7 @@ DatabasePanel::DatabasePanel(QWidget* parent) : QWidget(parent) {
     limit_->setRange(25, 2000);
     limit_->setValue(200);
     apply_ = new QPushButton(UiLanguage::tr("Apply changes"));
+    apply_->setProperty("class", "primary");
     apply_->setObjectName("databaseApply");
     discard_ = new QPushButton(UiLanguage::tr("Discard changes"));
     paging->addWidget(previous_);
@@ -201,6 +227,11 @@ DatabasePanel::DatabasePanel(QWidget* parent) : QWidget(parent) {
     paging->addWidget(discard_);
     paging->addWidget(apply_);
     content->addLayout(paging);
+    panes->addWidget(right);
+    auto* console = new QWidget;
+    console->setObjectName("databaseConsole");
+    auto* consoleLayout = new QVBoxLayout(console);
+    consoleLayout->setContentsMargins(10, 8, 10, 8);
     auto* editor = new CodeEditor;
     editor->setGitAnnotationsAvailable(false);
     editor->setLanguage(ts::LanguageId::Sql);
@@ -216,21 +247,33 @@ DatabasePanel::DatabasePanel(QWidget* parent) : QWidget(parent) {
             names << model_->headerData(i, Qt::Horizontal, Qt::DisplayRole).toString();
         editor->setCompletionWords(names);
     });
-    content->addWidget(sql_);
     auto* queryBar = new QHBoxLayout;
+    auto* consoleTitle = new QLabel(UiLanguage::tr("SQL console"));
+    consoleTitle->setProperty("class", "caption");
+    queryBar->addWidget(consoleTitle);
+    queryBar->addStretch();
     run_ = new QPushButton(UiLanguage::tr("Run statement"));
+    run_->setIcon(tsui::icon("play"));
     run_->setObjectName("databaseRun");
     stop_ = new QPushButton(UiLanguage::tr("Stop request"));
+    stop_->setIcon(tsui::icon("stop"));
     status_ = new QLabel(UiLanguage::tr("Choose a database driver and connection."));
     status_->setWordWrap(true);
     status_->setTextFormat(Qt::PlainText);
     queryBar->addWidget(run_);
     queryBar->addWidget(stop_);
-    queryBar->addWidget(status_, 1);
-    content->addLayout(queryBar);
-    split->addWidget(right);
-    split->setSizes({180, 800});
+    consoleLayout->addLayout(queryBar);
+    consoleLayout->addWidget(sql_, 1);
+    panes->addWidget(console);
+    panes->setSizes({300, 160});
+    panes->setStretchFactor(0, 3);
+    panes->setStretchFactor(1, 1);
+    split->addWidget(panes);
+    split->setSizes({210, 1000});
+    split->setStretchFactor(1, 1);
     layout->addWidget(split, 1);
+    status_->setProperty("class", "caption");
+    layout->addWidget(status_);
     connect(connect_, &QPushButton::clicked, this, &DatabasePanel::configure);
     connect(disconnect_, &QPushButton::clicked, this, [this] {
         if (allowDiscard()) {
@@ -312,7 +355,7 @@ DatabasePanel::DatabasePanel(QWidget* parent) : QWidget(parent) {
             model_->load({});
             page_ = {};
             for (const auto& table : result.value("tables").toArray())
-                tables_->addItem(table.toString());
+                tables_->addItem(new QListWidgetItem(tsui::icon("table"), table.toString()));
             status_->setText(UiLanguage::tr("Connected. Open a table or run a SQL statement."));
         } else if (kind == "page") {
             page_ = result;

@@ -15,7 +15,18 @@ inline QIcon icon(const QString& name, const QColor& ink = QColor("#A6A9B2")) {
     p.scale(2, 2);
     p.setBrush(Qt::NoBrush);
     p.setPen(QPen(ink, 1.55, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-    if (name == "close") {
+    if (name == "database") {
+        p.drawEllipse(QRectF(3, 2, 14, 5));
+        p.drawLine(QPointF(3, 4.5), QPointF(3, 15.5));
+        p.drawLine(QPointF(17, 4.5), QPointF(17, 15.5));
+        p.drawArc(QRectF(3, 7, 14, 5), 180 * 16, 180 * 16);
+        p.drawArc(QRectF(3, 13, 14, 5), 180 * 16, 180 * 16);
+    } else if (name == "table") {
+        p.drawRoundedRect(QRectF(2, 3, 16, 14), 2, 2);
+        p.drawLine(QPointF(2, 8), QPointF(18, 8));
+        p.drawLine(QPointF(2, 12), QPointF(18, 12));
+        p.drawLine(QPointF(8, 3), QPointF(8, 17));
+    } else if (name == "close") {
         p.drawLine(QPointF(5, 5), QPointF(15, 15));
         p.drawLine(QPointF(15, 5), QPointF(5, 15));
     } else if (name == "folder") {

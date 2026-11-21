@@ -11,17 +11,22 @@
 #include <QJsonDocument>
 #include <QLabel>
 #include <QMenuBar>
+#include <QScopeGuard>
 #include <QSettings>
+#include <QStandardPaths>
 #include <QTabBar>
 #include <QTemporaryDir>
 #include <QTest>
+#include <QUuid>
 #include <iostream>
 #include <stdexcept>
 
 int main(int argc, char** argv) {
     QApplication app(argc, argv);
     app.setOrganizationName("VeyraTests");
-    app.setApplicationName("IdeWorkflow");
+    app.setApplicationName("IdeWorkflow-" + QUuid::createUuid().toString(QUuid::Id128));
+    const auto sessionDirectory = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
+    const auto cleanup = qScopeGuard([&] { QDir(sessionDirectory).removeRecursively(); });
     QTemporaryDir settings, projects;
     QSettings::setDefaultFormat(QSettings::IniFormat);
     QSettings::setPath(QSettings::IniFormat, QSettings::UserScope, settings.path());
@@ -68,6 +73,8 @@ int main(int argc, char** argv) {
         editor->openFileRequested(entry);
         app.processEvents();
         check(!editor->isReadOnly(), "Opening a file activates the editor");
+        check(!editor->document()->isModified() && !editor->document()->isUndoAvailable(),
+              "Editor presentation leaves a newly opened document clean with an empty undo history");
         ts::Array<ts::Diagnostic> diagnostics;
         diagnostics.pushBack(
             {ts::RiskLevel::Critical, 1, "test", "Unresolved symbol", "Compiler diagnostic", ""});

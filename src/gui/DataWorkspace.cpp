@@ -4,6 +4,7 @@
 #include <QDockWidget>
 #include <QPushButton>
 #include <QTabWidget>
+#include <QToolButton>
 
 void MainWindow::setupDataTools() {
     databaseDock_ = new QDockWidget(UiLanguage::tr("Database"), this);
@@ -42,4 +43,8 @@ void MainWindow::setupDataTools() {
     if (outputDock_)
         tabifyDockWidget(outputDock_, databaseDock_);
     databaseDock_->hide();
+    connect(databaseDock_, &QDockWidget::visibilityChanged, this, [this](bool visible) {
+        if (auto* button = findChild<QToolButton*>("railDatabase"))
+            button->setChecked(visible);
+    });
 }

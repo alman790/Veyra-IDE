@@ -24,6 +24,7 @@
 #include <QTemporaryDir>
 #include <QTest>
 #include <QTimer>
+#include <QToolButton>
 #include <QTreeWidget>
 #include <cstring>
 #include <iostream>
@@ -81,8 +82,13 @@ int main(int argc, char** argv) {
         app.processEvents();
         auto* dock = window.findChild<QDockWidget*>("databaseDock");
         require(dock, "Database dock is integrated");
-        dock->show();
-        dock->raise();
+        auto* databaseButton = window.findChild<QToolButton*>("railDatabase");
+        require(databaseButton, "Database tool is available on the left rail");
+        databaseButton->click();
+        require(dock->isVisible() && databaseButton->isChecked(), "Rail opens the database tool window");
+        dock->hide();
+        require(!databaseButton->isChecked(), "Rail follows database tool window visibility");
+        databaseButton->click();
         auto* panel = window.findChild<DatabasePanel*>("databasePanel");
         require(panel, "Database connection panel exists");
         QTimer::singleShot(0, panel, [&] {
