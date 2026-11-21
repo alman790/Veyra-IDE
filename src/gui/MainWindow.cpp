@@ -3,10 +3,12 @@
 #include "../application/DocumentController.hpp"
 #include "AgentPanel.hpp"
 #include "CMakeProjectDialog.hpp"
+#include "DatabasePanel.hpp"
 #include "DebuggerPanel.hpp"
 #include "GitPanel.hpp"
 #include "GlassSurfaces.hpp"
 #include "Keymap.hpp"
+#include "RemoteWorkspace.hpp"
 #include "SourceInspector.hpp"
 #include "UiIcons.hpp"
 #include "UiLanguage.hpp"
@@ -144,6 +146,7 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
     }
     setupToolWindows();
     setupProjectAgent();
+    setupDataTools();
     buildNativeMenus();
     const QSettings startupSettings;
     const bool migrated = startupSettings.value("appearance/layoutVersion", 0).toInt() >= 3;
@@ -235,6 +238,11 @@ void MainWindow::buildNativeMenus() {
     auto* file = menuBar()->addMenu(UiLanguage::tr("&File"));
     file->addAction(UiLanguage::tr("New project…"), this, &MainWindow::createProject);
     file->addAction(UiLanguage::tr("Open project folder…"), this, &MainWindow::openProjectFolder);
+    file->addAction(UiLanguage::tr("Remote development…"), this, [this] {
+        auto* window = new RemoteWorkspace;
+        window->setWindowIcon(windowIcon());
+        window->show();
+    });
     file->addAction(UiLanguage::tr("New file…"), this, &MainWindow::newCode);
     file->addAction(UiLanguage::tr("Open files…"), this, &MainWindow::openCode);
     file->addSeparator();
@@ -309,6 +317,7 @@ void MainWindow::buildNativeMenus() {
     debug->setShortcut(QKeySequence("F5"));
     run->addAction(UiLanguage::tr("Stop"), this, &MainWindow::stopSource);
     auto* view = menuBar()->addMenu(UiLanguage::tr("&View"));
+    view->addAction(databaseDock_->toggleViewAction());
     view->addAction(projectDock_->toggleViewAction());
     view->addAction(outputDock_->toggleViewAction());
     view->addAction(inspectionDock_->toggleViewAction());
@@ -342,6 +351,11 @@ void MainWindow::updateWindowTitle() {
 }
 
 void MainWindow::closeEvent(QCloseEvent* event) {
+    for (auto* panel : findChildren<DatabasePanel*>())
+        if (!panel->requestClose()) {
+            event->ignore();
+            return;
+        }
     if (agentPanel_ && agentPanel_->agent()->busy()) {
         agentPanel_->agent()->cancel();
         QTimer::singleShot(50, this, [this] { close(); });
@@ -395,6 +409,8 @@ void MainWindow::closeEvent(QCloseEvent* event) {
     settings.setValue("window/geometry", saveGeometry());
     settings.setValue("window/page", pages_->currentIndex());
     settings.setValue("window/ideDocks", saveState());
+    for (auto* panel : findChildren<DatabasePanel*>())
+        panel->shutdown();
     QMainWindow::closeEvent(event);
 }
 

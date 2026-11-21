@@ -510,8 +510,9 @@ void MainWindow::applyTheme(tsui::Theme theme) {
         if (index >= 0)
             themeSelector_->setCurrentIndex(index);
     }
-    if (editor_)
-        editor_->refreshTheme();
+    for (auto* widget : QApplication::allWidgets())
+        if (auto* editor = qobject_cast<CodeEditor*>(widget))
+            editor->refreshTheme();
     const QColor iconColor = tsui::ThemeManager::color(tsui::Role::Muted);
     for (auto* control : findChildren<QAbstractButton*>()) {
         const QString key = control->property("tsIcon").toString();

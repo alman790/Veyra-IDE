@@ -53,7 +53,7 @@ QToolButton:checked {background:${selection};border-color:${border};}
 QToolButton::menu-indicator {image:none;width:0;height:0;}
 QTabBar#documentTabs {background:${sidebar};border-bottom:1px solid ${border};}
 QTabBar#documentTabs::tab {background:${sidebar};padding:9px 16px;margin:5px 3px 0 3px;min-height:18px;border:0;border-top-left-radius:8px;border-top-right-radius:8px;}
-QTabBar#documentTabs::close-button {image:url(:/branding/close.svg);width:12px;height:12px;padding:2px;border-radius:5px;}
+QTabBar::close-button {image:url(:/branding/close.svg);width:12px;height:12px;padding:2px;border-radius:5px;}
 QTabBar#documentTabs::close-button:hover {background:${raised};}
 QTabBar#documentTabs::tab:selected {background:${editor};border-bottom:2px solid ${accent};}
 QTreeView {background:${sidebar};show-decoration-selected:1;}

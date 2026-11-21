@@ -132,7 +132,35 @@ int smoke(const QString& executable, const QString& platform) {
         process.kill();
         process.waitForFinished(2000);
     }
-    QTextStream(stdout) << "PASS: GUI remains running: " << executable << '\n';
+    QProcess database;
+    database.setProcessEnvironment(environment);
+    database.setWorkingDirectory(directory.path());
+    database.start(QFileInfo(executable).absoluteFilePath(), {"--database-worker"});
+    if (!database.waitForStarted(10000))
+        return 1;
+    database.write(
+        QJsonDocument(
+            QJsonObject{{"id", 1}, {"operation", "connect"}, {"driver", "QSQLITE"}, {"database", ":memory:"}})
+            .toJson(QJsonDocument::Compact) +
+        '\n');
+    QByteArray reply;
+    QElapsedTimer deadline;
+    deadline.start();
+    while (!reply.contains('\n') && deadline.elapsed() < 10000) {
+        database.waitForReadyRead(100);
+        reply += database.readAllStandardOutput();
+    }
+    const bool sqlReady = QJsonDocument::fromJson(reply.trimmed()).object().value("ok").toBool();
+    database.closeWriteChannel();
+    if (!database.waitForFinished(2000)) {
+        database.kill();
+        database.waitForFinished(1000);
+    }
+    if (!sqlReady) {
+        QTextStream(stderr) << "Packaged SQLite worker failed: " << reply << '\n';
+        return 1;
+    }
+    QTextStream(stdout) << "PASS: GUI and packaged SQLite driver: " << executable << '\n';
     return 0;
 }
 }

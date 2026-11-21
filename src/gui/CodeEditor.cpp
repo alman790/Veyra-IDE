@@ -183,6 +183,7 @@ void LineNumberArea::contextMenuEvent(QContextMenuEvent* event) {
     breakpoint->setEnabled(line > 0);
     auto* authors = menu.addAction(UiLanguage::tr("Show Git annotations"));
     authors->setCheckable(true);
+    authors->setEnabled(editor_->gitAnnotationsAvailable_);
     authors->setChecked(editor_->annotations_->enabled());
     const auto* chosen = menu.exec(event->globalPos());
     if (chosen == bookmark)
@@ -1278,11 +1279,20 @@ void CodeEditor::setFilePath(const QString& path) {
 }
 
 void CodeEditor::setAnnotationsVisible(bool visible) {
+    if (!gitAnnotationsAvailable_)
+        return;
     annotations_->setEnabled(visible);
     QSettings().setValue("editor/gitAnnotations", visible);
     updateLineNumberAreaWidth(0);
     lineNumbers_->update();
     emit annotationsVisibilityChanged(visible);
+}
+
+void CodeEditor::setGitAnnotationsAvailable(bool available) {
+    gitAnnotationsAvailable_ = available;
+    annotations_->setEnabled(available && QSettings().value("editor/gitAnnotations", false).toBool());
+    updateLineNumberAreaWidth(0);
+    lineNumbers_->update();
 }
 
 void CodeEditor::changeEvent(QEvent* event) {

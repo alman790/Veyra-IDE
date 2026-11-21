@@ -1,4 +1,5 @@
 #pragma once
+#include "../platform/ProcessTree.hpp"
 #include "JsonRpcFramer.hpp"
 #include "ts/LanguageTools.hpp"
 #include <QHash>
@@ -10,7 +11,15 @@
 #include <QTimer>
 #include <functional>
 
+struct LspTransport {
+    QString program, workspace, sdkRoot;
+    QStringList arguments;
+};
+
 class LspClient final : public QObject {
+    LspTransport transport_;
+    QString fileUri(const QString& path) const;
+
     struct Document {
         QString text;
         QString language;
@@ -21,6 +30,7 @@ class LspClient final : public QObject {
     };
 
     QProcess server_;
+    ProcessTree tree_;
     QTimer shutdownDeadline_;
     QTimer completionRetry_;
     int completionLine_ = 0, completionColumn_ = 0, completionRetries_ = 0;
@@ -56,6 +66,11 @@ class LspClient final : public QObject {
 
   public:
     explicit LspClient(QObject* parent = nullptr);
+
+    void setTransport(const LspTransport& transport) {
+        transport_ = transport;
+    }
+
     ~LspClient() override;
 
     bool active() const noexcept {

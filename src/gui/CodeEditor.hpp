@@ -92,6 +92,7 @@ class CodeEditor final : public QPlainTextEdit {
     int completionRevision_ = -1;
     bool completionAllowed_ = false;
     bool editingKey_ = false;
+    bool gitAnnotationsAvailable_ = true;
     void dismissCompletion();
     void updateDocumentWords();
     QHash<QString, QJsonObject> serverEdits_;
@@ -142,6 +143,7 @@ class CodeEditor final : public QPlainTextEdit {
     void selectLines(int anchorLine, int line);
     void setFilePath(const QString& path);
     void setAnnotationsVisible(bool visible);
+    void setGitAnnotationsAvailable(bool available);
 
     GitAnnotations* annotations() const {
         return annotations_;

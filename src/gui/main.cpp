@@ -1,11 +1,15 @@
+#include "DatabaseSession.hpp"
 #include "MainWindow.hpp"
 #include <QApplication>
 #include <QDir>
 #include <QFont>
 #include <QFontDatabase>
 #include <QSettings>
+#include <cstring>
 
 int main(int argc, char** argv) {
+    if (argc > 1 && std::strcmp(argv[1], "--database-worker") == 0)
+        return runDatabaseWorker(argc, argv);
     QApplication app(argc, argv);
     QApplication::setOrganizationName("Veyra");
     QApplication::setApplicationName("Veyra IDE");

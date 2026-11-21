@@ -26,7 +26,7 @@ jobs:
         uses: ilammy/msvc-dev-cmd@v1
       - name: Install Linux dependencies
         if: runner.os == 'Linux'
-        run: sudo apt-get update && sudo apt-get install -y qt6-base-dev libgl1-mesa-dev libxkbcommon-dev clangd clang lldb ninja-build dpkg-dev rpm file
+        run: sudo apt-get update && sudo apt-get install -y qt6-base-dev libqt6sql6-sqlite openssh-server libgl1-mesa-dev libxkbcommon-dev clangd clang lldb ninja-build dpkg-dev rpm file
       - name: Install macOS dependencies
         if: runner.os == 'macOS'
         run: brew install qt ninja
@@ -111,3 +111,35 @@ jobs:
           sudo apt-get install -y clang-format-22 qt6-base-dev
       - run: cmake -S . -B build -DTS_BUILD_GUI=OFF -DTS_BUILD_TESTS=OFF -DTS_LOCAL_MODEL=OFF -DTS_CLANG_FORMAT=/usr/bin/clang-format-22
       - run: cmake --build build --target format-check translations-check --parallel 2
+  database-postgres:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: veyra_fixture
+          POSTGRES_PASSWORD: fixture
+          POSTGRES_DB: veyra_fixture
+        ports:
+          - 5432/tcp
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+    steps:
+      - uses: actions/checkout@v7
+      - name: Install SQL test dependencies
+        run: sudo apt-get update && sudo apt-get install -y qt6-base-dev libqt6sql6-psql libqt6sql6-sqlite ninja-build
+      - name: Build database integration tests
+        run: |
+          cmake -S . -B build -G Ninja -DTS_LOCAL_MODEL=OFF -DTS_REQUIRE_GUI=ON -DCMAKE_BUILD_TYPE=Release
+          cmake --build build --target veyra_database_postgres_tests --parallel 2
+      - name: Test against PostgreSQL
+        env:
+          VEYRA_TEST_POSTGRES_PORT: ${{ job.services.postgres.ports['5432'] }}
+          VEYRA_TEST_POSTGRES_DATABASE: veyra_fixture
+          VEYRA_TEST_POSTGRES_USER: veyra_fixture
+          VEYRA_TEST_POSTGRES_PASSWORD: fixture
+        run: ctest --test-dir build -R '^database_postgres$' --output-on-failure

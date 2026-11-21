@@ -19,6 +19,7 @@ class QTimer;
 class QLineEdit;
 class QCloseEvent;
 class QTabBar;
+class QTabWidget;
 class QDockWidget;
 class QTreeView;
 class QFileSystemModel;
@@ -33,6 +34,7 @@ class GitPanel;
 class DebuggerPanel;
 class QSplitter;
 class AgentPanel;
+class DatabasePanel;
 
 class MainWindow final : public QMainWindow {
     struct NavigationLocation {
@@ -75,6 +77,8 @@ class MainWindow final : public QMainWindow {
     QDockWidget* inspectionDock_ = nullptr;
     QDockWidget* agentDock_ = nullptr;
     AgentPanel* agentPanel_ = nullptr;
+    QTabWidget* databaseTabs_ = nullptr;
+    QDockWidget* databaseDock_ = nullptr;
     QListWidget* workbenchProblems_ = nullptr;
     QPlainTextEdit* runConsole_ = nullptr;
     QTimer* codeAuditTimer_ = nullptr;
@@ -137,6 +141,7 @@ class MainWindow final : public QMainWindow {
     void buildNativeMenus();
     QWidget* buildIdeHeader();
     void setupToolWindows();
+    void setupDataTools();
     void updateProjectTree();
     void applyTheme(tsui::Theme theme);
     void showCommandPalette();

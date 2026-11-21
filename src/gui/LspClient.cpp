@@ -13,13 +13,18 @@
 #include <QUrl>
 #include <algorithm>
 
-namespace {
-QString uri(const QString& path) {
+QString LspClient::fileUri(const QString& path) const {
+    if (!transport_.program.isEmpty()) {
+        QUrl url;
+        url.setScheme("file");
+        url.setPath(path);
+        return url.toString(QUrl::FullyEncoded);
+    }
     return QUrl::fromLocalFile(QFileInfo(path).absoluteFilePath()).toString(QUrl::FullyEncoded);
-}
 }
 
 LspClient::LspClient(QObject* parent) : QObject(parent) {
+    tree_.configure(server_);
     completionRetry_.setSingleShot(true);
     completionRetry_.setInterval(450);
     connect(&completionRetry_, &QTimer::timeout, this, [this] {
@@ -31,8 +36,20 @@ LspClient::LspClient(QObject* parent) : QObject(parent) {
         completionRetries_ = remaining - 1;
     });
     shutdownDeadline_.setSingleShot(true);
-    connect(&shutdownDeadline_, &QTimer::timeout, this, [this] { server_.kill(); });
-    connect(&server_, &QProcess::started, this, &LspClient::initialize);
+    connect(&shutdownDeadline_, &QTimer::timeout, this, [this] {
+        tree_.terminate();
+        server_.kill();
+    });
+    connect(&server_, &QProcess::started, this, [this] {
+        QString error;
+        if (!tree_.attach(server_.processId(), error)) {
+            server_.kill();
+            if (status_)
+                status_(error);
+            return;
+        }
+        initialize();
+    });
     connect(&server_, &QProcess::readyReadStandardError, this, [this] {
         const auto text = QString::fromUtf8(server_.readAllStandardError()).left(8192);
         if (status_ && !text.isEmpty())
@@ -53,6 +70,7 @@ LspClient::LspClient(QObject* parent) : QObject(parent) {
     });
     connect(&server_, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished), this,
             [this](int code, QProcess::ExitStatus) {
+                tree_.reset();
                 shutdownDeadline_.stop();
                 initialized_ = false;
                 stopping_ = false;
@@ -79,6 +97,7 @@ LspClient::~LspClient() {
     shutdownDeadline_.stop();
     server_.disconnect(this);
     if (active()) {
+        tree_.terminate();
         server_.kill();
         server_.waitForFinished(1500);
     }
@@ -95,7 +114,7 @@ void LspClient::notification(const QString& method, const QJsonObject& params) {
 
 void LspClient::initialize() {
     initializeRequest_ = nextRequest_++;
-    const auto root = uri(workspace_);
+    const auto root = fileUri(workspace_);
     const QJsonObject capabilities{
         {"general", QJsonObject{{"positionEncodings", QJsonArray{"utf-16"}}}},
         {"textDocument",
@@ -116,11 +135,14 @@ void LspClient::initialize() {
     send({{"jsonrpc", "2.0"},
           {"id", initializeRequest_},
           {"method", "initialize"},
-          {"params", QJsonObject{{"processId", static_cast<qint64>(QCoreApplication::applicationPid())},
-                                 {"rootUri", root},
-                                 {"capabilities", capabilities},
-                                 {"initializationOptions", initializationOptions_},
-                                 {"clientInfo", QJsonObject{{"name", "Veyra IDE"}, {"version", "2.0"}}}}}});
+          {"params",
+           QJsonObject{{"processId", transport_.program.isEmpty()
+                                         ? QJsonValue(static_cast<qint64>(QCoreApplication::applicationPid()))
+                                         : QJsonValue(QJsonValue::Null)},
+                       {"rootUri", root},
+                       {"capabilities", capabilities},
+                       {"initializationOptions", initializationOptions_},
+                       {"clientInfo", QJsonObject{{"name", "Veyra IDE"}}}}}});
 }
 
 void LspClient::opened(const QString& name) {
@@ -287,18 +309,23 @@ bool LspClient::startFile(const QString& path, const QString& text, const ts::La
                           std::function<void(const QString&, int, const QString&)> diagnostic) {
     if (path.isEmpty())
         return false;
+    const bool remote = !transport_.program.isEmpty();
     const auto key = "lsp/" + QString::fromStdString(language.lspId) + "/command";
     QString command = QSettings().value(key).toString().trimmed();
     if (command.isEmpty())
         command = QString::fromStdString(language.suggestedServer);
     auto words = QProcess::splitCommand(command);
+    if (remote)
+        words = QStringList{transport_.program} + transport_.arguments;
     const auto root = ts::findCMakeRoot(path.toStdString());
     QString workspace = root.empty() ? QFileInfo(path).absolutePath() : QString::fromStdString(root);
     const auto projectRoot = QSettings().value("workspace/root").toString();
     if (!projectRoot.isEmpty() &&
         QFileInfo(path).absoluteFilePath().startsWith(QDir(projectRoot).absolutePath() + '/'))
         workspace = QDir(projectRoot).absolutePath();
-    if (!words.isEmpty() && QFileInfo(words.first()).baseName().startsWith("clangd")) {
+    if (remote)
+        workspace = transport_.workspace;
+    if (!remote && !words.isEmpty() && QFileInfo(words.first()).baseName().startsWith("clangd")) {
         QString database = QSettings().value("lsp/cpp/compileCommands").toString();
         if (database.isEmpty() && !root.empty()) {
             const auto prefix =
@@ -395,14 +422,15 @@ bool LspClient::startFile(const QString& path, const QString& text, const ts::La
     status_ = std::move(status);
     completions_ = std::move(completions);
     diagnostic_ = std::move(diagnostic);
-    if (words.isEmpty() || ToolDiscovery::server(words.first()).isEmpty()) {
+    if (words.isEmpty() ||
+        (remote ? ToolDiscovery::find(words.first()) : ToolDiscovery::server(words.first())).isEmpty()) {
         if (status_)
             status_("LSP disabled: required server not found: " +
                     (words.isEmpty() ? QString::fromStdString(language.name) : words.first()));
         return false;
     }
     cancelCompletion();
-    documentUri_ = uri(path);
+    documentUri_ = fileUri(path);
     languageId_ = QString::fromStdString(language.lspId);
     if (documents_.contains(documentUri_)) {
         changeText(text);
@@ -417,12 +445,13 @@ bool LspClient::startFile(const QString& path, const QString& text, const ts::La
     const auto profilePlan = ts::buildPlanFor(
         "file." + (language.extensions.empty() ? std::string("txt") : language.extensions[0]),
         ".veyra/build");
-    const auto sdk = ToolDiscovery::projectSdk();
-    const auto compiler = ToolDiscovery::compiler(QString::fromStdString(language.lspId),
-                                                  QString::fromStdString(profilePlan.build.program));
+    const auto sdkRoot = remote ? transport_.sdkRoot : ToolDiscovery::projectSdk().root;
+    const auto compiler = remote ? QString()
+                                 : ToolDiscovery::compiler(QString::fromStdString(language.lspId),
+                                                           QString::fromStdString(profilePlan.build.program));
     const std::function<QJsonValue(const QJsonValue&)> expand = [&](const QJsonValue& value) -> QJsonValue {
         if (value.isString())
-            return value.toString().replace("{sdk}", sdk.root).replace("{compiler}", compiler);
+            return value.toString().replace("{sdk}", sdkRoot).replace("{compiler}", compiler);
         if (value.isArray()) {
             QJsonArray array;
             for (const auto& item : value.toArray())
@@ -450,10 +479,11 @@ bool LspClient::startFile(const QString& path, const QString& text, const ts::La
     stopping_ = false;
     nextRequest_ = 1;
     shutdownRequest_ = -1;
-    server_.setWorkingDirectory(workspace_);
+    server_.setWorkingDirectory(remote ? QDir::homePath() : workspace_);
     server_.setProcessChannelMode(QProcess::SeparateChannels);
     server_.setProcessEnvironment(ToolDiscovery::environment());
-    server_.start(ToolDiscovery::server(words.first()), words.mid(1));
+    server_.start(remote ? ToolDiscovery::find(words.first()) : ToolDiscovery::server(words.first()),
+                  words.mid(1));
     return true;
 }
 
@@ -475,7 +505,7 @@ void LspClient::changeText(const QString& text) {
 }
 
 void LspClient::saveFile(const QString& path, const QString& text) {
-    const auto name = uri(path);
+    const auto name = fileUri(path);
     if (!documents_.contains(name) || !ready())
         return;
     if (name == documentUri_)
@@ -484,7 +514,7 @@ void LspClient::saveFile(const QString& path, const QString& text) {
 }
 
 void LspClient::closeFile(const QString& path) {
-    const auto name = uri(path);
+    const auto name = fileUri(path);
     if (documents_.contains(name) && documents_[name].opened)
         notification("textDocument/didClose", {{"textDocument", QJsonObject{{"uri", name}}}});
     documents_.remove(name);
@@ -550,6 +580,6 @@ void LspClient::requestDocument(const QString& method, int line, int column, con
 }
 
 int LspClient::documentVersion(const QString& path) const {
-    const auto found = documents_.constFind(uri(path));
+    const auto found = documents_.constFind(fileUri(path));
     return found == documents_.cend() ? -1 : found->version;
 }
