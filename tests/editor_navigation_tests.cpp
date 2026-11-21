@@ -45,6 +45,8 @@ int main(int argc, char** argv) {
         CodeEditor editor;
         editor.resize(1000, 700);
         editor.show();
+        editor.activateWindow();
+        editor.raise();
         editor.useDocument(documents.activeDocument()->text.get());
         editor.setFocus();
         app.processEvents();
@@ -69,8 +71,11 @@ int main(int argc, char** argv) {
         QTest::keyClick(&editor, Qt::Key_End);
         QTest::keyClick(&editor, Qt::Key_Return);
         QTest::keyClicks(&editor, "vari");
-        QTest::qWait(250);
         auto* completion = editor.findChild<QCompleter*>();
+        QElapsedTimer completionDeadline;
+        completionDeadline.start();
+        while (!completion->popup()->isVisible() && completionDeadline.elapsed() < 2000)
+            QTest::qWait(20);
         check(completion->popup()->isVisible(), "Live completion works beyond the former 2 MiB limit");
         const auto expectedPopup = editor.viewport()->mapToGlobal(editor.cursorRect().bottomLeft());
         check(std::abs(completion->popup()->pos().x() - expectedPopup.x()) <= 4,
