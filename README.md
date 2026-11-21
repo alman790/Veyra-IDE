@@ -13,7 +13,9 @@
   <a href="#contributing"><img src="https://img.shields.io/badge/Contributions-welcome-22A699?style=flat-square" alt="Contributions welcome"></a>
 </p>
 
-Veyra is a desktop IDE built with C++20 and Qt 6. It connects the editor to local SDKs and language servers, builds and runs projects, and provides native debugging through LLDB. Code completion and thread review can also use a small model bundled with the application.
+Veyra is a native IDE for code, live thread feedback and local AI. Its C++/Qt interface runs without Electron, and the bundled Qwen model works in-process: no account, API key or model server is needed for local assistance. Connect your SDK and language server for semantic editing, build projects, and debug with LLDB.
+
+The bundled model is approximately 491 MB. Thread feedback combines source heuristics with optional model ranking; it does not prove the absence of data races.
 
 ## Screenshots
 
@@ -31,10 +33,10 @@ Download a package from [Releases](https://github.com/alman790/Veyra-IDE/release
 
 | Platform | Package |
 | --- | --- |
-| Windows x86-64 | [Installer](https://github.com/alman790/Veyra-IDE/releases/download/v2.0.0/VeyraIDE-2.0.0-windows-x86_64-setup.exe) · [ZIP](https://github.com/alman790/Veyra-IDE/releases/download/v2.0.0/VeyraIDE-2.0.0-windows-x86_64.zip) |
-| macOS Apple Silicon | [DMG](https://github.com/alman790/Veyra-IDE/releases/download/v2.0.0/VeyraIDE-2.0.0-macos-arm64.dmg) · [PKG](https://github.com/alman790/Veyra-IDE/releases/download/v2.0.0/VeyraIDE-2.0.0-macos-arm64.pkg) |
-| macOS Intel | [DMG](https://github.com/alman790/Veyra-IDE/releases/download/v2.0.0/VeyraIDE-2.0.0-macos-x86_64.dmg) · [PKG](https://github.com/alman790/Veyra-IDE/releases/download/v2.0.0/VeyraIDE-2.0.0-macos-x86_64.pkg) |
-| Linux x86-64 | [DEB](https://github.com/alman790/Veyra-IDE/releases/download/v2.0.0/VeyraIDE-2.0.0-linux-x86_64.deb) · [RPM](https://github.com/alman790/Veyra-IDE/releases/download/v2.0.0/VeyraIDE-2.0.0-linux-x86_64.rpm) · [tar.gz](https://github.com/alman790/Veyra-IDE/releases/download/v2.0.0/VeyraIDE-2.0.0-linux-x86_64.tar.gz) |
+| Windows x86-64 | [Installer](https://github.com/alman790/Veyra-IDE/releases/download/v2.1.0/VeyraIDE-2.1.0-windows-x86_64-setup.exe) · [ZIP](https://github.com/alman790/Veyra-IDE/releases/download/v2.1.0/VeyraIDE-2.1.0-windows-x86_64.zip) |
+| macOS Apple Silicon | [DMG](https://github.com/alman790/Veyra-IDE/releases/download/v2.1.0/VeyraIDE-2.1.0-macos-arm64.dmg) · [PKG](https://github.com/alman790/Veyra-IDE/releases/download/v2.1.0/VeyraIDE-2.1.0-macos-arm64.pkg) |
+| macOS Intel | [DMG](https://github.com/alman790/Veyra-IDE/releases/download/v2.1.0/VeyraIDE-2.1.0-macos-x86_64.dmg) · [PKG](https://github.com/alman790/Veyra-IDE/releases/download/v2.1.0/VeyraIDE-2.1.0-macos-x86_64.pkg) |
+| Linux x86-64 | [DEB](https://github.com/alman790/Veyra-IDE/releases/download/v2.1.0/VeyraIDE-2.1.0-linux-x86_64.deb) · [RPM](https://github.com/alman790/Veyra-IDE/releases/download/v2.1.0/VeyraIDE-2.1.0-linux-x86_64.rpm) · [tar.gz](https://github.com/alman790/Veyra-IDE/releases/download/v2.1.0/VeyraIDE-2.1.0-linux-x86_64.tar.gz) |
 
 Verify downloads against `SHA256SUMS.txt` attached to the release. Linux packages use system Qt libraries and were built on Ubuntu 24.04. macOS bundles are ad-hoc signed, not notarized; Windows installers are not code-signed. SDKs, language servers, and LLDB adapters are connected separately.
 
