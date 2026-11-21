@@ -143,6 +143,7 @@ int smoke(const QString& executable, const QString& platform) {
             QJsonObject{{"id", 1}, {"operation", "connect"}, {"driver", "QSQLITE"}, {"database", ":memory:"}})
             .toJson(QJsonDocument::Compact) +
         '\n');
+    database.waitForBytesWritten(5000);
     QByteArray reply;
     QElapsedTimer deadline;
     deadline.start();
@@ -157,7 +158,8 @@ int smoke(const QString& executable, const QString& platform) {
         database.waitForFinished(1000);
     }
     if (!sqlReady) {
-        QTextStream(stderr) << "Packaged SQLite worker failed: " << reply << '\n';
+        QTextStream(stderr) << "Packaged SQLite worker failed (" << database.exitCode() << "): " << reply
+                            << database.readAllStandardError() << '\n';
         return 1;
     }
     QTextStream(stdout) << "PASS: GUI and packaged SQLite driver: " << executable << '\n';

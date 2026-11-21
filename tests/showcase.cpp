@@ -7,10 +7,13 @@
 #include <QFile>
 #include <QLabel>
 #include <QPainter>
+#include <QScopeGuard>
 #include <QSettings>
+#include <QStandardPaths>
 #include <QTemporaryDir>
 #include <QTest>
 #include <QTimer>
+#include <QUuid>
 #include <iostream>
 #include <stdexcept>
 
@@ -18,8 +21,10 @@
 int main(int argc, char** argv) {
     QApplication app(argc, argv);
     app.setOrganizationName("VeyraTests");
-    app.setApplicationName("Showcase");
-    QTemporaryDir workspace;
+    app.setApplicationName("Showcase-" + QUuid::createUuid().toString(QUuid::Id128));
+    const auto sessionDirectory = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
+    const auto cleanup = qScopeGuard([&] { QDir(sessionDirectory).removeRecursively(); });
+    QTemporaryDir workspace(QDir::tempPath() + "/veyra-workspace-XXXXXX");
     QSettings::setDefaultFormat(QSettings::IniFormat);
     QSettings::setPath(QSettings::IniFormat, QSettings::UserScope, workspace.path());
     QSettings().setValue("workspace/root", workspace.path());
