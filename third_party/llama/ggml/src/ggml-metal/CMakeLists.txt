@@ -119,8 +119,8 @@ if (GGML_METAL_EMBED_LIBRARY)
             COMMAND cat ${HEADERS_FOR_SRC} ${SRC} > "${EMBED}.tmp1"
             # Step 2: remove internal #include and #pragma once
             COMMAND sed -e "/\#include \"common.h\"/d" -e "/\#include \"dequantize.h\"/d" -e "/\#include \"quantize.h\"/d" -e "/\#include \"fa_common.metal\"/d" -e "/\#include \"fa_vec_common.metal\"/d" -e "/\#pragma once/d" < "${EMBED}.tmp1" > "${EMBED}.tmp2"
-            # Step 3: inline ggml-common.h (replacing __embed_ggml-common.h__ sentinel)
-            COMMAND sed -e "/__embed_ggml-common.h__/r ${METALLIB_COMMON}" -e "/__embed_ggml-common.h__/d" < "${EMBED}.tmp2" > "${EMBED}.tmp3"
+            # Step 3: inline ggml-common.h (replacing __embed_ggml_common_h__ sentinel)
+            COMMAND sed -e "/__embed_ggml_common_h__/r ${METALLIB_COMMON}" -e "/__embed_ggml_common_h__/d" < "${EMBED}.tmp2" > "${EMBED}.tmp3"
             # Step 4: inline ggml-metal-impl.h
             COMMAND sed -e "/\#include \"ggml-metal-impl.h\"/r ${METALLIB_IMPL}" -e "/\#include \"ggml-metal-impl.h\"/d" < "${EMBED}.tmp3" > "${EMBED}"
             # Step 5: emit an asm chunk with kind-specific start/end symbols

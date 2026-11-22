@@ -660,5 +660,6 @@
   "Экспортирует отображаемые значения, включая сокращения и обозначения двоичных данных.": "Exports displayed values, including truncation and binary markers.",
   "Эту ячейку нельзя редактировать.": "This cell cannot be edited.",
   "Таблицы": "Tables",
-  "SQL-консоль": "SQL console"
+  "SQL-консоль": "SQL console",
+  "Не удалось токенизировать запрос локальной модели.": "Unable to tokenize the local model request."
 }

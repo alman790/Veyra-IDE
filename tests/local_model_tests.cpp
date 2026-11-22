@@ -1,4 +1,5 @@
 #include "ts/LocalCodeModel.hpp"
+#include <atomic>
 #include <chrono>
 #include <iostream>
 #include <regex>
@@ -11,6 +12,25 @@ int main() {
     if (result.empty() || result.find("```") != std::string::npos ||
         result.find("def add") != std::string::npos)
         return 1;
+    const auto repeated =
+        ts::LocalCodeModel::complete("def add(a, b):\n    return a", "\n", "Python", [] { return false; });
+    if (repeated != result || ts::LocalCodeModel::metrics().cachedTokens <= 0)
+        return 4;
+    const auto cpp = ts::LocalCodeModel::complete("int add(int a, int b) {\n    return a", "\n}\n", "C++",
+                                                  [] { return false; });
+    if (cpp.empty() || cpp.find('}') != std::string::npos || cpp.find("b") == std::string::npos)
+        return 5;
+    if (ts::LocalCodeModel::generate(
+            "Answer briefly.", "Reply with READY.", 8, [] { return false; }, {}, 8192)
+            .empty())
+        return 6;
+    std::atomic<int> checks{0};
+    ts::LocalCodeModel::generate("Continue the source.", std::string(3000, 'x'), 48,
+                                 [&] { return ++checks > 8; });
+    const auto afterCancel =
+        ts::LocalCodeModel::complete("def add(a, b):\n    return a", "\n", "Python", [] { return false; });
+    if (afterCancel != result)
+        return 7;
     if (!ts::LocalCodeModel::complete("x", "", "text", [] { return true; }).empty())
         return 2;
     const auto choice = ts::LocalCodeModel::choose(

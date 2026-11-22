@@ -1,0 +1,1116 @@
+{
+  "measured_on": "2026-11-22",
+  "hardware": {
+    "cpu": "Apple M1",
+    "memory_bytes": 8589934592
+  },
+  "base_model": {
+    "model": "Qwen/Qwen2.5-Coder-0.5B-Instruct-GGUF",
+    "revision": "ebb2015119c907b064c512bf053e945850b5875f",
+    "filename": "qwen2.5-coder-0.5b-instruct-q4_k_m.gguf",
+    "sha256": "1d9614638d18024d0fbb36575a15f1302a3adf044df10345688ec4f6e1c4ff32",
+    "bytes": 491400064,
+    "license": "Apache-2.0",
+    "runtime": {
+      "repository": "https://github.com/ggml-org/llama.cpp",
+      "revision": "2d8a32502909ca065c41c4cf5f2fb1c427c047fc",
+      "license": "MIT",
+      "local_patches": [
+        "Format-safe sentinel for embedded Metal headers in ggml-metal/kernels/dequantize.h and ggml-metal/CMakeLists.txt."
+      ]
+    }
+  },
+  "baseline_source_revision": "e7b83a71036297325db10c70c1a4098f08925e7d",
+  "methodology": {
+    "requests": "16 fixed completion cases, two sequential rounds per executable",
+    "scoring": "Whitespace-normalized exact expected continuation; first round only",
+    "timing": "Wall time per request, including the first in-process call. OS file/shader caches were not controlled. No UI debounce is included.",
+    "limits": "Small fixture of short functions. Exact match does not measure general code correctness; equivalent implementations may fail the comparison.",
+    "base_weights_changed": false
+  },
+  "baseline_cpu": {
+    "cases": 16,
+    "exact": 5,
+    "median_ms": 366.735333,
+    "p95_ms": 574.779541,
+    "runs": [
+      {
+        "before": "def add(a, b):\n    return a",
+        "exact": true,
+        "language": "Python",
+        "milliseconds": 821.942375,
+        "output": " + b",
+        "round": 0
+      },
+      {
+        "before": "def subtract(left, right):\n    return left",
+        "exact": true,
+        "language": "Python",
+        "milliseconds": 333.656042,
+        "output": " - right",
+        "round": 0
+      },
+      {
+        "before": "def multiply(x, y):\n    return x",
+        "exact": true,
+        "language": "Python",
+        "milliseconds": 329.689416,
+        "output": " * y",
+        "round": 0
+      },
+      {
+        "before": "def is_empty(items):\n    return len(items)",
+        "exact": true,
+        "language": "Python",
+        "milliseconds": 306.522209,
+        "output": " == 0",
+        "round": 0
+      },
+      {
+        "before": "def maximum(a, b):\n    return a if a > b else ",
+        "exact": true,
+        "language": "Python",
+        "milliseconds": 366.735333,
+        "output": "b",
+        "round": 0
+      },
+      {
+        "before": "int add(int a, int b) {\n    return a",
+        "exact": false,
+        "language": "C++",
+        "milliseconds": 404.098125,
+        "output": " + b;\n}",
+        "round": 0
+      },
+      {
+        "before": "int square(int value) {\n    return value",
+        "exact": false,
+        "language": "C++",
+        "milliseconds": 383.583959,
+        "output": " * value;\n}",
+        "round": 0
+      },
+      {
+        "before": "bool empty(const std::vector<int>& items) {\n    return items.",
+        "exact": false,
+        "language": "C++",
+        "milliseconds": 391.81825,
+        "output": "empty();\n}",
+        "round": 0
+      },
+      {
+        "before": "function add(a, b) {\n    return a",
+        "exact": false,
+        "language": "JavaScript",
+        "milliseconds": 327.126208,
+        "output": " + b;\n}",
+        "round": 0
+      },
+      {
+        "before": "function square(value) {\n    return value",
+        "exact": false,
+        "language": "JavaScript",
+        "milliseconds": 291.807542,
+        "output": " * value\n}",
+        "round": 0
+      },
+      {
+        "before": "function subtract(a: number, b: number): number {\n    return a",
+        "exact": false,
+        "language": "TypeScript",
+        "milliseconds": 361.867417,
+        "output": " - b;\n}",
+        "round": 0
+      },
+      {
+        "before": "static int add(int a, int b) {\n    return a",
+        "exact": false,
+        "language": "Java",
+        "milliseconds": 380.376,
+        "output": " + b;\n}",
+        "round": 0
+      },
+      {
+        "before": "func add(a int, b int) int {\n    return a",
+        "exact": false,
+        "language": "Go",
+        "milliseconds": 379.5945,
+        "output": " + b\n}",
+        "round": 0
+      },
+      {
+        "before": "fn add(a: i32, b: i32) -> i32 {\n    a",
+        "exact": false,
+        "language": "Rust",
+        "milliseconds": 426.954834,
+        "output": " + b\n}",
+        "round": 0
+      },
+      {
+        "before": "def add(a, b)\n  a",
+        "exact": false,
+        "language": "Ruby",
+        "milliseconds": 347.270458,
+        "output": " + b\nend",
+        "round": 0
+      },
+      {
+        "before": "static int Add(int a, int b) {\n    return a",
+        "exact": false,
+        "language": "C#",
+        "milliseconds": 391.200583,
+        "output": " + b;\n}",
+        "round": 0
+      },
+      {
+        "before": "def add(a, b):\n    return a",
+        "exact": true,
+        "language": "Python",
+        "milliseconds": 351.356791,
+        "output": " + b",
+        "round": 1
+      },
+      {
+        "before": "def subtract(left, right):\n    return left",
+        "exact": true,
+        "language": "Python",
+        "milliseconds": 332.116417,
+        "output": " - right",
+        "round": 1
+      },
+      {
+        "before": "def multiply(x, y):\n    return x",
+        "exact": true,
+        "language": "Python",
+        "milliseconds": 328.034208,
+        "output": " * y",
+        "round": 1
+      },
+      {
+        "before": "def is_empty(items):\n    return len(items)",
+        "exact": true,
+        "language": "Python",
+        "milliseconds": 299.902417,
+        "output": " == 0",
+        "round": 1
+      },
+      {
+        "before": "def maximum(a, b):\n    return a if a > b else ",
+        "exact": true,
+        "language": "Python",
+        "milliseconds": 369.115625,
+        "output": "b",
+        "round": 1
+      },
+      {
+        "before": "int add(int a, int b) {\n    return a",
+        "exact": false,
+        "language": "C++",
+        "milliseconds": 373.841625,
+        "output": " + b;\n}",
+        "round": 1
+      },
+      {
+        "before": "int square(int value) {\n    return value",
+        "exact": false,
+        "language": "C++",
+        "milliseconds": 333.728792,
+        "output": " * value;\n}",
+        "round": 1
+      },
+      {
+        "before": "bool empty(const std::vector<int>& items) {\n    return items.",
+        "exact": false,
+        "language": "C++",
+        "milliseconds": 383.431917,
+        "output": "empty();\n}",
+        "round": 1
+      },
+      {
+        "before": "function add(a, b) {\n    return a",
+        "exact": false,
+        "language": "JavaScript",
+        "milliseconds": 308.172334,
+        "output": " + b;\n}",
+        "round": 1
+      },
+      {
+        "before": "function square(value) {\n    return value",
+        "exact": false,
+        "language": "JavaScript",
+        "milliseconds": 289.274833,
+        "output": " * value\n}",
+        "round": 1
+      },
+      {
+        "before": "function subtract(a: number, b: number): number {\n    return a",
+        "exact": false,
+        "language": "TypeScript",
+        "milliseconds": 357.496375,
+        "output": " - b;\n}",
+        "round": 1
+      },
+      {
+        "before": "static int add(int a, int b) {\n    return a",
+        "exact": false,
+        "language": "Java",
+        "milliseconds": 385.275,
+        "output": " + b;\n}",
+        "round": 1
+      },
+      {
+        "before": "func add(a int, b int) int {\n    return a",
+        "exact": false,
+        "language": "Go",
+        "milliseconds": 397.587625,
+        "output": " + b\n}",
+        "round": 1
+      },
+      {
+        "before": "fn add(a: i32, b: i32) -> i32 {\n    a",
+        "exact": false,
+        "language": "Rust",
+        "milliseconds": 433.426042,
+        "output": " + b\n}",
+        "round": 1
+      },
+      {
+        "before": "def add(a, b)\n  a",
+        "exact": false,
+        "language": "Ruby",
+        "milliseconds": 293.130125,
+        "output": " + b\nend",
+        "round": 1
+      },
+      {
+        "before": "static int Add(int a, int b) {\n    return a",
+        "exact": false,
+        "language": "C#",
+        "milliseconds": 574.779541,
+        "output": " + b;\n}",
+        "round": 1
+      }
+    ]
+  },
+  "optimized_cpu": {
+    "cases": 16,
+    "exact": 13,
+    "median_ms": 88.946875,
+    "p95_ms": 140.239375,
+    "runs": [
+      {
+        "backend": "cpu",
+        "before": "def add(a, b):\n    return a",
+        "cached_tokens": 0,
+        "exact": true,
+        "generated_tokens": 3,
+        "language": "Python",
+        "milliseconds": 448.3625,
+        "output": " + b",
+        "prompt_tokens": 13,
+        "round": 0
+      },
+      {
+        "backend": "cpu",
+        "before": "def subtract(left, right):\n    return left",
+        "cached_tokens": 2,
+        "exact": true,
+        "generated_tokens": 3,
+        "language": "Python",
+        "milliseconds": 75.813875,
+        "output": " - right",
+        "prompt_tokens": 13,
+        "round": 0
+      },
+      {
+        "backend": "cpu",
+        "before": "def multiply(x, y):\n    return x",
+        "cached_tokens": 2,
+        "exact": true,
+        "generated_tokens": 3,
+        "language": "Python",
+        "milliseconds": 77.607708,
+        "output": " * y",
+        "prompt_tokens": 13,
+        "round": 0
+      },
+      {
+        "backend": "cpu",
+        "before": "def is_empty(items):\n    return len(items)",
+        "cached_tokens": 2,
+        "exact": false,
+        "generated_tokens": 1,
+        "language": "Python",
+        "milliseconds": 59.626916,
+        "output": "",
+        "prompt_tokens": 14,
+        "round": 0
+      },
+      {
+        "backend": "cpu",
+        "before": "def maximum(a, b):\n    return a if a > b else ",
+        "cached_tokens": 2,
+        "exact": true,
+        "generated_tokens": 2,
+        "language": "Python",
+        "milliseconds": 86.239416,
+        "output": "b",
+        "prompt_tokens": 19,
+        "round": 0
+      },
+      {
+        "backend": "cpu",
+        "before": "int add(int a, int b) {\n    return a",
+        "cached_tokens": 1,
+        "exact": true,
+        "generated_tokens": 3,
+        "language": "C++",
+        "milliseconds": 98.287,
+        "output": " + b;",
+        "prompt_tokens": 17,
+        "round": 0
+      },
+      {
+        "backend": "cpu",
+        "before": "int square(int value) {\n    return value",
+        "cached_tokens": 2,
+        "exact": true,
+        "generated_tokens": 3,
+        "language": "C++",
+        "milliseconds": 77.928459,
+        "output": " * value;",
+        "prompt_tokens": 14,
+        "round": 0
+      },
+      {
+        "backend": "cpu",
+        "before": "bool empty(const std::vector<int>& items) {\n    return items.",
+        "cached_tokens": 1,
+        "exact": false,
+        "generated_tokens": 6,
+        "language": "C++",
+        "milliseconds": 133.535709,
+        "output": "size() == 0;",
+        "prompt_tokens": 20,
+        "round": 0
+      },
+      {
+        "backend": "cpu",
+        "before": "function add(a, b) {\n    return a",
+        "cached_tokens": 1,
+        "exact": true,
+        "generated_tokens": 3,
+        "language": "JavaScript",
+        "milliseconds": 87.394375,
+        "output": " + b;",
+        "prompt_tokens": 15,
+        "round": 0
+      },
+      {
+        "backend": "cpu",
+        "before": "function square(value) {\n    return value",
+        "cached_tokens": 2,
+        "exact": true,
+        "generated_tokens": 3,
+        "language": "JavaScript",
+        "milliseconds": 76.942459,
+        "output": " * value;",
+        "prompt_tokens": 13,
+        "round": 0
+      },
+      {
+        "backend": "cpu",
+        "before": "function subtract(a: number, b: number): number {\n    return a",
+        "cached_tokens": 2,
+        "exact": true,
+        "generated_tokens": 3,
+        "language": "TypeScript",
+        "milliseconds": 105.947417,
+        "output": " - b;",
+        "prompt_tokens": 20,
+        "round": 0
+      },
+      {
+        "backend": "cpu",
+        "before": "static int add(int a, int b) {\n    return a",
+        "cached_tokens": 1,
+        "exact": true,
+        "generated_tokens": 3,
+        "language": "Java",
+        "milliseconds": 99.712292,
+        "output": " + b;",
+        "prompt_tokens": 18,
+        "round": 0
+      },
+      {
+        "backend": "cpu",
+        "before": "func add(a int, b int) int {\n    return a",
+        "cached_tokens": 1,
+        "exact": true,
+        "generated_tokens": 3,
+        "language": "Go",
+        "milliseconds": 101.88625,
+        "output": " + b",
+        "prompt_tokens": 18,
+        "round": 0
+      },
+      {
+        "backend": "cpu",
+        "before": "fn add(a: i32, b: i32) -> i32 {\n    a",
+        "cached_tokens": 1,
+        "exact": true,
+        "generated_tokens": 3,
+        "language": "Rust",
+        "milliseconds": 133.098375,
+        "output": " + b",
+        "prompt_tokens": 26,
+        "round": 0
+      },
+      {
+        "backend": "cpu",
+        "before": "def add(a, b)\n  a",
+        "cached_tokens": 1,
+        "exact": false,
+        "generated_tokens": 2,
+        "language": "Ruby",
+        "milliseconds": 74.660458,
+        "output": "b",
+        "prompt_tokens": 14,
+        "round": 0
+      },
+      {
+        "backend": "cpu",
+        "before": "static int Add(int a, int b) {\n    return a",
+        "cached_tokens": 1,
+        "exact": true,
+        "generated_tokens": 3,
+        "language": "C#",
+        "milliseconds": 101.828334,
+        "output": " + b;",
+        "prompt_tokens": 18,
+        "round": 0
+      },
+      {
+        "backend": "cpu",
+        "before": "def add(a, b):\n    return a",
+        "cached_tokens": 1,
+        "exact": true,
+        "generated_tokens": 3,
+        "language": "Python",
+        "milliseconds": 78.502542,
+        "output": " + b",
+        "prompt_tokens": 13,
+        "round": 1
+      },
+      {
+        "backend": "cpu",
+        "before": "def subtract(left, right):\n    return left",
+        "cached_tokens": 2,
+        "exact": true,
+        "generated_tokens": 3,
+        "language": "Python",
+        "milliseconds": 74.39325,
+        "output": " - right",
+        "prompt_tokens": 13,
+        "round": 1
+      },
+      {
+        "backend": "cpu",
+        "before": "def multiply(x, y):\n    return x",
+        "cached_tokens": 2,
+        "exact": true,
+        "generated_tokens": 3,
+        "language": "Python",
+        "milliseconds": 82.62475,
+        "output": " * y",
+        "prompt_tokens": 13,
+        "round": 1
+      },
+      {
+        "backend": "cpu",
+        "before": "def is_empty(items):\n    return len(items)",
+        "cached_tokens": 2,
+        "exact": false,
+        "generated_tokens": 1,
+        "language": "Python",
+        "milliseconds": 60.124208,
+        "output": "",
+        "prompt_tokens": 14,
+        "round": 1
+      },
+      {
+        "backend": "cpu",
+        "before": "def maximum(a, b):\n    return a if a > b else ",
+        "cached_tokens": 2,
+        "exact": true,
+        "generated_tokens": 2,
+        "language": "Python",
+        "milliseconds": 86.088541,
+        "output": "b",
+        "prompt_tokens": 19,
+        "round": 1
+      },
+      {
+        "backend": "cpu",
+        "before": "int add(int a, int b) {\n    return a",
+        "cached_tokens": 1,
+        "exact": true,
+        "generated_tokens": 3,
+        "language": "C++",
+        "milliseconds": 91.276,
+        "output": " + b;",
+        "prompt_tokens": 17,
+        "round": 1
+      },
+      {
+        "backend": "cpu",
+        "before": "int square(int value) {\n    return value",
+        "cached_tokens": 2,
+        "exact": true,
+        "generated_tokens": 3,
+        "language": "C++",
+        "milliseconds": 76.338917,
+        "output": " * value;",
+        "prompt_tokens": 14,
+        "round": 1
+      },
+      {
+        "backend": "cpu",
+        "before": "bool empty(const std::vector<int>& items) {\n    return items.",
+        "cached_tokens": 1,
+        "exact": false,
+        "generated_tokens": 6,
+        "language": "C++",
+        "milliseconds": 140.239375,
+        "output": "size() == 0;",
+        "prompt_tokens": 20,
+        "round": 1
+      },
+      {
+        "backend": "cpu",
+        "before": "function add(a, b) {\n    return a",
+        "cached_tokens": 1,
+        "exact": true,
+        "generated_tokens": 3,
+        "language": "JavaScript",
+        "milliseconds": 88.946875,
+        "output": " + b;",
+        "prompt_tokens": 15,
+        "round": 1
+      },
+      {
+        "backend": "cpu",
+        "before": "function square(value) {\n    return value",
+        "cached_tokens": 2,
+        "exact": true,
+        "generated_tokens": 3,
+        "language": "JavaScript",
+        "milliseconds": 75.145542,
+        "output": " * value;",
+        "prompt_tokens": 13,
+        "round": 1
+      },
+      {
+        "backend": "cpu",
+        "before": "function subtract(a: number, b: number): number {\n    return a",
+        "cached_tokens": 2,
+        "exact": true,
+        "generated_tokens": 3,
+        "language": "TypeScript",
+        "milliseconds": 101.677084,
+        "output": " - b;",
+        "prompt_tokens": 20,
+        "round": 1
+      },
+      {
+        "backend": "cpu",
+        "before": "static int add(int a, int b) {\n    return a",
+        "cached_tokens": 1,
+        "exact": true,
+        "generated_tokens": 3,
+        "language": "Java",
+        "milliseconds": 96.05275,
+        "output": " + b;",
+        "prompt_tokens": 18,
+        "round": 1
+      },
+      {
+        "backend": "cpu",
+        "before": "func add(a int, b int) int {\n    return a",
+        "cached_tokens": 1,
+        "exact": true,
+        "generated_tokens": 3,
+        "language": "Go",
+        "milliseconds": 98.008125,
+        "output": " + b",
+        "prompt_tokens": 18,
+        "round": 1
+      },
+      {
+        "backend": "cpu",
+        "before": "fn add(a: i32, b: i32) -> i32 {\n    a",
+        "cached_tokens": 1,
+        "exact": true,
+        "generated_tokens": 3,
+        "language": "Rust",
+        "milliseconds": 126.709416,
+        "output": " + b",
+        "prompt_tokens": 26,
+        "round": 1
+      },
+      {
+        "backend": "cpu",
+        "before": "def add(a, b)\n  a",
+        "cached_tokens": 1,
+        "exact": false,
+        "generated_tokens": 2,
+        "language": "Ruby",
+        "milliseconds": 70.225125,
+        "output": "b",
+        "prompt_tokens": 14,
+        "round": 1
+      },
+      {
+        "backend": "cpu",
+        "before": "static int Add(int a, int b) {\n    return a",
+        "cached_tokens": 1,
+        "exact": true,
+        "generated_tokens": 3,
+        "language": "C#",
+        "milliseconds": 95.470667,
+        "output": " + b;",
+        "prompt_tokens": 18,
+        "round": 1
+      }
+    ]
+  },
+  "optimized_metal": {
+    "cases": 16,
+    "exact": 13,
+    "median_ms": 63.293542,
+    "p95_ms": 101.213416,
+    "runs": [
+      {
+        "backend": "metal",
+        "before": "def add(a, b):\n    return a",
+        "cached_tokens": 0,
+        "exact": true,
+        "generated_tokens": 3,
+        "language": "Python",
+        "milliseconds": 458.48325,
+        "output": " + b",
+        "prompt_tokens": 13,
+        "round": 0
+      },
+      {
+        "backend": "metal",
+        "before": "def subtract(left, right):\n    return left",
+        "cached_tokens": 2,
+        "exact": true,
+        "generated_tokens": 3,
+        "language": "Python",
+        "milliseconds": 55.80625,
+        "output": " - right",
+        "prompt_tokens": 13,
+        "round": 0
+      },
+      {
+        "backend": "metal",
+        "before": "def multiply(x, y):\n    return x",
+        "cached_tokens": 2,
+        "exact": true,
+        "generated_tokens": 3,
+        "language": "Python",
+        "milliseconds": 55.67475,
+        "output": " * y",
+        "prompt_tokens": 13,
+        "round": 0
+      },
+      {
+        "backend": "metal",
+        "before": "def is_empty(items):\n    return len(items)",
+        "cached_tokens": 2,
+        "exact": false,
+        "generated_tokens": 1,
+        "language": "Python",
+        "milliseconds": 47.112,
+        "output": "",
+        "prompt_tokens": 14,
+        "round": 0
+      },
+      {
+        "backend": "metal",
+        "before": "def maximum(a, b):\n    return a if a > b else ",
+        "cached_tokens": 2,
+        "exact": true,
+        "generated_tokens": 2,
+        "language": "Python",
+        "milliseconds": 51.799125,
+        "output": "b",
+        "prompt_tokens": 19,
+        "round": 0
+      },
+      {
+        "backend": "metal",
+        "before": "int add(int a, int b) {\n    return a",
+        "cached_tokens": 1,
+        "exact": true,
+        "generated_tokens": 3,
+        "language": "C++",
+        "milliseconds": 59.719792,
+        "output": " + b;",
+        "prompt_tokens": 17,
+        "round": 0
+      },
+      {
+        "backend": "metal",
+        "before": "int square(int value) {\n    return value",
+        "cached_tokens": 2,
+        "exact": true,
+        "generated_tokens": 3,
+        "language": "C++",
+        "milliseconds": 58.169042,
+        "output": " * value;",
+        "prompt_tokens": 14,
+        "round": 0
+      },
+      {
+        "backend": "metal",
+        "before": "bool empty(const std::vector<int>& items) {\n    return items.",
+        "cached_tokens": 1,
+        "exact": false,
+        "generated_tokens": 6,
+        "language": "C++",
+        "milliseconds": 97.028333,
+        "output": "size() == 0;",
+        "prompt_tokens": 20,
+        "round": 0
+      },
+      {
+        "backend": "metal",
+        "before": "function add(a, b) {\n    return a",
+        "cached_tokens": 1,
+        "exact": true,
+        "generated_tokens": 3,
+        "language": "JavaScript",
+        "milliseconds": 61.245667,
+        "output": " + b;",
+        "prompt_tokens": 15,
+        "round": 0
+      },
+      {
+        "backend": "metal",
+        "before": "function square(value) {\n    return value",
+        "cached_tokens": 2,
+        "exact": true,
+        "generated_tokens": 3,
+        "language": "JavaScript",
+        "milliseconds": 61.747667,
+        "output": " * value;",
+        "prompt_tokens": 13,
+        "round": 0
+      },
+      {
+        "backend": "metal",
+        "before": "function subtract(a: number, b: number): number {\n    return a",
+        "cached_tokens": 2,
+        "exact": true,
+        "generated_tokens": 3,
+        "language": "TypeScript",
+        "milliseconds": 67.105167,
+        "output": " - b;",
+        "prompt_tokens": 20,
+        "round": 0
+      },
+      {
+        "backend": "metal",
+        "before": "static int add(int a, int b) {\n    return a",
+        "cached_tokens": 1,
+        "exact": true,
+        "generated_tokens": 3,
+        "language": "Java",
+        "milliseconds": 68.701084,
+        "output": " + b;",
+        "prompt_tokens": 18,
+        "round": 0
+      },
+      {
+        "backend": "metal",
+        "before": "func add(a int, b int) int {\n    return a",
+        "cached_tokens": 1,
+        "exact": true,
+        "generated_tokens": 3,
+        "language": "Go",
+        "milliseconds": 66.533375,
+        "output": " + b",
+        "prompt_tokens": 18,
+        "round": 0
+      },
+      {
+        "backend": "metal",
+        "before": "fn add(a: i32, b: i32) -> i32 {\n    a",
+        "cached_tokens": 1,
+        "exact": true,
+        "generated_tokens": 3,
+        "language": "Rust",
+        "milliseconds": 65.901125,
+        "output": " + b",
+        "prompt_tokens": 26,
+        "round": 0
+      },
+      {
+        "backend": "metal",
+        "before": "def add(a, b)\n  a",
+        "cached_tokens": 1,
+        "exact": false,
+        "generated_tokens": 2,
+        "language": "Ruby",
+        "milliseconds": 52.031792,
+        "output": "b",
+        "prompt_tokens": 14,
+        "round": 0
+      },
+      {
+        "backend": "metal",
+        "before": "static int Add(int a, int b) {\n    return a",
+        "cached_tokens": 1,
+        "exact": true,
+        "generated_tokens": 3,
+        "language": "C#",
+        "milliseconds": 68.611,
+        "output": " + b;",
+        "prompt_tokens": 18,
+        "round": 0
+      },
+      {
+        "backend": "metal",
+        "before": "def add(a, b):\n    return a",
+        "cached_tokens": 1,
+        "exact": true,
+        "generated_tokens": 3,
+        "language": "Python",
+        "milliseconds": 63.749625,
+        "output": " + b",
+        "prompt_tokens": 13,
+        "round": 1
+      },
+      {
+        "backend": "metal",
+        "before": "def subtract(left, right):\n    return left",
+        "cached_tokens": 2,
+        "exact": true,
+        "generated_tokens": 3,
+        "language": "Python",
+        "milliseconds": 63.293542,
+        "output": " - right",
+        "prompt_tokens": 13,
+        "round": 1
+      },
+      {
+        "backend": "metal",
+        "before": "def multiply(x, y):\n    return x",
+        "cached_tokens": 2,
+        "exact": true,
+        "generated_tokens": 3,
+        "language": "Python",
+        "milliseconds": 62.056708,
+        "output": " * y",
+        "prompt_tokens": 13,
+        "round": 1
+      },
+      {
+        "backend": "metal",
+        "before": "def is_empty(items):\n    return len(items)",
+        "cached_tokens": 2,
+        "exact": false,
+        "generated_tokens": 1,
+        "language": "Python",
+        "milliseconds": 47.665042,
+        "output": "",
+        "prompt_tokens": 14,
+        "round": 1
+      },
+      {
+        "backend": "metal",
+        "before": "def maximum(a, b):\n    return a if a > b else ",
+        "cached_tokens": 2,
+        "exact": true,
+        "generated_tokens": 2,
+        "language": "Python",
+        "milliseconds": 55.550209,
+        "output": "b",
+        "prompt_tokens": 19,
+        "round": 1
+      },
+      {
+        "backend": "metal",
+        "before": "int add(int a, int b) {\n    return a",
+        "cached_tokens": 1,
+        "exact": true,
+        "generated_tokens": 3,
+        "language": "C++",
+        "milliseconds": 60.589666,
+        "output": " + b;",
+        "prompt_tokens": 17,
+        "round": 1
+      },
+      {
+        "backend": "metal",
+        "before": "int square(int value) {\n    return value",
+        "cached_tokens": 2,
+        "exact": true,
+        "generated_tokens": 3,
+        "language": "C++",
+        "milliseconds": 59.426583,
+        "output": " * value;",
+        "prompt_tokens": 14,
+        "round": 1
+      },
+      {
+        "backend": "metal",
+        "before": "bool empty(const std::vector<int>& items) {\n    return items.",
+        "cached_tokens": 1,
+        "exact": false,
+        "generated_tokens": 6,
+        "language": "C++",
+        "milliseconds": 101.213416,
+        "output": "size() == 0;",
+        "prompt_tokens": 20,
+        "round": 1
+      },
+      {
+        "backend": "metal",
+        "before": "function add(a, b) {\n    return a",
+        "cached_tokens": 1,
+        "exact": true,
+        "generated_tokens": 3,
+        "language": "JavaScript",
+        "milliseconds": 63.626083,
+        "output": " + b;",
+        "prompt_tokens": 15,
+        "round": 1
+      },
+      {
+        "backend": "metal",
+        "before": "function square(value) {\n    return value",
+        "cached_tokens": 2,
+        "exact": true,
+        "generated_tokens": 3,
+        "language": "JavaScript",
+        "milliseconds": 62.962541,
+        "output": " * value;",
+        "prompt_tokens": 13,
+        "round": 1
+      },
+      {
+        "backend": "metal",
+        "before": "function subtract(a: number, b: number): number {\n    return a",
+        "cached_tokens": 2,
+        "exact": true,
+        "generated_tokens": 3,
+        "language": "TypeScript",
+        "milliseconds": 69.991625,
+        "output": " - b;",
+        "prompt_tokens": 20,
+        "round": 1
+      },
+      {
+        "backend": "metal",
+        "before": "static int add(int a, int b) {\n    return a",
+        "cached_tokens": 1,
+        "exact": true,
+        "generated_tokens": 3,
+        "language": "Java",
+        "milliseconds": 68.807541,
+        "output": " + b;",
+        "prompt_tokens": 18,
+        "round": 1
+      },
+      {
+        "backend": "metal",
+        "before": "func add(a int, b int) int {\n    return a",
+        "cached_tokens": 1,
+        "exact": true,
+        "generated_tokens": 3,
+        "language": "Go",
+        "milliseconds": 67.13275,
+        "output": " + b",
+        "prompt_tokens": 18,
+        "round": 1
+      },
+      {
+        "backend": "metal",
+        "before": "fn add(a: i32, b: i32) -> i32 {\n    a",
+        "cached_tokens": 1,
+        "exact": true,
+        "generated_tokens": 3,
+        "language": "Rust",
+        "milliseconds": 64.086041,
+        "output": " + b",
+        "prompt_tokens": 26,
+        "round": 1
+      },
+      {
+        "backend": "metal",
+        "before": "def add(a, b)\n  a",
+        "cached_tokens": 1,
+        "exact": false,
+        "generated_tokens": 2,
+        "language": "Ruby",
+        "milliseconds": 52.183708,
+        "output": "b",
+        "prompt_tokens": 14,
+        "round": 1
+      },
+      {
+        "backend": "metal",
+        "before": "static int Add(int a, int b) {\n    return a",
+        "cached_tokens": 1,
+        "exact": true,
+        "generated_tokens": 3,
+        "language": "C#",
+        "milliseconds": 68.785042,
+        "output": " + b;",
+        "prompt_tokens": 18,
+        "round": 1
+      }
+    ]
+  },
+  "selection_training": {
+    "accepted": false,
+    "best_epoch": 21,
+    "dataset_sha256": "8f48ab93469189d4ef055e15c6cbd391ff5053f1acc42e3fea45bd5013299d4d",
+    "dimensions": 896,
+    "learning_rate": 0.005,
+    "rank": 8,
+    "scope": "output projection LoRA; transformer weights frozen",
+    "seed": 790,
+    "test": {
+      "baseline_correct": 38,
+      "correct": 26,
+      "cross_entropy": 1.5510233627106924,
+      "examples": 96
+    },
+    "train": {
+      "baseline_correct": 33,
+      "correct": 37,
+      "cross_entropy": 1.4922996391668348,
+      "examples": 128
+    },
+    "validation": {
+      "baseline_correct": 17,
+      "correct": 12,
+      "cross_entropy": 1.6459282445582324,
+      "examples": 80
+    },
+    "decision": "Rejected; the adapter is not bundled or enabled.",
+    "split_policy": "Different source families per split; candidate orders and English/Russian recommendation text vary within each family.",
+    "source_families": {
+      "train": 8,
+      "validation": 5,
+      "test": 6
+    },
+    "limits": "Scores include permutations and English/Russian text variants of 8 training, 5 validation and 6 test source families; they are not independent code tasks."
+  },
+  "build": "Debug application wrapper; vendored inference runtime compiled with -O2"
+}

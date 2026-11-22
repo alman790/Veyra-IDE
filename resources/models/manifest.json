@@ -8,6 +8,9 @@
   "runtime": {
     "repository": "https://github.com/ggml-org/llama.cpp",
     "revision": "2d8a32502909ca065c41c4cf5f2fb1c427c047fc",
-    "license": "MIT"
+    "license": "MIT",
+    "local_patches": [
+      "Format-safe sentinel for embedded Metal headers in ggml-metal/kernels/dequantize.h and ggml-metal/CMakeLists.txt."
+    ]
   }
 }

@@ -76,14 +76,24 @@ void MainWindow::requestPredictiveCompletion() {
     context.setPosition(position);
     context.setPosition(std::min(document->characterCount() - 1, position + 350), QTextCursor::KeepAnchor);
     const auto after = context.selectedText().replace(QChar::ParagraphSeparator, '\n').toStdString();
-    const auto language =
-        ts::languageForPath((sourcePath_.isEmpty() ? sourceDisplayName_ : sourcePath_).toStdString()).name +
-        "\nSDK completions at the cursor: " +
-        editor_->property("semanticCandidates").toStringList().mid(0, 20).join(", ").left(700).toStdString();
+    const auto& profile =
+        ts::languageForPath((sourcePath_.isEmpty() ? sourceDisplayName_ : sourcePath_).toStdString());
+    const auto language = profile.name;
+    const auto symbols = editor_->property("semanticCandidates")
+                             .toStringList()
+                             .mid(0, 20)
+                             .join(", ")
+                             .left(700)
+                             .replace('\n', ' ')
+                             .replace('\r', ' ');
+    const auto sdkPrelude =
+        symbols.isEmpty() || profile.lineComment.empty()
+            ? std::string()
+            : profile.lineComment + " Available SDK symbols: " + symbols.toStdString() + "\n";
     auto result = std::make_shared<std::string>();
     localModelJob_->start(
-        [before, after, language, result](const auto& cancelled, const auto&) {
-            *result = ts::LocalCodeModel::complete(before, after, language, cancelled);
+        [before, after, language, sdkPrelude, result](const auto& cancelled, const auto&) {
+            *result = ts::LocalCodeModel::complete(before, after, language, cancelled, sdkPrelude);
         },
         [this, document, position, revision, generation, result](const QString& error, bool cancelled) {
             if (closing_ || cancelled || !document || generation != localGeneration_ ||

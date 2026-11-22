@@ -312,6 +312,7 @@ CodeEditor::CodeEditor(QWidget* parent) : QPlainTextEdit(parent) {
     connect(this, &CodeEditor::sourceTextChanged, this, [this] {
         serverWords_.clear();
         serverEdits_.clear();
+        setProperty("semanticCandidates", QStringList{});
         completionAllowed_ = false;
         wordsRevision_ = -1;
         if (autoCompletion_ && editingKey_ && !isReadOnly())
@@ -828,6 +829,7 @@ void CodeEditor::dismissCompletion() {
     completionAllowed_ = false;
     serverWords_.clear();
     serverEdits_.clear();
+    setProperty("semanticCandidates", QStringList{});
     if (completer_)
         completer_->popup()->hide();
 }

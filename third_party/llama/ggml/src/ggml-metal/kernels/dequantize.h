@@ -5,16 +5,16 @@
 #define GGML_COMMON_DECL_METAL
 #define GGML_COMMON_IMPL_METAL
 #if defined(GGML_METAL_EMBED_LIBRARY)
-__embed_ggml - common.h__
+__embed_ggml_common_h__
 #else
 #include "ggml-common.h"
 #endif
 
 #define QK_NL 16 // shared by mul_mm and get_rows_q instantiations
 
-               // NOTE: this is not dequantizing - we are simply fitting the template
-               template <typename type4x4>
-               void dequantize_f32(device const float4x4* src, short il, thread type4x4& reg) {
+    // NOTE: this is not dequantizing - we are simply fitting the template
+    template <typename type4x4>
+    void dequantize_f32(device const float4x4* src, short il, thread type4x4& reg) {
     reg = (type4x4)(*src);
 }
 

@@ -1,0 +1,3574 @@
+[
+  {
+    "split": "train",
+    "family": "train-0",
+    "source": "int counter=0; void work(){++counter;} int main(){std::thread a(work),b(work);a.join();b.join();}",
+    "candidates": [
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends.",
+      "Wait with a predicate and recheck it while holding the condition-variable mutex.",
+      "Use a consistent order or a joint lock when acquiring multiple mutexes."
+    ],
+    "target": 0
+  },
+  {
+    "split": "train",
+    "family": "train-0",
+    "source": "int counter=0; void work(){++counter;} int main(){std::thread a(work),b(work);a.join();b.join();}",
+    "candidates": [
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной.",
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации.",
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой.",
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных."
+    ],
+    "target": 2
+  },
+  {
+    "split": "train",
+    "family": "train-0",
+    "source": "int counter=0; void work(){++counter;} int main(){std::thread a(work),b(work);a.join();b.join();}",
+    "candidates": [
+      "Wait with a predicate and recheck it while holding the condition-variable mutex.",
+      "Guard shared reads and writes with one synchronization policy.",
+      "Use a consistent order or a joint lock when acquiring multiple mutexes.",
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends."
+    ],
+    "target": 2
+  },
+  {
+    "split": "train",
+    "family": "train-0",
+    "source": "int counter=0; void work(){++counter;} int main(){std::thread a(work),b(work);a.join();b.join();}",
+    "candidates": [
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации.",
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной.",
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой.",
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных."
+    ],
+    "target": 1
+  },
+  {
+    "split": "train",
+    "family": "train-0",
+    "source": "int counter=0; void work(){++counter;} int main(){std::thread a(work),b(work);a.join();b.join();}",
+    "candidates": [
+      "Guard shared reads and writes with one synchronization policy.",
+      "Use a consistent order or a joint lock when acquiring multiple mutexes.",
+      "Wait with a predicate and recheck it while holding the condition-variable mutex."
+    ],
+    "target": 1
+  },
+  {
+    "split": "train",
+    "family": "train-0",
+    "source": "int counter=0; void work(){++counter;} int main(){std::thread a(work),b(work);a.join();b.join();}",
+    "candidates": [
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных.",
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой.",
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации.",
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной."
+    ],
+    "target": 3
+  },
+  {
+    "split": "train",
+    "family": "train-0",
+    "source": "int counter=0; void work(){++counter;} int main(){std::thread a(work),b(work);a.join();b.join();}",
+    "candidates": [
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends.",
+      "Use a consistent order or a joint lock when acquiring multiple mutexes.",
+      "Guard shared reads and writes with one synchronization policy.",
+      "Wait with a predicate and recheck it while holding the condition-variable mutex."
+    ],
+    "target": 3
+  },
+  {
+    "split": "train",
+    "family": "train-0",
+    "source": "int counter=0; void work(){++counter;} int main(){std::thread a(work),b(work);a.join();b.join();}",
+    "candidates": [
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной.",
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой.",
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации.",
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных."
+    ],
+    "target": 3
+  },
+  {
+    "split": "train",
+    "family": "train-0",
+    "source": "int counter=0; void work(){++counter;} int main(){std::thread a(work),b(work);a.join();b.join();}",
+    "candidates": [
+      "Wait with a predicate and recheck it while holding the condition-variable mutex.",
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends.",
+      "Guard shared reads and writes with one synchronization policy."
+    ],
+    "target": 3
+  },
+  {
+    "split": "train",
+    "family": "train-0",
+    "source": "int counter=0; void work(){++counter;} int main(){std::thread a(work),b(work);a.join();b.join();}",
+    "candidates": [
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой.",
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации.",
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной.",
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных."
+    ],
+    "target": 2
+  },
+  {
+    "split": "train",
+    "family": "train-0",
+    "source": "int counter=0; void work(){++counter;} int main(){std::thread a(work),b(work);a.join();b.join();}",
+    "candidates": [
+      "Wait with a predicate and recheck it while holding the condition-variable mutex.",
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends.",
+      "Use a consistent order or a joint lock when acquiring multiple mutexes.",
+      "Guard shared reads and writes with one synchronization policy."
+    ],
+    "target": 4
+  },
+  {
+    "split": "train",
+    "family": "train-0",
+    "source": "int counter=0; void work(){++counter;} int main(){std::thread a(work),b(work);a.join();b.join();}",
+    "candidates": [
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной.",
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой.",
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных.",
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации."
+    ],
+    "target": 4
+  },
+  {
+    "split": "train",
+    "family": "train-0",
+    "source": "int counter=0; void work(){++counter;} int main(){std::thread a(work),b(work);a.join();b.join();}",
+    "candidates": [
+      "Wait with a predicate and recheck it while holding the condition-variable mutex.",
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends.",
+      "Guard shared reads and writes with one synchronization policy."
+    ],
+    "target": 3
+  },
+  {
+    "split": "train",
+    "family": "train-0",
+    "source": "int counter=0; void work(){++counter;} int main(){std::thread a(work),b(work);a.join();b.join();}",
+    "candidates": [
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной.",
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных.",
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой.",
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации."
+    ],
+    "target": 4
+  },
+  {
+    "split": "train",
+    "family": "train-0",
+    "source": "int counter=0; void work(){++counter;} int main(){std::thread a(work),b(work);a.join();b.join();}",
+    "candidates": [
+      "Wait with a predicate and recheck it while holding the condition-variable mutex.",
+      "Guard shared reads and writes with one synchronization policy.",
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends.",
+      "Use a consistent order or a joint lock when acquiring multiple mutexes."
+    ],
+    "target": 2
+  },
+  {
+    "split": "train",
+    "family": "train-0",
+    "source": "int counter=0; void work(){++counter;} int main(){std::thread a(work),b(work);a.join();b.join();}",
+    "candidates": [
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных.",
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации.",
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой.",
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной."
+    ],
+    "target": 2
+  },
+  {
+    "split": "train",
+    "family": "train-1",
+    "source": "int total=0; void update(){total+=2;} void launch(){auto a=std::async(std::launch::async,update);auto b=std::async(std::launch::async,update);a.get();b.get();}",
+    "candidates": [
+      "Wait with a predicate and recheck it while holding the condition-variable mutex.",
+      "Guard shared reads and writes with one synchronization policy.",
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends."
+    ],
+    "target": 2
+  },
+  {
+    "split": "train",
+    "family": "train-1",
+    "source": "int total=0; void update(){total+=2;} void launch(){auto a=std::async(std::launch::async,update);auto b=std::async(std::launch::async,update);a.get();b.get();}",
+    "candidates": [
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации.",
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных.",
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной.",
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой."
+    ],
+    "target": 1
+  },
+  {
+    "split": "train",
+    "family": "train-1",
+    "source": "int total=0; void update(){total+=2;} void launch(){auto a=std::async(std::launch::async,update);auto b=std::async(std::launch::async,update);a.get();b.get();}",
+    "candidates": [
+      "Use a consistent order or a joint lock when acquiring multiple mutexes.",
+      "Guard shared reads and writes with one synchronization policy.",
+      "Wait with a predicate and recheck it while holding the condition-variable mutex.",
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends."
+    ],
+    "target": 2
+  },
+  {
+    "split": "train",
+    "family": "train-1",
+    "source": "int total=0; void update(){total+=2;} void launch(){auto a=std::async(std::launch::async,update);auto b=std::async(std::launch::async,update);a.get();b.get();}",
+    "candidates": [
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных.",
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной.",
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой.",
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации."
+    ],
+    "target": 4
+  },
+  {
+    "split": "train",
+    "family": "train-1",
+    "source": "int total=0; void update(){total+=2;} void launch(){auto a=std::async(std::launch::async,update);auto b=std::async(std::launch::async,update);a.get();b.get();}",
+    "candidates": [
+      "Guard shared reads and writes with one synchronization policy.",
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends.",
+      "Use a consistent order or a joint lock when acquiring multiple mutexes."
+    ],
+    "target": 1
+  },
+  {
+    "split": "train",
+    "family": "train-1",
+    "source": "int total=0; void update(){total+=2;} void launch(){auto a=std::async(std::launch::async,update);auto b=std::async(std::launch::async,update);a.get();b.get();}",
+    "candidates": [
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных.",
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой.",
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной.",
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации."
+    ],
+    "target": 4
+  },
+  {
+    "split": "train",
+    "family": "train-1",
+    "source": "int total=0; void update(){total+=2;} void launch(){auto a=std::async(std::launch::async,update);auto b=std::async(std::launch::async,update);a.get();b.get();}",
+    "candidates": [
+      "Wait with a predicate and recheck it while holding the condition-variable mutex.",
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends.",
+      "Use a consistent order or a joint lock when acquiring multiple mutexes.",
+      "Guard shared reads and writes with one synchronization policy."
+    ],
+    "target": 4
+  },
+  {
+    "split": "train",
+    "family": "train-1",
+    "source": "int total=0; void update(){total+=2;} void launch(){auto a=std::async(std::launch::async,update);auto b=std::async(std::launch::async,update);a.get();b.get();}",
+    "candidates": [
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной.",
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации.",
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой.",
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных."
+    ],
+    "target": 2
+  },
+  {
+    "split": "train",
+    "family": "train-1",
+    "source": "int total=0; void update(){total+=2;} void launch(){auto a=std::async(std::launch::async,update);auto b=std::async(std::launch::async,update);a.get();b.get();}",
+    "candidates": [
+      "Use a consistent order or a joint lock when acquiring multiple mutexes.",
+      "Guard shared reads and writes with one synchronization policy.",
+      "Wait with a predicate and recheck it while holding the condition-variable mutex."
+    ],
+    "target": 2
+  },
+  {
+    "split": "train",
+    "family": "train-1",
+    "source": "int total=0; void update(){total+=2;} void launch(){auto a=std::async(std::launch::async,update);auto b=std::async(std::launch::async,update);a.get();b.get();}",
+    "candidates": [
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой.",
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации.",
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных.",
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной."
+    ],
+    "target": 2
+  },
+  {
+    "split": "train",
+    "family": "train-1",
+    "source": "int total=0; void update(){total+=2;} void launch(){auto a=std::async(std::launch::async,update);auto b=std::async(std::launch::async,update);a.get();b.get();}",
+    "candidates": [
+      "Use a consistent order or a joint lock when acquiring multiple mutexes.",
+      "Guard shared reads and writes with one synchronization policy.",
+      "Wait with a predicate and recheck it while holding the condition-variable mutex.",
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends."
+    ],
+    "target": 2
+  },
+  {
+    "split": "train",
+    "family": "train-1",
+    "source": "int total=0; void update(){total+=2;} void launch(){auto a=std::async(std::launch::async,update);auto b=std::async(std::launch::async,update);a.get();b.get();}",
+    "candidates": [
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой.",
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных.",
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной.",
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации."
+    ],
+    "target": 4
+  },
+  {
+    "split": "train",
+    "family": "train-1",
+    "source": "int total=0; void update(){total+=2;} void launch(){auto a=std::async(std::launch::async,update);auto b=std::async(std::launch::async,update);a.get();b.get();}",
+    "candidates": [
+      "Use a consistent order or a joint lock when acquiring multiple mutexes.",
+      "Guard shared reads and writes with one synchronization policy.",
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends."
+    ],
+    "target": 2
+  },
+  {
+    "split": "train",
+    "family": "train-1",
+    "source": "int total=0; void update(){total+=2;} void launch(){auto a=std::async(std::launch::async,update);auto b=std::async(std::launch::async,update);a.get();b.get();}",
+    "candidates": [
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой.",
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации.",
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных.",
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной."
+    ],
+    "target": 2
+  },
+  {
+    "split": "train",
+    "family": "train-1",
+    "source": "int total=0; void update(){total+=2;} void launch(){auto a=std::async(std::launch::async,update);auto b=std::async(std::launch::async,update);a.get();b.get();}",
+    "candidates": [
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends.",
+      "Guard shared reads and writes with one synchronization policy.",
+      "Wait with a predicate and recheck it while holding the condition-variable mutex.",
+      "Use a consistent order or a joint lock when acquiring multiple mutexes."
+    ],
+    "target": 2
+  },
+  {
+    "split": "train",
+    "family": "train-1",
+    "source": "int total=0; void update(){total+=2;} void launch(){auto a=std::async(std::launch::async,update);auto b=std::async(std::launch::async,update);a.get();b.get();}",
+    "candidates": [
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных.",
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой.",
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной.",
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации."
+    ],
+    "target": 4
+  },
+  {
+    "split": "train",
+    "family": "train-2",
+    "source": "void launch(){int value=1;std::thread([&value]{use(value);}).detach();}",
+    "candidates": [
+      "Guard shared reads and writes with one synchronization policy.",
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends.",
+      "Use a consistent order or a joint lock when acquiring multiple mutexes."
+    ],
+    "target": 2
+  },
+  {
+    "split": "train",
+    "family": "train-2",
+    "source": "void launch(){int value=1;std::thread([&value]{use(value);}).detach();}",
+    "candidates": [
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных.",
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной.",
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации.",
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой."
+    ],
+    "target": 1
+  },
+  {
+    "split": "train",
+    "family": "train-2",
+    "source": "void launch(){int value=1;std::thread([&value]{use(value);}).detach();}",
+    "candidates": [
+      "Wait with a predicate and recheck it while holding the condition-variable mutex.",
+      "Use a consistent order or a joint lock when acquiring multiple mutexes.",
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends.",
+      "Guard shared reads and writes with one synchronization policy."
+    ],
+    "target": 3
+  },
+  {
+    "split": "train",
+    "family": "train-2",
+    "source": "void launch(){int value=1;std::thread([&value]{use(value);}).detach();}",
+    "candidates": [
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных.",
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации.",
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой.",
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной."
+    ],
+    "target": 1
+  },
+  {
+    "split": "train",
+    "family": "train-2",
+    "source": "void launch(){int value=1;std::thread([&value]{use(value);}).detach();}",
+    "candidates": [
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends.",
+      "Guard shared reads and writes with one synchronization policy.",
+      "Use a consistent order or a joint lock when acquiring multiple mutexes."
+    ],
+    "target": 1
+  },
+  {
+    "split": "train",
+    "family": "train-2",
+    "source": "void launch(){int value=1;std::thread([&value]{use(value);}).detach();}",
+    "candidates": [
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных.",
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации.",
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой.",
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной."
+    ],
+    "target": 1
+  },
+  {
+    "split": "train",
+    "family": "train-2",
+    "source": "void launch(){int value=1;std::thread([&value]{use(value);}).detach();}",
+    "candidates": [
+      "Guard shared reads and writes with one synchronization policy.",
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends.",
+      "Wait with a predicate and recheck it while holding the condition-variable mutex.",
+      "Use a consistent order or a joint lock when acquiring multiple mutexes."
+    ],
+    "target": 2
+  },
+  {
+    "split": "train",
+    "family": "train-2",
+    "source": "void launch(){int value=1;std::thread([&value]{use(value);}).detach();}",
+    "candidates": [
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой.",
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации.",
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных.",
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной."
+    ],
+    "target": 3
+  },
+  {
+    "split": "train",
+    "family": "train-2",
+    "source": "void launch(){int value=1;std::thread([&value]{use(value);}).detach();}",
+    "candidates": [
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends.",
+      "Wait with a predicate and recheck it while holding the condition-variable mutex.",
+      "Guard shared reads and writes with one synchronization policy."
+    ],
+    "target": 1
+  },
+  {
+    "split": "train",
+    "family": "train-2",
+    "source": "void launch(){int value=1;std::thread([&value]{use(value);}).detach();}",
+    "candidates": [
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной.",
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой.",
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных.",
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации."
+    ],
+    "target": 3
+  },
+  {
+    "split": "train",
+    "family": "train-2",
+    "source": "void launch(){int value=1;std::thread([&value]{use(value);}).detach();}",
+    "candidates": [
+      "Wait with a predicate and recheck it while holding the condition-variable mutex.",
+      "Use a consistent order or a joint lock when acquiring multiple mutexes.",
+      "Guard shared reads and writes with one synchronization policy.",
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends."
+    ],
+    "target": 4
+  },
+  {
+    "split": "train",
+    "family": "train-2",
+    "source": "void launch(){int value=1;std::thread([&value]{use(value);}).detach();}",
+    "candidates": [
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации.",
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой.",
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной.",
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных."
+    ],
+    "target": 4
+  },
+  {
+    "split": "train",
+    "family": "train-2",
+    "source": "void launch(){int value=1;std::thread([&value]{use(value);}).detach();}",
+    "candidates": [
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends.",
+      "Use a consistent order or a joint lock when acquiring multiple mutexes.",
+      "Guard shared reads and writes with one synchronization policy."
+    ],
+    "target": 1
+  },
+  {
+    "split": "train",
+    "family": "train-2",
+    "source": "void launch(){int value=1;std::thread([&value]{use(value);}).detach();}",
+    "candidates": [
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации.",
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной.",
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой.",
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных."
+    ],
+    "target": 4
+  },
+  {
+    "split": "train",
+    "family": "train-2",
+    "source": "void launch(){int value=1;std::thread([&value]{use(value);}).detach();}",
+    "candidates": [
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends.",
+      "Wait with a predicate and recheck it while holding the condition-variable mutex.",
+      "Guard shared reads and writes with one synchronization policy.",
+      "Use a consistent order or a joint lock when acquiring multiple mutexes."
+    ],
+    "target": 1
+  },
+  {
+    "split": "train",
+    "family": "train-2",
+    "source": "void launch(){int value=1;std::thread([&value]{use(value);}).detach();}",
+    "candidates": [
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных.",
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной.",
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой.",
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации."
+    ],
+    "target": 1
+  },
+  {
+    "split": "train",
+    "family": "train-3",
+    "source": "void launch(){std::string text=\"message\";std::thread task([&text]{send(text);});task.detach();}",
+    "candidates": [
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends.",
+      "Guard shared reads and writes with one synchronization policy.",
+      "Wait with a predicate and recheck it while holding the condition-variable mutex."
+    ],
+    "target": 1
+  },
+  {
+    "split": "train",
+    "family": "train-3",
+    "source": "void launch(){std::string text=\"message\";std::thread task([&text]{send(text);});task.detach();}",
+    "candidates": [
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной.",
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации.",
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой.",
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных."
+    ],
+    "target": 4
+  },
+  {
+    "split": "train",
+    "family": "train-3",
+    "source": "void launch(){std::string text=\"message\";std::thread task([&text]{send(text);});task.detach();}",
+    "candidates": [
+      "Use a consistent order or a joint lock when acquiring multiple mutexes.",
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends.",
+      "Wait with a predicate and recheck it while holding the condition-variable mutex.",
+      "Guard shared reads and writes with one synchronization policy."
+    ],
+    "target": 2
+  },
+  {
+    "split": "train",
+    "family": "train-3",
+    "source": "void launch(){std::string text=\"message\";std::thread task([&text]{send(text);});task.detach();}",
+    "candidates": [
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных.",
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации.",
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной.",
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой."
+    ],
+    "target": 1
+  },
+  {
+    "split": "train",
+    "family": "train-3",
+    "source": "void launch(){std::string text=\"message\";std::thread task([&text]{send(text);});task.detach();}",
+    "candidates": [
+      "Use a consistent order or a joint lock when acquiring multiple mutexes.",
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends.",
+      "Guard shared reads and writes with one synchronization policy."
+    ],
+    "target": 2
+  },
+  {
+    "split": "train",
+    "family": "train-3",
+    "source": "void launch(){std::string text=\"message\";std::thread task([&text]{send(text);});task.detach();}",
+    "candidates": [
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной.",
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных.",
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации.",
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой."
+    ],
+    "target": 2
+  },
+  {
+    "split": "train",
+    "family": "train-3",
+    "source": "void launch(){std::string text=\"message\";std::thread task([&text]{send(text);});task.detach();}",
+    "candidates": [
+      "Guard shared reads and writes with one synchronization policy.",
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends.",
+      "Wait with a predicate and recheck it while holding the condition-variable mutex.",
+      "Use a consistent order or a joint lock when acquiring multiple mutexes."
+    ],
+    "target": 2
+  },
+  {
+    "split": "train",
+    "family": "train-3",
+    "source": "void launch(){std::string text=\"message\";std::thread task([&text]{send(text);});task.detach();}",
+    "candidates": [
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных.",
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной.",
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации.",
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой."
+    ],
+    "target": 1
+  },
+  {
+    "split": "train",
+    "family": "train-3",
+    "source": "void launch(){std::string text=\"message\";std::thread task([&text]{send(text);});task.detach();}",
+    "candidates": [
+      "Use a consistent order or a joint lock when acquiring multiple mutexes.",
+      "Guard shared reads and writes with one synchronization policy.",
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends."
+    ],
+    "target": 3
+  },
+  {
+    "split": "train",
+    "family": "train-3",
+    "source": "void launch(){std::string text=\"message\";std::thread task([&text]{send(text);});task.detach();}",
+    "candidates": [
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных.",
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой.",
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации.",
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной."
+    ],
+    "target": 1
+  },
+  {
+    "split": "train",
+    "family": "train-3",
+    "source": "void launch(){std::string text=\"message\";std::thread task([&text]{send(text);});task.detach();}",
+    "candidates": [
+      "Guard shared reads and writes with one synchronization policy.",
+      "Wait with a predicate and recheck it while holding the condition-variable mutex.",
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends.",
+      "Use a consistent order or a joint lock when acquiring multiple mutexes."
+    ],
+    "target": 3
+  },
+  {
+    "split": "train",
+    "family": "train-3",
+    "source": "void launch(){std::string text=\"message\";std::thread task([&text]{send(text);});task.detach();}",
+    "candidates": [
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных.",
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации.",
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной.",
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой."
+    ],
+    "target": 1
+  },
+  {
+    "split": "train",
+    "family": "train-3",
+    "source": "void launch(){std::string text=\"message\";std::thread task([&text]{send(text);});task.detach();}",
+    "candidates": [
+      "Use a consistent order or a joint lock when acquiring multiple mutexes.",
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends.",
+      "Wait with a predicate and recheck it while holding the condition-variable mutex."
+    ],
+    "target": 2
+  },
+  {
+    "split": "train",
+    "family": "train-3",
+    "source": "void launch(){std::string text=\"message\";std::thread task([&text]{send(text);});task.detach();}",
+    "candidates": [
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой.",
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных.",
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной.",
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации."
+    ],
+    "target": 2
+  },
+  {
+    "split": "train",
+    "family": "train-3",
+    "source": "void launch(){std::string text=\"message\";std::thread task([&text]{send(text);});task.detach();}",
+    "candidates": [
+      "Guard shared reads and writes with one synchronization policy.",
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends.",
+      "Wait with a predicate and recheck it while holding the condition-variable mutex.",
+      "Use a consistent order or a joint lock when acquiring multiple mutexes."
+    ],
+    "target": 2
+  },
+  {
+    "split": "train",
+    "family": "train-3",
+    "source": "void launch(){std::string text=\"message\";std::thread task([&text]{send(text);});task.detach();}",
+    "candidates": [
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации.",
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных.",
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой.",
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной."
+    ],
+    "target": 2
+  },
+  {
+    "split": "train",
+    "family": "train-4",
+    "source": "std::mutex m;std::condition_variable cv;bool ready=false;void wait(){std::unique_lock<std::mutex> lock(m);cv.wait(lock);consume();}",
+    "candidates": [
+      "Use a consistent order or a joint lock when acquiring multiple mutexes.",
+      "Wait with a predicate and recheck it while holding the condition-variable mutex.",
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends."
+    ],
+    "target": 2
+  },
+  {
+    "split": "train",
+    "family": "train-4",
+    "source": "std::mutex m;std::condition_variable cv;bool ready=false;void wait(){std::unique_lock<std::mutex> lock(m);cv.wait(lock);consume();}",
+    "candidates": [
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных.",
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной.",
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации.",
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой."
+    ],
+    "target": 2
+  },
+  {
+    "split": "train",
+    "family": "train-4",
+    "source": "std::mutex m;std::condition_variable cv;bool ready=false;void wait(){std::unique_lock<std::mutex> lock(m);cv.wait(lock);consume();}",
+    "candidates": [
+      "Use a consistent order or a joint lock when acquiring multiple mutexes.",
+      "Wait with a predicate and recheck it while holding the condition-variable mutex.",
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends.",
+      "Guard shared reads and writes with one synchronization policy."
+    ],
+    "target": 2
+  },
+  {
+    "split": "train",
+    "family": "train-4",
+    "source": "std::mutex m;std::condition_variable cv;bool ready=false;void wait(){std::unique_lock<std::mutex> lock(m);cv.wait(lock);consume();}",
+    "candidates": [
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной.",
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации.",
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой.",
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных."
+    ],
+    "target": 1
+  },
+  {
+    "split": "train",
+    "family": "train-4",
+    "source": "std::mutex m;std::condition_variable cv;bool ready=false;void wait(){std::unique_lock<std::mutex> lock(m);cv.wait(lock);consume();}",
+    "candidates": [
+      "Guard shared reads and writes with one synchronization policy.",
+      "Wait with a predicate and recheck it while holding the condition-variable mutex.",
+      "Use a consistent order or a joint lock when acquiring multiple mutexes."
+    ],
+    "target": 2
+  },
+  {
+    "split": "train",
+    "family": "train-4",
+    "source": "std::mutex m;std::condition_variable cv;bool ready=false;void wait(){std::unique_lock<std::mutex> lock(m);cv.wait(lock);consume();}",
+    "candidates": [
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой.",
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных.",
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной.",
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации."
+    ],
+    "target": 3
+  },
+  {
+    "split": "train",
+    "family": "train-4",
+    "source": "std::mutex m;std::condition_variable cv;bool ready=false;void wait(){std::unique_lock<std::mutex> lock(m);cv.wait(lock);consume();}",
+    "candidates": [
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends.",
+      "Wait with a predicate and recheck it while holding the condition-variable mutex.",
+      "Guard shared reads and writes with one synchronization policy.",
+      "Use a consistent order or a joint lock when acquiring multiple mutexes."
+    ],
+    "target": 2
+  },
+  {
+    "split": "train",
+    "family": "train-4",
+    "source": "std::mutex m;std::condition_variable cv;bool ready=false;void wait(){std::unique_lock<std::mutex> lock(m);cv.wait(lock);consume();}",
+    "candidates": [
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной.",
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных.",
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой.",
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации."
+    ],
+    "target": 1
+  },
+  {
+    "split": "train",
+    "family": "train-4",
+    "source": "std::mutex m;std::condition_variable cv;bool ready=false;void wait(){std::unique_lock<std::mutex> lock(m);cv.wait(lock);consume();}",
+    "candidates": [
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends.",
+      "Guard shared reads and writes with one synchronization policy.",
+      "Wait with a predicate and recheck it while holding the condition-variable mutex."
+    ],
+    "target": 3
+  },
+  {
+    "split": "train",
+    "family": "train-4",
+    "source": "std::mutex m;std::condition_variable cv;bool ready=false;void wait(){std::unique_lock<std::mutex> lock(m);cv.wait(lock);consume();}",
+    "candidates": [
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных.",
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой.",
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации.",
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной."
+    ],
+    "target": 4
+  },
+  {
+    "split": "train",
+    "family": "train-4",
+    "source": "std::mutex m;std::condition_variable cv;bool ready=false;void wait(){std::unique_lock<std::mutex> lock(m);cv.wait(lock);consume();}",
+    "candidates": [
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends.",
+      "Use a consistent order or a joint lock when acquiring multiple mutexes.",
+      "Guard shared reads and writes with one synchronization policy.",
+      "Wait with a predicate and recheck it while holding the condition-variable mutex."
+    ],
+    "target": 4
+  },
+  {
+    "split": "train",
+    "family": "train-4",
+    "source": "std::mutex m;std::condition_variable cv;bool ready=false;void wait(){std::unique_lock<std::mutex> lock(m);cv.wait(lock);consume();}",
+    "candidates": [
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной.",
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой.",
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных.",
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации."
+    ],
+    "target": 1
+  },
+  {
+    "split": "train",
+    "family": "train-4",
+    "source": "std::mutex m;std::condition_variable cv;bool ready=false;void wait(){std::unique_lock<std::mutex> lock(m);cv.wait(lock);consume();}",
+    "candidates": [
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends.",
+      "Wait with a predicate and recheck it while holding the condition-variable mutex.",
+      "Use a consistent order or a joint lock when acquiring multiple mutexes."
+    ],
+    "target": 2
+  },
+  {
+    "split": "train",
+    "family": "train-4",
+    "source": "std::mutex m;std::condition_variable cv;bool ready=false;void wait(){std::unique_lock<std::mutex> lock(m);cv.wait(lock);consume();}",
+    "candidates": [
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой.",
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных.",
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации.",
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной."
+    ],
+    "target": 4
+  },
+  {
+    "split": "train",
+    "family": "train-4",
+    "source": "std::mutex m;std::condition_variable cv;bool ready=false;void wait(){std::unique_lock<std::mutex> lock(m);cv.wait(lock);consume();}",
+    "candidates": [
+      "Guard shared reads and writes with one synchronization policy.",
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends.",
+      "Use a consistent order or a joint lock when acquiring multiple mutexes.",
+      "Wait with a predicate and recheck it while holding the condition-variable mutex."
+    ],
+    "target": 4
+  },
+  {
+    "split": "train",
+    "family": "train-4",
+    "source": "std::mutex m;std::condition_variable cv;bool ready=false;void wait(){std::unique_lock<std::mutex> lock(m);cv.wait(lock);consume();}",
+    "candidates": [
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации.",
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных.",
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой.",
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной."
+    ],
+    "target": 4
+  },
+  {
+    "split": "train",
+    "family": "train-5",
+    "source": "std::mutex a,b;void first(){std::lock_guard<std::mutex>x(a);std::lock_guard<std::mutex>y(b);}void second(){std::lock_guard<std::mutex>x(b);std::lock_guard<std::mutex>y(a);}",
+    "candidates": [
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends.",
+      "Wait with a predicate and recheck it while holding the condition-variable mutex.",
+      "Use a consistent order or a joint lock when acquiring multiple mutexes."
+    ],
+    "target": 3
+  },
+  {
+    "split": "train",
+    "family": "train-5",
+    "source": "std::mutex a,b;void first(){std::lock_guard<std::mutex>x(a);std::lock_guard<std::mutex>y(b);}void second(){std::lock_guard<std::mutex>x(b);std::lock_guard<std::mutex>y(a);}",
+    "candidates": [
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной.",
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой.",
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации.",
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных."
+    ],
+    "target": 2
+  },
+  {
+    "split": "train",
+    "family": "train-5",
+    "source": "std::mutex a,b;void first(){std::lock_guard<std::mutex>x(a);std::lock_guard<std::mutex>y(b);}void second(){std::lock_guard<std::mutex>x(b);std::lock_guard<std::mutex>y(a);}",
+    "candidates": [
+      "Wait with a predicate and recheck it while holding the condition-variable mutex.",
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends.",
+      "Guard shared reads and writes with one synchronization policy.",
+      "Use a consistent order or a joint lock when acquiring multiple mutexes."
+    ],
+    "target": 4
+  },
+  {
+    "split": "train",
+    "family": "train-5",
+    "source": "std::mutex a,b;void first(){std::lock_guard<std::mutex>x(a);std::lock_guard<std::mutex>y(b);}void second(){std::lock_guard<std::mutex>x(b);std::lock_guard<std::mutex>y(a);}",
+    "candidates": [
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной.",
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации.",
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных.",
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой."
+    ],
+    "target": 4
+  },
+  {
+    "split": "train",
+    "family": "train-5",
+    "source": "std::mutex a,b;void first(){std::lock_guard<std::mutex>x(a);std::lock_guard<std::mutex>y(b);}void second(){std::lock_guard<std::mutex>x(b);std::lock_guard<std::mutex>y(a);}",
+    "candidates": [
+      "Guard shared reads and writes with one synchronization policy.",
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends.",
+      "Use a consistent order or a joint lock when acquiring multiple mutexes."
+    ],
+    "target": 3
+  },
+  {
+    "split": "train",
+    "family": "train-5",
+    "source": "std::mutex a,b;void first(){std::lock_guard<std::mutex>x(a);std::lock_guard<std::mutex>y(b);}void second(){std::lock_guard<std::mutex>x(b);std::lock_guard<std::mutex>y(a);}",
+    "candidates": [
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных.",
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой.",
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной.",
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации."
+    ],
+    "target": 2
+  },
+  {
+    "split": "train",
+    "family": "train-5",
+    "source": "std::mutex a,b;void first(){std::lock_guard<std::mutex>x(a);std::lock_guard<std::mutex>y(b);}void second(){std::lock_guard<std::mutex>x(b);std::lock_guard<std::mutex>y(a);}",
+    "candidates": [
+      "Wait with a predicate and recheck it while holding the condition-variable mutex.",
+      "Guard shared reads and writes with one synchronization policy.",
+      "Use a consistent order or a joint lock when acquiring multiple mutexes.",
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends."
+    ],
+    "target": 3
+  },
+  {
+    "split": "train",
+    "family": "train-5",
+    "source": "std::mutex a,b;void first(){std::lock_guard<std::mutex>x(a);std::lock_guard<std::mutex>y(b);}void second(){std::lock_guard<std::mutex>x(b);std::lock_guard<std::mutex>y(a);}",
+    "candidates": [
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных.",
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной.",
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации.",
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой."
+    ],
+    "target": 4
+  },
+  {
+    "split": "train",
+    "family": "train-5",
+    "source": "std::mutex a,b;void first(){std::lock_guard<std::mutex>x(a);std::lock_guard<std::mutex>y(b);}void second(){std::lock_guard<std::mutex>x(b);std::lock_guard<std::mutex>y(a);}",
+    "candidates": [
+      "Use a consistent order or a joint lock when acquiring multiple mutexes.",
+      "Guard shared reads and writes with one synchronization policy.",
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends."
+    ],
+    "target": 1
+  },
+  {
+    "split": "train",
+    "family": "train-5",
+    "source": "std::mutex a,b;void first(){std::lock_guard<std::mutex>x(a);std::lock_guard<std::mutex>y(b);}void second(){std::lock_guard<std::mutex>x(b);std::lock_guard<std::mutex>y(a);}",
+    "candidates": [
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной.",
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных.",
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации.",
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой."
+    ],
+    "target": 4
+  },
+  {
+    "split": "train",
+    "family": "train-5",
+    "source": "std::mutex a,b;void first(){std::lock_guard<std::mutex>x(a);std::lock_guard<std::mutex>y(b);}void second(){std::lock_guard<std::mutex>x(b);std::lock_guard<std::mutex>y(a);}",
+    "candidates": [
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends.",
+      "Use a consistent order or a joint lock when acquiring multiple mutexes.",
+      "Guard shared reads and writes with one synchronization policy.",
+      "Wait with a predicate and recheck it while holding the condition-variable mutex."
+    ],
+    "target": 2
+  },
+  {
+    "split": "train",
+    "family": "train-5",
+    "source": "std::mutex a,b;void first(){std::lock_guard<std::mutex>x(a);std::lock_guard<std::mutex>y(b);}void second(){std::lock_guard<std::mutex>x(b);std::lock_guard<std::mutex>y(a);}",
+    "candidates": [
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной.",
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных.",
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации.",
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой."
+    ],
+    "target": 4
+  },
+  {
+    "split": "train",
+    "family": "train-5",
+    "source": "std::mutex a,b;void first(){std::lock_guard<std::mutex>x(a);std::lock_guard<std::mutex>y(b);}void second(){std::lock_guard<std::mutex>x(b);std::lock_guard<std::mutex>y(a);}",
+    "candidates": [
+      "Guard shared reads and writes with one synchronization policy.",
+      "Use a consistent order or a joint lock when acquiring multiple mutexes.",
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends."
+    ],
+    "target": 2
+  },
+  {
+    "split": "train",
+    "family": "train-5",
+    "source": "std::mutex a,b;void first(){std::lock_guard<std::mutex>x(a);std::lock_guard<std::mutex>y(b);}void second(){std::lock_guard<std::mutex>x(b);std::lock_guard<std::mutex>y(a);}",
+    "candidates": [
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной.",
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой.",
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных.",
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации."
+    ],
+    "target": 2
+  },
+  {
+    "split": "train",
+    "family": "train-5",
+    "source": "std::mutex a,b;void first(){std::lock_guard<std::mutex>x(a);std::lock_guard<std::mutex>y(b);}void second(){std::lock_guard<std::mutex>x(b);std::lock_guard<std::mutex>y(a);}",
+    "candidates": [
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends.",
+      "Use a consistent order or a joint lock when acquiring multiple mutexes.",
+      "Guard shared reads and writes with one synchronization policy.",
+      "Wait with a predicate and recheck it while holding the condition-variable mutex."
+    ],
+    "target": 2
+  },
+  {
+    "split": "train",
+    "family": "train-5",
+    "source": "std::mutex a,b;void first(){std::lock_guard<std::mutex>x(a);std::lock_guard<std::mutex>y(b);}void second(){std::lock_guard<std::mutex>x(b);std::lock_guard<std::mutex>y(a);}",
+    "candidates": [
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных.",
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой.",
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной.",
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации."
+    ],
+    "target": 2
+  },
+  {
+    "split": "train",
+    "family": "train-6",
+    "source": "int square(int value){return value*value;}",
+    "candidates": [
+      "Guard shared reads and writes with one synchronization policy.",
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends.",
+      "Wait with a predicate and recheck it while holding the condition-variable mutex."
+    ],
+    "target": 0
+  },
+  {
+    "split": "train",
+    "family": "train-6",
+    "source": "int square(int value){return value*value;}",
+    "candidates": [
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой.",
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной.",
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных.",
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации."
+    ],
+    "target": 0
+  },
+  {
+    "split": "train",
+    "family": "train-6",
+    "source": "int square(int value){return value*value;}",
+    "candidates": [
+      "Guard shared reads and writes with one synchronization policy.",
+      "Wait with a predicate and recheck it while holding the condition-variable mutex.",
+      "Use a consistent order or a joint lock when acquiring multiple mutexes.",
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends."
+    ],
+    "target": 0
+  },
+  {
+    "split": "train",
+    "family": "train-6",
+    "source": "int square(int value){return value*value;}",
+    "candidates": [
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации.",
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной.",
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных.",
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой."
+    ],
+    "target": 0
+  },
+  {
+    "split": "train",
+    "family": "train-6",
+    "source": "int square(int value){return value*value;}",
+    "candidates": [
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends.",
+      "Use a consistent order or a joint lock when acquiring multiple mutexes.",
+      "Wait with a predicate and recheck it while holding the condition-variable mutex."
+    ],
+    "target": 0
+  },
+  {
+    "split": "train",
+    "family": "train-6",
+    "source": "int square(int value){return value*value;}",
+    "candidates": [
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации.",
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной.",
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных.",
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой."
+    ],
+    "target": 0
+  },
+  {
+    "split": "train",
+    "family": "train-6",
+    "source": "int square(int value){return value*value;}",
+    "candidates": [
+      "Guard shared reads and writes with one synchronization policy.",
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends.",
+      "Wait with a predicate and recheck it while holding the condition-variable mutex.",
+      "Use a consistent order or a joint lock when acquiring multiple mutexes."
+    ],
+    "target": 0
+  },
+  {
+    "split": "train",
+    "family": "train-6",
+    "source": "int square(int value){return value*value;}",
+    "candidates": [
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой.",
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной.",
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации.",
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных."
+    ],
+    "target": 0
+  },
+  {
+    "split": "train",
+    "family": "train-6",
+    "source": "int square(int value){return value*value;}",
+    "candidates": [
+      "Use a consistent order or a joint lock when acquiring multiple mutexes.",
+      "Guard shared reads and writes with one synchronization policy.",
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends."
+    ],
+    "target": 0
+  },
+  {
+    "split": "train",
+    "family": "train-6",
+    "source": "int square(int value){return value*value;}",
+    "candidates": [
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой.",
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации.",
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных.",
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной."
+    ],
+    "target": 0
+  },
+  {
+    "split": "train",
+    "family": "train-6",
+    "source": "int square(int value){return value*value;}",
+    "candidates": [
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends.",
+      "Wait with a predicate and recheck it while holding the condition-variable mutex.",
+      "Use a consistent order or a joint lock when acquiring multiple mutexes.",
+      "Guard shared reads and writes with one synchronization policy."
+    ],
+    "target": 0
+  },
+  {
+    "split": "train",
+    "family": "train-6",
+    "source": "int square(int value){return value*value;}",
+    "candidates": [
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных.",
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой.",
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной.",
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации."
+    ],
+    "target": 0
+  },
+  {
+    "split": "train",
+    "family": "train-6",
+    "source": "int square(int value){return value*value;}",
+    "candidates": [
+      "Wait with a predicate and recheck it while holding the condition-variable mutex.",
+      "Use a consistent order or a joint lock when acquiring multiple mutexes.",
+      "Guard shared reads and writes with one synchronization policy."
+    ],
+    "target": 0
+  },
+  {
+    "split": "train",
+    "family": "train-6",
+    "source": "int square(int value){return value*value;}",
+    "candidates": [
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных.",
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной.",
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации.",
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой."
+    ],
+    "target": 0
+  },
+  {
+    "split": "train",
+    "family": "train-6",
+    "source": "int square(int value){return value*value;}",
+    "candidates": [
+      "Guard shared reads and writes with one synchronization policy.",
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends.",
+      "Use a consistent order or a joint lock when acquiring multiple mutexes.",
+      "Wait with a predicate and recheck it while holding the condition-variable mutex."
+    ],
+    "target": 0
+  },
+  {
+    "split": "train",
+    "family": "train-6",
+    "source": "int square(int value){return value*value;}",
+    "candidates": [
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации.",
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой.",
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных.",
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной."
+    ],
+    "target": 0
+  },
+  {
+    "split": "train",
+    "family": "train-7",
+    "source": "std::atomic<int> count{0};void work(){count.fetch_add(1);}void launch(){std::thread a(work),b(work);a.join();b.join();}",
+    "candidates": [
+      "Guard shared reads and writes with one synchronization policy.",
+      "Wait with a predicate and recheck it while holding the condition-variable mutex.",
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends."
+    ],
+    "target": 0
+  },
+  {
+    "split": "train",
+    "family": "train-7",
+    "source": "std::atomic<int> count{0};void work(){count.fetch_add(1);}void launch(){std::thread a(work),b(work);a.join();b.join();}",
+    "candidates": [
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации.",
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной.",
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой.",
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных."
+    ],
+    "target": 0
+  },
+  {
+    "split": "train",
+    "family": "train-7",
+    "source": "std::atomic<int> count{0};void work(){count.fetch_add(1);}void launch(){std::thread a(work),b(work);a.join();b.join();}",
+    "candidates": [
+      "Wait with a predicate and recheck it while holding the condition-variable mutex.",
+      "Use a consistent order or a joint lock when acquiring multiple mutexes.",
+      "Guard shared reads and writes with one synchronization policy.",
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends."
+    ],
+    "target": 0
+  },
+  {
+    "split": "train",
+    "family": "train-7",
+    "source": "std::atomic<int> count{0};void work(){count.fetch_add(1);}void launch(){std::thread a(work),b(work);a.join();b.join();}",
+    "candidates": [
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных.",
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации.",
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной.",
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой."
+    ],
+    "target": 0
+  },
+  {
+    "split": "train",
+    "family": "train-7",
+    "source": "std::atomic<int> count{0};void work(){count.fetch_add(1);}void launch(){std::thread a(work),b(work);a.join();b.join();}",
+    "candidates": [
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends.",
+      "Wait with a predicate and recheck it while holding the condition-variable mutex.",
+      "Guard shared reads and writes with one synchronization policy."
+    ],
+    "target": 0
+  },
+  {
+    "split": "train",
+    "family": "train-7",
+    "source": "std::atomic<int> count{0};void work(){count.fetch_add(1);}void launch(){std::thread a(work),b(work);a.join();b.join();}",
+    "candidates": [
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой.",
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации.",
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной.",
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных."
+    ],
+    "target": 0
+  },
+  {
+    "split": "train",
+    "family": "train-7",
+    "source": "std::atomic<int> count{0};void work(){count.fetch_add(1);}void launch(){std::thread a(work),b(work);a.join();b.join();}",
+    "candidates": [
+      "Wait with a predicate and recheck it while holding the condition-variable mutex.",
+      "Use a consistent order or a joint lock when acquiring multiple mutexes.",
+      "Guard shared reads and writes with one synchronization policy.",
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends."
+    ],
+    "target": 0
+  },
+  {
+    "split": "train",
+    "family": "train-7",
+    "source": "std::atomic<int> count{0};void work(){count.fetch_add(1);}void launch(){std::thread a(work),b(work);a.join();b.join();}",
+    "candidates": [
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой.",
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации.",
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной.",
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных."
+    ],
+    "target": 0
+  },
+  {
+    "split": "train",
+    "family": "train-7",
+    "source": "std::atomic<int> count{0};void work(){count.fetch_add(1);}void launch(){std::thread a(work),b(work);a.join();b.join();}",
+    "candidates": [
+      "Wait with a predicate and recheck it while holding the condition-variable mutex.",
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends.",
+      "Guard shared reads and writes with one synchronization policy."
+    ],
+    "target": 0
+  },
+  {
+    "split": "train",
+    "family": "train-7",
+    "source": "std::atomic<int> count{0};void work(){count.fetch_add(1);}void launch(){std::thread a(work),b(work);a.join();b.join();}",
+    "candidates": [
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной.",
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных.",
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации.",
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой."
+    ],
+    "target": 0
+  },
+  {
+    "split": "train",
+    "family": "train-7",
+    "source": "std::atomic<int> count{0};void work(){count.fetch_add(1);}void launch(){std::thread a(work),b(work);a.join();b.join();}",
+    "candidates": [
+      "Wait with a predicate and recheck it while holding the condition-variable mutex.",
+      "Guard shared reads and writes with one synchronization policy.",
+      "Use a consistent order or a joint lock when acquiring multiple mutexes.",
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends."
+    ],
+    "target": 0
+  },
+  {
+    "split": "train",
+    "family": "train-7",
+    "source": "std::atomic<int> count{0};void work(){count.fetch_add(1);}void launch(){std::thread a(work),b(work);a.join();b.join();}",
+    "candidates": [
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной.",
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации.",
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой.",
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных."
+    ],
+    "target": 0
+  },
+  {
+    "split": "train",
+    "family": "train-7",
+    "source": "std::atomic<int> count{0};void work(){count.fetch_add(1);}void launch(){std::thread a(work),b(work);a.join();b.join();}",
+    "candidates": [
+      "Guard shared reads and writes with one synchronization policy.",
+      "Use a consistent order or a joint lock when acquiring multiple mutexes.",
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends."
+    ],
+    "target": 0
+  },
+  {
+    "split": "train",
+    "family": "train-7",
+    "source": "std::atomic<int> count{0};void work(){count.fetch_add(1);}void launch(){std::thread a(work),b(work);a.join();b.join();}",
+    "candidates": [
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных.",
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой.",
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации.",
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной."
+    ],
+    "target": 0
+  },
+  {
+    "split": "train",
+    "family": "train-7",
+    "source": "std::atomic<int> count{0};void work(){count.fetch_add(1);}void launch(){std::thread a(work),b(work);a.join();b.join();}",
+    "candidates": [
+      "Use a consistent order or a joint lock when acquiring multiple mutexes.",
+      "Wait with a predicate and recheck it while holding the condition-variable mutex.",
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends.",
+      "Guard shared reads and writes with one synchronization policy."
+    ],
+    "target": 0
+  },
+  {
+    "split": "train",
+    "family": "train-7",
+    "source": "std::atomic<int> count{0};void work(){count.fetch_add(1);}void launch(){std::thread a(work),b(work);a.join();b.join();}",
+    "candidates": [
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации.",
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных.",
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной.",
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой."
+    ],
+    "target": 0
+  },
+  {
+    "split": "validation",
+    "family": "validation-0",
+    "source": "std::vector<int> values;void launch(){std::thread a([]{values.push_back(1);});std::thread b([]{values.push_back(2);});a.join();b.join();}",
+    "candidates": [
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends.",
+      "Wait with a predicate and recheck it while holding the condition-variable mutex.",
+      "Guard shared reads and writes with one synchronization policy."
+    ],
+    "target": 3
+  },
+  {
+    "split": "validation",
+    "family": "validation-0",
+    "source": "std::vector<int> values;void launch(){std::thread a([]{values.push_back(1);});std::thread b([]{values.push_back(2);});a.join();b.join();}",
+    "candidates": [
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной.",
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации.",
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой.",
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных."
+    ],
+    "target": 2
+  },
+  {
+    "split": "validation",
+    "family": "validation-0",
+    "source": "std::vector<int> values;void launch(){std::thread a([]{values.push_back(1);});std::thread b([]{values.push_back(2);});a.join();b.join();}",
+    "candidates": [
+      "Use a consistent order or a joint lock when acquiring multiple mutexes.",
+      "Guard shared reads and writes with one synchronization policy.",
+      "Wait with a predicate and recheck it while holding the condition-variable mutex.",
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends."
+    ],
+    "target": 2
+  },
+  {
+    "split": "validation",
+    "family": "validation-0",
+    "source": "std::vector<int> values;void launch(){std::thread a([]{values.push_back(1);});std::thread b([]{values.push_back(2);});a.join();b.join();}",
+    "candidates": [
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации.",
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных.",
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной.",
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой."
+    ],
+    "target": 1
+  },
+  {
+    "split": "validation",
+    "family": "validation-0",
+    "source": "std::vector<int> values;void launch(){std::thread a([]{values.push_back(1);});std::thread b([]{values.push_back(2);});a.join();b.join();}",
+    "candidates": [
+      "Wait with a predicate and recheck it while holding the condition-variable mutex.",
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends.",
+      "Guard shared reads and writes with one synchronization policy."
+    ],
+    "target": 3
+  },
+  {
+    "split": "validation",
+    "family": "validation-0",
+    "source": "std::vector<int> values;void launch(){std::thread a([]{values.push_back(1);});std::thread b([]{values.push_back(2);});a.join();b.join();}",
+    "candidates": [
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных.",
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой.",
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной.",
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации."
+    ],
+    "target": 4
+  },
+  {
+    "split": "validation",
+    "family": "validation-0",
+    "source": "std::vector<int> values;void launch(){std::thread a([]{values.push_back(1);});std::thread b([]{values.push_back(2);});a.join();b.join();}",
+    "candidates": [
+      "Guard shared reads and writes with one synchronization policy.",
+      "Wait with a predicate and recheck it while holding the condition-variable mutex.",
+      "Use a consistent order or a joint lock when acquiring multiple mutexes.",
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends."
+    ],
+    "target": 1
+  },
+  {
+    "split": "validation",
+    "family": "validation-0",
+    "source": "std::vector<int> values;void launch(){std::thread a([]{values.push_back(1);});std::thread b([]{values.push_back(2);});a.join();b.join();}",
+    "candidates": [
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных.",
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой.",
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной.",
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации."
+    ],
+    "target": 4
+  },
+  {
+    "split": "validation",
+    "family": "validation-0",
+    "source": "std::vector<int> values;void launch(){std::thread a([]{values.push_back(1);});std::thread b([]{values.push_back(2);});a.join();b.join();}",
+    "candidates": [
+      "Guard shared reads and writes with one synchronization policy.",
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends.",
+      "Use a consistent order or a joint lock when acquiring multiple mutexes."
+    ],
+    "target": 1
+  },
+  {
+    "split": "validation",
+    "family": "validation-0",
+    "source": "std::vector<int> values;void launch(){std::thread a([]{values.push_back(1);});std::thread b([]{values.push_back(2);});a.join();b.join();}",
+    "candidates": [
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной.",
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных.",
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой.",
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации."
+    ],
+    "target": 4
+  },
+  {
+    "split": "validation",
+    "family": "validation-0",
+    "source": "std::vector<int> values;void launch(){std::thread a([]{values.push_back(1);});std::thread b([]{values.push_back(2);});a.join();b.join();}",
+    "candidates": [
+      "Guard shared reads and writes with one synchronization policy.",
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends.",
+      "Use a consistent order or a joint lock when acquiring multiple mutexes.",
+      "Wait with a predicate and recheck it while holding the condition-variable mutex."
+    ],
+    "target": 1
+  },
+  {
+    "split": "validation",
+    "family": "validation-0",
+    "source": "std::vector<int> values;void launch(){std::thread a([]{values.push_back(1);});std::thread b([]{values.push_back(2);});a.join();b.join();}",
+    "candidates": [
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации.",
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных.",
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой.",
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной."
+    ],
+    "target": 1
+  },
+  {
+    "split": "validation",
+    "family": "validation-0",
+    "source": "std::vector<int> values;void launch(){std::thread a([]{values.push_back(1);});std::thread b([]{values.push_back(2);});a.join();b.join();}",
+    "candidates": [
+      "Wait with a predicate and recheck it while holding the condition-variable mutex.",
+      "Guard shared reads and writes with one synchronization policy.",
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends."
+    ],
+    "target": 2
+  },
+  {
+    "split": "validation",
+    "family": "validation-0",
+    "source": "std::vector<int> values;void launch(){std::thread a([]{values.push_back(1);});std::thread b([]{values.push_back(2);});a.join();b.join();}",
+    "candidates": [
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации.",
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной.",
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных.",
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой."
+    ],
+    "target": 1
+  },
+  {
+    "split": "validation",
+    "family": "validation-0",
+    "source": "std::vector<int> values;void launch(){std::thread a([]{values.push_back(1);});std::thread b([]{values.push_back(2);});a.join();b.join();}",
+    "candidates": [
+      "Wait with a predicate and recheck it while holding the condition-variable mutex.",
+      "Guard shared reads and writes with one synchronization policy.",
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends.",
+      "Use a consistent order or a joint lock when acquiring multiple mutexes."
+    ],
+    "target": 2
+  },
+  {
+    "split": "validation",
+    "family": "validation-0",
+    "source": "std::vector<int> values;void launch(){std::thread a([]{values.push_back(1);});std::thread b([]{values.push_back(2);});a.join();b.join();}",
+    "candidates": [
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации.",
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной.",
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных.",
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой."
+    ],
+    "target": 1
+  },
+  {
+    "split": "validation",
+    "family": "validation-1",
+    "source": "std::thread create(){std::string text=\"temporary\";return std::thread([&text]{print(text);});}",
+    "candidates": [
+      "Guard shared reads and writes with one synchronization policy.",
+      "Wait with a predicate and recheck it while holding the condition-variable mutex.",
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends."
+    ],
+    "target": 3
+  },
+  {
+    "split": "validation",
+    "family": "validation-1",
+    "source": "std::thread create(){std::string text=\"temporary\";return std::thread([&text]{print(text);});}",
+    "candidates": [
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой.",
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации.",
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной.",
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных."
+    ],
+    "target": 4
+  },
+  {
+    "split": "validation",
+    "family": "validation-1",
+    "source": "std::thread create(){std::string text=\"temporary\";return std::thread([&text]{print(text);});}",
+    "candidates": [
+      "Wait with a predicate and recheck it while holding the condition-variable mutex.",
+      "Use a consistent order or a joint lock when acquiring multiple mutexes.",
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends.",
+      "Guard shared reads and writes with one synchronization policy."
+    ],
+    "target": 3
+  },
+  {
+    "split": "validation",
+    "family": "validation-1",
+    "source": "std::thread create(){std::string text=\"temporary\";return std::thread([&text]{print(text);});}",
+    "candidates": [
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной.",
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой.",
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных.",
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации."
+    ],
+    "target": 3
+  },
+  {
+    "split": "validation",
+    "family": "validation-1",
+    "source": "std::thread create(){std::string text=\"temporary\";return std::thread([&text]{print(text);});}",
+    "candidates": [
+      "Wait with a predicate and recheck it while holding the condition-variable mutex.",
+      "Use a consistent order or a joint lock when acquiring multiple mutexes.",
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends."
+    ],
+    "target": 3
+  },
+  {
+    "split": "validation",
+    "family": "validation-1",
+    "source": "std::thread create(){std::string text=\"temporary\";return std::thread([&text]{print(text);});}",
+    "candidates": [
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной.",
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации.",
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой.",
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных."
+    ],
+    "target": 4
+  },
+  {
+    "split": "validation",
+    "family": "validation-1",
+    "source": "std::thread create(){std::string text=\"temporary\";return std::thread([&text]{print(text);});}",
+    "candidates": [
+      "Guard shared reads and writes with one synchronization policy.",
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends.",
+      "Use a consistent order or a joint lock when acquiring multiple mutexes.",
+      "Wait with a predicate and recheck it while holding the condition-variable mutex."
+    ],
+    "target": 2
+  },
+  {
+    "split": "validation",
+    "family": "validation-1",
+    "source": "std::thread create(){std::string text=\"temporary\";return std::thread([&text]{print(text);});}",
+    "candidates": [
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных.",
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой.",
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации.",
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной."
+    ],
+    "target": 1
+  },
+  {
+    "split": "validation",
+    "family": "validation-1",
+    "source": "std::thread create(){std::string text=\"temporary\";return std::thread([&text]{print(text);});}",
+    "candidates": [
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends.",
+      "Wait with a predicate and recheck it while holding the condition-variable mutex.",
+      "Use a consistent order or a joint lock when acquiring multiple mutexes."
+    ],
+    "target": 1
+  },
+  {
+    "split": "validation",
+    "family": "validation-1",
+    "source": "std::thread create(){std::string text=\"temporary\";return std::thread([&text]{print(text);});}",
+    "candidates": [
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных.",
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации.",
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной.",
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой."
+    ],
+    "target": 1
+  },
+  {
+    "split": "validation",
+    "family": "validation-1",
+    "source": "std::thread create(){std::string text=\"temporary\";return std::thread([&text]{print(text);});}",
+    "candidates": [
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends.",
+      "Use a consistent order or a joint lock when acquiring multiple mutexes.",
+      "Guard shared reads and writes with one synchronization policy.",
+      "Wait with a predicate and recheck it while holding the condition-variable mutex."
+    ],
+    "target": 1
+  },
+  {
+    "split": "validation",
+    "family": "validation-1",
+    "source": "std::thread create(){std::string text=\"temporary\";return std::thread([&text]{print(text);});}",
+    "candidates": [
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой.",
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации.",
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных.",
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной."
+    ],
+    "target": 3
+  },
+  {
+    "split": "validation",
+    "family": "validation-1",
+    "source": "std::thread create(){std::string text=\"temporary\";return std::thread([&text]{print(text);});}",
+    "candidates": [
+      "Guard shared reads and writes with one synchronization policy.",
+      "Wait with a predicate and recheck it while holding the condition-variable mutex.",
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends."
+    ],
+    "target": 3
+  },
+  {
+    "split": "validation",
+    "family": "validation-1",
+    "source": "std::thread create(){std::string text=\"temporary\";return std::thread([&text]{print(text);});}",
+    "candidates": [
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой.",
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации.",
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной.",
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных."
+    ],
+    "target": 4
+  },
+  {
+    "split": "validation",
+    "family": "validation-1",
+    "source": "std::thread create(){std::string text=\"temporary\";return std::thread([&text]{print(text);});}",
+    "candidates": [
+      "Guard shared reads and writes with one synchronization policy.",
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends.",
+      "Use a consistent order or a joint lock when acquiring multiple mutexes.",
+      "Wait with a predicate and recheck it while holding the condition-variable mutex."
+    ],
+    "target": 2
+  },
+  {
+    "split": "validation",
+    "family": "validation-1",
+    "source": "std::thread create(){std::string text=\"temporary\";return std::thread([&text]{print(text);});}",
+    "candidates": [
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации.",
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой.",
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной.",
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных."
+    ],
+    "target": 4
+  },
+  {
+    "split": "validation",
+    "family": "validation-2",
+    "source": "void receive(){std::unique_lock<std::mutex> lock(queueMutex);if(queue.empty())changed.wait(lock);auto value=queue.front();queue.pop();}",
+    "candidates": [
+      "Wait with a predicate and recheck it while holding the condition-variable mutex.",
+      "Guard shared reads and writes with one synchronization policy.",
+      "Use a consistent order or a joint lock when acquiring multiple mutexes."
+    ],
+    "target": 1
+  },
+  {
+    "split": "validation",
+    "family": "validation-2",
+    "source": "void receive(){std::unique_lock<std::mutex> lock(queueMutex);if(queue.empty())changed.wait(lock);auto value=queue.front();queue.pop();}",
+    "candidates": [
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой.",
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации.",
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных.",
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной."
+    ],
+    "target": 4
+  },
+  {
+    "split": "validation",
+    "family": "validation-2",
+    "source": "void receive(){std::unique_lock<std::mutex> lock(queueMutex);if(queue.empty())changed.wait(lock);auto value=queue.front();queue.pop();}",
+    "candidates": [
+      "Guard shared reads and writes with one synchronization policy.",
+      "Use a consistent order or a joint lock when acquiring multiple mutexes.",
+      "Wait with a predicate and recheck it while holding the condition-variable mutex.",
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends."
+    ],
+    "target": 3
+  },
+  {
+    "split": "validation",
+    "family": "validation-2",
+    "source": "void receive(){std::unique_lock<std::mutex> lock(queueMutex);if(queue.empty())changed.wait(lock);auto value=queue.front();queue.pop();}",
+    "candidates": [
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной.",
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации.",
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой.",
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных."
+    ],
+    "target": 1
+  },
+  {
+    "split": "validation",
+    "family": "validation-2",
+    "source": "void receive(){std::unique_lock<std::mutex> lock(queueMutex);if(queue.empty())changed.wait(lock);auto value=queue.front();queue.pop();}",
+    "candidates": [
+      "Guard shared reads and writes with one synchronization policy.",
+      "Wait with a predicate and recheck it while holding the condition-variable mutex.",
+      "Use a consistent order or a joint lock when acquiring multiple mutexes."
+    ],
+    "target": 2
+  },
+  {
+    "split": "validation",
+    "family": "validation-2",
+    "source": "void receive(){std::unique_lock<std::mutex> lock(queueMutex);if(queue.empty())changed.wait(lock);auto value=queue.front();queue.pop();}",
+    "candidates": [
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных.",
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной.",
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой.",
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации."
+    ],
+    "target": 2
+  },
+  {
+    "split": "validation",
+    "family": "validation-2",
+    "source": "void receive(){std::unique_lock<std::mutex> lock(queueMutex);if(queue.empty())changed.wait(lock);auto value=queue.front();queue.pop();}",
+    "candidates": [
+      "Guard shared reads and writes with one synchronization policy.",
+      "Use a consistent order or a joint lock when acquiring multiple mutexes.",
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends.",
+      "Wait with a predicate and recheck it while holding the condition-variable mutex."
+    ],
+    "target": 4
+  },
+  {
+    "split": "validation",
+    "family": "validation-2",
+    "source": "void receive(){std::unique_lock<std::mutex> lock(queueMutex);if(queue.empty())changed.wait(lock);auto value=queue.front();queue.pop();}",
+    "candidates": [
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации.",
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой.",
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных.",
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной."
+    ],
+    "target": 4
+  },
+  {
+    "split": "validation",
+    "family": "validation-2",
+    "source": "void receive(){std::unique_lock<std::mutex> lock(queueMutex);if(queue.empty())changed.wait(lock);auto value=queue.front();queue.pop();}",
+    "candidates": [
+      "Wait with a predicate and recheck it while holding the condition-variable mutex.",
+      "Guard shared reads and writes with one synchronization policy.",
+      "Use a consistent order or a joint lock when acquiring multiple mutexes."
+    ],
+    "target": 1
+  },
+  {
+    "split": "validation",
+    "family": "validation-2",
+    "source": "void receive(){std::unique_lock<std::mutex> lock(queueMutex);if(queue.empty())changed.wait(lock);auto value=queue.front();queue.pop();}",
+    "candidates": [
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной.",
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации.",
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных.",
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой."
+    ],
+    "target": 1
+  },
+  {
+    "split": "validation",
+    "family": "validation-2",
+    "source": "void receive(){std::unique_lock<std::mutex> lock(queueMutex);if(queue.empty())changed.wait(lock);auto value=queue.front();queue.pop();}",
+    "candidates": [
+      "Guard shared reads and writes with one synchronization policy.",
+      "Use a consistent order or a joint lock when acquiring multiple mutexes.",
+      "Wait with a predicate and recheck it while holding the condition-variable mutex.",
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends."
+    ],
+    "target": 3
+  },
+  {
+    "split": "validation",
+    "family": "validation-2",
+    "source": "void receive(){std::unique_lock<std::mutex> lock(queueMutex);if(queue.empty())changed.wait(lock);auto value=queue.front();queue.pop();}",
+    "candidates": [
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных.",
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой.",
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной.",
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации."
+    ],
+    "target": 3
+  },
+  {
+    "split": "validation",
+    "family": "validation-2",
+    "source": "void receive(){std::unique_lock<std::mutex> lock(queueMutex);if(queue.empty())changed.wait(lock);auto value=queue.front();queue.pop();}",
+    "candidates": [
+      "Use a consistent order or a joint lock when acquiring multiple mutexes.",
+      "Wait with a predicate and recheck it while holding the condition-variable mutex.",
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends."
+    ],
+    "target": 2
+  },
+  {
+    "split": "validation",
+    "family": "validation-2",
+    "source": "void receive(){std::unique_lock<std::mutex> lock(queueMutex);if(queue.empty())changed.wait(lock);auto value=queue.front();queue.pop();}",
+    "candidates": [
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации.",
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных.",
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой.",
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной."
+    ],
+    "target": 4
+  },
+  {
+    "split": "validation",
+    "family": "validation-2",
+    "source": "void receive(){std::unique_lock<std::mutex> lock(queueMutex);if(queue.empty())changed.wait(lock);auto value=queue.front();queue.pop();}",
+    "candidates": [
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends.",
+      "Use a consistent order or a joint lock when acquiring multiple mutexes.",
+      "Guard shared reads and writes with one synchronization policy.",
+      "Wait with a predicate and recheck it while holding the condition-variable mutex."
+    ],
+    "target": 4
+  },
+  {
+    "split": "validation",
+    "family": "validation-2",
+    "source": "void receive(){std::unique_lock<std::mutex> lock(queueMutex);if(queue.empty())changed.wait(lock);auto value=queue.front();queue.pop();}",
+    "candidates": [
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации.",
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных.",
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной.",
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой."
+    ],
+    "target": 3
+  },
+  {
+    "split": "validation",
+    "family": "validation-3",
+    "source": "void transfer(Account&x,Account&y){std::lock_guard<std::mutex> first(x.mutex);std::lock_guard<std::mutex> second(y.mutex);x.balance--;y.balance++;}void run(Account&a,Account&b){std::thread t(transfer,std::ref(a),std::ref(b));transfer(b,a);t.join();}",
+    "candidates": [
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends.",
+      "Use a consistent order or a joint lock when acquiring multiple mutexes.",
+      "Wait with a predicate and recheck it while holding the condition-variable mutex."
+    ],
+    "target": 2
+  },
+  {
+    "split": "validation",
+    "family": "validation-3",
+    "source": "void transfer(Account&x,Account&y){std::lock_guard<std::mutex> first(x.mutex);std::lock_guard<std::mutex> second(y.mutex);x.balance--;y.balance++;}void run(Account&a,Account&b){std::thread t(transfer,std::ref(a),std::ref(b));transfer(b,a);t.join();}",
+    "candidates": [
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных.",
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой.",
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной.",
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации."
+    ],
+    "target": 2
+  },
+  {
+    "split": "validation",
+    "family": "validation-3",
+    "source": "void transfer(Account&x,Account&y){std::lock_guard<std::mutex> first(x.mutex);std::lock_guard<std::mutex> second(y.mutex);x.balance--;y.balance++;}void run(Account&a,Account&b){std::thread t(transfer,std::ref(a),std::ref(b));transfer(b,a);t.join();}",
+    "candidates": [
+      "Guard shared reads and writes with one synchronization policy.",
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends.",
+      "Use a consistent order or a joint lock when acquiring multiple mutexes.",
+      "Wait with a predicate and recheck it while holding the condition-variable mutex."
+    ],
+    "target": 3
+  },
+  {
+    "split": "validation",
+    "family": "validation-3",
+    "source": "void transfer(Account&x,Account&y){std::lock_guard<std::mutex> first(x.mutex);std::lock_guard<std::mutex> second(y.mutex);x.balance--;y.balance++;}void run(Account&a,Account&b){std::thread t(transfer,std::ref(a),std::ref(b));transfer(b,a);t.join();}",
+    "candidates": [
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной.",
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных.",
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой.",
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации."
+    ],
+    "target": 3
+  },
+  {
+    "split": "validation",
+    "family": "validation-3",
+    "source": "void transfer(Account&x,Account&y){std::lock_guard<std::mutex> first(x.mutex);std::lock_guard<std::mutex> second(y.mutex);x.balance--;y.balance++;}void run(Account&a,Account&b){std::thread t(transfer,std::ref(a),std::ref(b));transfer(b,a);t.join();}",
+    "candidates": [
+      "Use a consistent order or a joint lock when acquiring multiple mutexes.",
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends.",
+      "Guard shared reads and writes with one synchronization policy."
+    ],
+    "target": 1
+  },
+  {
+    "split": "validation",
+    "family": "validation-3",
+    "source": "void transfer(Account&x,Account&y){std::lock_guard<std::mutex> first(x.mutex);std::lock_guard<std::mutex> second(y.mutex);x.balance--;y.balance++;}void run(Account&a,Account&b){std::thread t(transfer,std::ref(a),std::ref(b));transfer(b,a);t.join();}",
+    "candidates": [
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной.",
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой.",
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных.",
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации."
+    ],
+    "target": 2
+  },
+  {
+    "split": "validation",
+    "family": "validation-3",
+    "source": "void transfer(Account&x,Account&y){std::lock_guard<std::mutex> first(x.mutex);std::lock_guard<std::mutex> second(y.mutex);x.balance--;y.balance++;}void run(Account&a,Account&b){std::thread t(transfer,std::ref(a),std::ref(b));transfer(b,a);t.join();}",
+    "candidates": [
+      "Wait with a predicate and recheck it while holding the condition-variable mutex.",
+      "Guard shared reads and writes with one synchronization policy.",
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends.",
+      "Use a consistent order or a joint lock when acquiring multiple mutexes."
+    ],
+    "target": 4
+  },
+  {
+    "split": "validation",
+    "family": "validation-3",
+    "source": "void transfer(Account&x,Account&y){std::lock_guard<std::mutex> first(x.mutex);std::lock_guard<std::mutex> second(y.mutex);x.balance--;y.balance++;}void run(Account&a,Account&b){std::thread t(transfer,std::ref(a),std::ref(b));transfer(b,a);t.join();}",
+    "candidates": [
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации.",
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных.",
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной.",
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой."
+    ],
+    "target": 4
+  },
+  {
+    "split": "validation",
+    "family": "validation-3",
+    "source": "void transfer(Account&x,Account&y){std::lock_guard<std::mutex> first(x.mutex);std::lock_guard<std::mutex> second(y.mutex);x.balance--;y.balance++;}void run(Account&a,Account&b){std::thread t(transfer,std::ref(a),std::ref(b));transfer(b,a);t.join();}",
+    "candidates": [
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends.",
+      "Guard shared reads and writes with one synchronization policy.",
+      "Use a consistent order or a joint lock when acquiring multiple mutexes."
+    ],
+    "target": 3
+  },
+  {
+    "split": "validation",
+    "family": "validation-3",
+    "source": "void transfer(Account&x,Account&y){std::lock_guard<std::mutex> first(x.mutex);std::lock_guard<std::mutex> second(y.mutex);x.balance--;y.balance++;}void run(Account&a,Account&b){std::thread t(transfer,std::ref(a),std::ref(b));transfer(b,a);t.join();}",
+    "candidates": [
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой.",
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации.",
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной.",
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных."
+    ],
+    "target": 1
+  },
+  {
+    "split": "validation",
+    "family": "validation-3",
+    "source": "void transfer(Account&x,Account&y){std::lock_guard<std::mutex> first(x.mutex);std::lock_guard<std::mutex> second(y.mutex);x.balance--;y.balance++;}void run(Account&a,Account&b){std::thread t(transfer,std::ref(a),std::ref(b));transfer(b,a);t.join();}",
+    "candidates": [
+      "Use a consistent order or a joint lock when acquiring multiple mutexes.",
+      "Guard shared reads and writes with one synchronization policy.",
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends.",
+      "Wait with a predicate and recheck it while holding the condition-variable mutex."
+    ],
+    "target": 1
+  },
+  {
+    "split": "validation",
+    "family": "validation-3",
+    "source": "void transfer(Account&x,Account&y){std::lock_guard<std::mutex> first(x.mutex);std::lock_guard<std::mutex> second(y.mutex);x.balance--;y.balance++;}void run(Account&a,Account&b){std::thread t(transfer,std::ref(a),std::ref(b));transfer(b,a);t.join();}",
+    "candidates": [
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных.",
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной.",
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации.",
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой."
+    ],
+    "target": 4
+  },
+  {
+    "split": "validation",
+    "family": "validation-3",
+    "source": "void transfer(Account&x,Account&y){std::lock_guard<std::mutex> first(x.mutex);std::lock_guard<std::mutex> second(y.mutex);x.balance--;y.balance++;}void run(Account&a,Account&b){std::thread t(transfer,std::ref(a),std::ref(b));transfer(b,a);t.join();}",
+    "candidates": [
+      "Guard shared reads and writes with one synchronization policy.",
+      "Wait with a predicate and recheck it while holding the condition-variable mutex.",
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends."
+    ],
+    "target": 0
+  },
+  {
+    "split": "validation",
+    "family": "validation-3",
+    "source": "void transfer(Account&x,Account&y){std::lock_guard<std::mutex> first(x.mutex);std::lock_guard<std::mutex> second(y.mutex);x.balance--;y.balance++;}void run(Account&a,Account&b){std::thread t(transfer,std::ref(a),std::ref(b));transfer(b,a);t.join();}",
+    "candidates": [
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной.",
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных.",
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой.",
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации."
+    ],
+    "target": 3
+  },
+  {
+    "split": "validation",
+    "family": "validation-3",
+    "source": "void transfer(Account&x,Account&y){std::lock_guard<std::mutex> first(x.mutex);std::lock_guard<std::mutex> second(y.mutex);x.balance--;y.balance++;}void run(Account&a,Account&b){std::thread t(transfer,std::ref(a),std::ref(b));transfer(b,a);t.join();}",
+    "candidates": [
+      "Wait with a predicate and recheck it while holding the condition-variable mutex.",
+      "Use a consistent order or a joint lock when acquiring multiple mutexes.",
+      "Guard shared reads and writes with one synchronization policy.",
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends."
+    ],
+    "target": 2
+  },
+  {
+    "split": "validation",
+    "family": "validation-3",
+    "source": "void transfer(Account&x,Account&y){std::lock_guard<std::mutex> first(x.mutex);std::lock_guard<std::mutex> second(y.mutex);x.balance--;y.balance++;}void run(Account&a,Account&b){std::thread t(transfer,std::ref(a),std::ref(b));transfer(b,a);t.join();}",
+    "candidates": [
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой.",
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации.",
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной.",
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных."
+    ],
+    "target": 1
+  },
+  {
+    "split": "validation",
+    "family": "validation-4",
+    "source": "std::mutex m;int count=0;void work(){std::lock_guard<std::mutex> lock(m);++count;}void run(){std::thread a(work),b(work);a.join();b.join();}",
+    "candidates": [
+      "Guard shared reads and writes with one synchronization policy.",
+      "Use a consistent order or a joint lock when acquiring multiple mutexes.",
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends."
+    ],
+    "target": 0
+  },
+  {
+    "split": "validation",
+    "family": "validation-4",
+    "source": "std::mutex m;int count=0;void work(){std::lock_guard<std::mutex> lock(m);++count;}void run(){std::thread a(work),b(work);a.join();b.join();}",
+    "candidates": [
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации.",
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной.",
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой.",
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных."
+    ],
+    "target": 0
+  },
+  {
+    "split": "validation",
+    "family": "validation-4",
+    "source": "std::mutex m;int count=0;void work(){std::lock_guard<std::mutex> lock(m);++count;}void run(){std::thread a(work),b(work);a.join();b.join();}",
+    "candidates": [
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends.",
+      "Guard shared reads and writes with one synchronization policy.",
+      "Wait with a predicate and recheck it while holding the condition-variable mutex.",
+      "Use a consistent order or a joint lock when acquiring multiple mutexes."
+    ],
+    "target": 0
+  },
+  {
+    "split": "validation",
+    "family": "validation-4",
+    "source": "std::mutex m;int count=0;void work(){std::lock_guard<std::mutex> lock(m);++count;}void run(){std::thread a(work),b(work);a.join();b.join();}",
+    "candidates": [
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных.",
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной.",
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации.",
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой."
+    ],
+    "target": 0
+  },
+  {
+    "split": "validation",
+    "family": "validation-4",
+    "source": "std::mutex m;int count=0;void work(){std::lock_guard<std::mutex> lock(m);++count;}void run(){std::thread a(work),b(work);a.join();b.join();}",
+    "candidates": [
+      "Guard shared reads and writes with one synchronization policy.",
+      "Use a consistent order or a joint lock when acquiring multiple mutexes.",
+      "Wait with a predicate and recheck it while holding the condition-variable mutex."
+    ],
+    "target": 0
+  },
+  {
+    "split": "validation",
+    "family": "validation-4",
+    "source": "std::mutex m;int count=0;void work(){std::lock_guard<std::mutex> lock(m);++count;}void run(){std::thread a(work),b(work);a.join();b.join();}",
+    "candidates": [
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной.",
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой.",
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации.",
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных."
+    ],
+    "target": 0
+  },
+  {
+    "split": "validation",
+    "family": "validation-4",
+    "source": "std::mutex m;int count=0;void work(){std::lock_guard<std::mutex> lock(m);++count;}void run(){std::thread a(work),b(work);a.join();b.join();}",
+    "candidates": [
+      "Wait with a predicate and recheck it while holding the condition-variable mutex.",
+      "Guard shared reads and writes with one synchronization policy.",
+      "Use a consistent order or a joint lock when acquiring multiple mutexes.",
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends."
+    ],
+    "target": 0
+  },
+  {
+    "split": "validation",
+    "family": "validation-4",
+    "source": "std::mutex m;int count=0;void work(){std::lock_guard<std::mutex> lock(m);++count;}void run(){std::thread a(work),b(work);a.join();b.join();}",
+    "candidates": [
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации.",
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных.",
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной.",
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой."
+    ],
+    "target": 0
+  },
+  {
+    "split": "validation",
+    "family": "validation-4",
+    "source": "std::mutex m;int count=0;void work(){std::lock_guard<std::mutex> lock(m);++count;}void run(){std::thread a(work),b(work);a.join();b.join();}",
+    "candidates": [
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends.",
+      "Wait with a predicate and recheck it while holding the condition-variable mutex.",
+      "Guard shared reads and writes with one synchronization policy."
+    ],
+    "target": 0
+  },
+  {
+    "split": "validation",
+    "family": "validation-4",
+    "source": "std::mutex m;int count=0;void work(){std::lock_guard<std::mutex> lock(m);++count;}void run(){std::thread a(work),b(work);a.join();b.join();}",
+    "candidates": [
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации.",
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной.",
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных.",
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой."
+    ],
+    "target": 0
+  },
+  {
+    "split": "validation",
+    "family": "validation-4",
+    "source": "std::mutex m;int count=0;void work(){std::lock_guard<std::mutex> lock(m);++count;}void run(){std::thread a(work),b(work);a.join();b.join();}",
+    "candidates": [
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends.",
+      "Guard shared reads and writes with one synchronization policy.",
+      "Use a consistent order or a joint lock when acquiring multiple mutexes.",
+      "Wait with a predicate and recheck it while holding the condition-variable mutex."
+    ],
+    "target": 0
+  },
+  {
+    "split": "validation",
+    "family": "validation-4",
+    "source": "std::mutex m;int count=0;void work(){std::lock_guard<std::mutex> lock(m);++count;}void run(){std::thread a(work),b(work);a.join();b.join();}",
+    "candidates": [
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой.",
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной.",
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации.",
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных."
+    ],
+    "target": 0
+  },
+  {
+    "split": "validation",
+    "family": "validation-4",
+    "source": "std::mutex m;int count=0;void work(){std::lock_guard<std::mutex> lock(m);++count;}void run(){std::thread a(work),b(work);a.join();b.join();}",
+    "candidates": [
+      "Use a consistent order or a joint lock when acquiring multiple mutexes.",
+      "Wait with a predicate and recheck it while holding the condition-variable mutex.",
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends."
+    ],
+    "target": 0
+  },
+  {
+    "split": "validation",
+    "family": "validation-4",
+    "source": "std::mutex m;int count=0;void work(){std::lock_guard<std::mutex> lock(m);++count;}void run(){std::thread a(work),b(work);a.join();b.join();}",
+    "candidates": [
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной.",
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных.",
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой.",
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации."
+    ],
+    "target": 0
+  },
+  {
+    "split": "validation",
+    "family": "validation-4",
+    "source": "std::mutex m;int count=0;void work(){std::lock_guard<std::mutex> lock(m);++count;}void run(){std::thread a(work),b(work);a.join();b.join();}",
+    "candidates": [
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends.",
+      "Guard shared reads and writes with one synchronization policy.",
+      "Use a consistent order or a joint lock when acquiring multiple mutexes.",
+      "Wait with a predicate and recheck it while holding the condition-variable mutex."
+    ],
+    "target": 0
+  },
+  {
+    "split": "validation",
+    "family": "validation-4",
+    "source": "std::mutex m;int count=0;void work(){std::lock_guard<std::mutex> lock(m);++count;}void run(){std::thread a(work),b(work);a.join();b.join();}",
+    "candidates": [
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной.",
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой.",
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных.",
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации."
+    ],
+    "target": 0
+  },
+  {
+    "split": "test",
+    "family": "test-0",
+    "source": "struct State{int hits=0;void update(){++hits;}};void run(){State state;std::thread a([&]{state.update();}),b([&]{state.update();});a.join();b.join();}",
+    "candidates": [
+      "Guard shared reads and writes with one synchronization policy.",
+      "Use a consistent order or a joint lock when acquiring multiple mutexes.",
+      "Wait with a predicate and recheck it while holding the condition-variable mutex."
+    ],
+    "target": 1
+  },
+  {
+    "split": "test",
+    "family": "test-0",
+    "source": "struct State{int hits=0;void update(){++hits;}};void run(){State state;std::thread a([&]{state.update();}),b([&]{state.update();});a.join();b.join();}",
+    "candidates": [
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации.",
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой.",
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных.",
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной."
+    ],
+    "target": 1
+  },
+  {
+    "split": "test",
+    "family": "test-0",
+    "source": "struct State{int hits=0;void update(){++hits;}};void run(){State state;std::thread a([&]{state.update();}),b([&]{state.update();});a.join();b.join();}",
+    "candidates": [
+      "Guard shared reads and writes with one synchronization policy.",
+      "Use a consistent order or a joint lock when acquiring multiple mutexes.",
+      "Wait with a predicate and recheck it while holding the condition-variable mutex.",
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends."
+    ],
+    "target": 1
+  },
+  {
+    "split": "test",
+    "family": "test-0",
+    "source": "struct State{int hits=0;void update(){++hits;}};void run(){State state;std::thread a([&]{state.update();}),b([&]{state.update();});a.join();b.join();}",
+    "candidates": [
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации.",
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой.",
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной.",
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных."
+    ],
+    "target": 1
+  },
+  {
+    "split": "test",
+    "family": "test-0",
+    "source": "struct State{int hits=0;void update(){++hits;}};void run(){State state;std::thread a([&]{state.update();}),b([&]{state.update();});a.join();b.join();}",
+    "candidates": [
+      "Use a consistent order or a joint lock when acquiring multiple mutexes.",
+      "Guard shared reads and writes with one synchronization policy.",
+      "Wait with a predicate and recheck it while holding the condition-variable mutex."
+    ],
+    "target": 2
+  },
+  {
+    "split": "test",
+    "family": "test-0",
+    "source": "struct State{int hits=0;void update(){++hits;}};void run(){State state;std::thread a([&]{state.update();}),b([&]{state.update();});a.join();b.join();}",
+    "candidates": [
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной.",
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации.",
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой.",
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных."
+    ],
+    "target": 2
+  },
+  {
+    "split": "test",
+    "family": "test-0",
+    "source": "struct State{int hits=0;void update(){++hits;}};void run(){State state;std::thread a([&]{state.update();}),b([&]{state.update();});a.join();b.join();}",
+    "candidates": [
+      "Guard shared reads and writes with one synchronization policy.",
+      "Wait with a predicate and recheck it while holding the condition-variable mutex.",
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends.",
+      "Use a consistent order or a joint lock when acquiring multiple mutexes."
+    ],
+    "target": 1
+  },
+  {
+    "split": "test",
+    "family": "test-0",
+    "source": "struct State{int hits=0;void update(){++hits;}};void run(){State state;std::thread a([&]{state.update();}),b([&]{state.update();});a.join();b.join();}",
+    "candidates": [
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой.",
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации.",
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных.",
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной."
+    ],
+    "target": 2
+  },
+  {
+    "split": "test",
+    "family": "test-0",
+    "source": "struct State{int hits=0;void update(){++hits;}};void run(){State state;std::thread a([&]{state.update();}),b([&]{state.update();});a.join();b.join();}",
+    "candidates": [
+      "Wait with a predicate and recheck it while holding the condition-variable mutex.",
+      "Guard shared reads and writes with one synchronization policy.",
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends."
+    ],
+    "target": 2
+  },
+  {
+    "split": "test",
+    "family": "test-0",
+    "source": "struct State{int hits=0;void update(){++hits;}};void run(){State state;std::thread a([&]{state.update();}),b([&]{state.update();});a.join();b.join();}",
+    "candidates": [
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных.",
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой.",
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации.",
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной."
+    ],
+    "target": 3
+  },
+  {
+    "split": "test",
+    "family": "test-0",
+    "source": "struct State{int hits=0;void update(){++hits;}};void run(){State state;std::thread a([&]{state.update();}),b([&]{state.update();});a.join();b.join();}",
+    "candidates": [
+      "Wait with a predicate and recheck it while holding the condition-variable mutex.",
+      "Use a consistent order or a joint lock when acquiring multiple mutexes.",
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends.",
+      "Guard shared reads and writes with one synchronization policy."
+    ],
+    "target": 4
+  },
+  {
+    "split": "test",
+    "family": "test-0",
+    "source": "struct State{int hits=0;void update(){++hits;}};void run(){State state;std::thread a([&]{state.update();}),b([&]{state.update();});a.join();b.join();}",
+    "candidates": [
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой.",
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных.",
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной.",
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации."
+    ],
+    "target": 4
+  },
+  {
+    "split": "test",
+    "family": "test-0",
+    "source": "struct State{int hits=0;void update(){++hits;}};void run(){State state;std::thread a([&]{state.update();}),b([&]{state.update();});a.join();b.join();}",
+    "candidates": [
+      "Wait with a predicate and recheck it while holding the condition-variable mutex.",
+      "Use a consistent order or a joint lock when acquiring multiple mutexes.",
+      "Guard shared reads and writes with one synchronization policy."
+    ],
+    "target": 3
+  },
+  {
+    "split": "test",
+    "family": "test-0",
+    "source": "struct State{int hits=0;void update(){++hits;}};void run(){State state;std::thread a([&]{state.update();}),b([&]{state.update();});a.join();b.join();}",
+    "candidates": [
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных.",
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной.",
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации.",
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой."
+    ],
+    "target": 3
+  },
+  {
+    "split": "test",
+    "family": "test-0",
+    "source": "struct State{int hits=0;void update(){++hits;}};void run(){State state;std::thread a([&]{state.update();}),b([&]{state.update();});a.join();b.join();}",
+    "candidates": [
+      "Guard shared reads and writes with one synchronization policy.",
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends.",
+      "Wait with a predicate and recheck it while holding the condition-variable mutex.",
+      "Use a consistent order or a joint lock when acquiring multiple mutexes."
+    ],
+    "target": 1
+  },
+  {
+    "split": "test",
+    "family": "test-0",
+    "source": "struct State{int hits=0;void update(){++hits;}};void run(){State state;std::thread a([&]{state.update();}),b([&]{state.update();});a.join();b.join();}",
+    "candidates": [
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации.",
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных.",
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой.",
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной."
+    ],
+    "target": 1
+  },
+  {
+    "split": "test",
+    "family": "test-1",
+    "source": "std::future<int> calculate(){int local=7;return std::async(std::launch::async,[&local]{return local+1;});}",
+    "candidates": [
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends.",
+      "Use a consistent order or a joint lock when acquiring multiple mutexes.",
+      "Guard shared reads and writes with one synchronization policy."
+    ],
+    "target": 1
+  },
+  {
+    "split": "test",
+    "family": "test-1",
+    "source": "std::future<int> calculate(){int local=7;return std::async(std::launch::async,[&local]{return local+1;});}",
+    "candidates": [
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной.",
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации.",
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных.",
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой."
+    ],
+    "target": 3
+  },
+  {
+    "split": "test",
+    "family": "test-1",
+    "source": "std::future<int> calculate(){int local=7;return std::async(std::launch::async,[&local]{return local+1;});}",
+    "candidates": [
+      "Wait with a predicate and recheck it while holding the condition-variable mutex.",
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends.",
+      "Guard shared reads and writes with one synchronization policy.",
+      "Use a consistent order or a joint lock when acquiring multiple mutexes."
+    ],
+    "target": 2
+  },
+  {
+    "split": "test",
+    "family": "test-1",
+    "source": "std::future<int> calculate(){int local=7;return std::async(std::launch::async,[&local]{return local+1;});}",
+    "candidates": [
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации.",
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой.",
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной.",
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных."
+    ],
+    "target": 4
+  },
+  {
+    "split": "test",
+    "family": "test-1",
+    "source": "std::future<int> calculate(){int local=7;return std::async(std::launch::async,[&local]{return local+1;});}",
+    "candidates": [
+      "Wait with a predicate and recheck it while holding the condition-variable mutex.",
+      "Guard shared reads and writes with one synchronization policy.",
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends."
+    ],
+    "target": 3
+  },
+  {
+    "split": "test",
+    "family": "test-1",
+    "source": "std::future<int> calculate(){int local=7;return std::async(std::launch::async,[&local]{return local+1;});}",
+    "candidates": [
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных.",
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации.",
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой.",
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной."
+    ],
+    "target": 1
+  },
+  {
+    "split": "test",
+    "family": "test-1",
+    "source": "std::future<int> calculate(){int local=7;return std::async(std::launch::async,[&local]{return local+1;});}",
+    "candidates": [
+      "Guard shared reads and writes with one synchronization policy.",
+      "Use a consistent order or a joint lock when acquiring multiple mutexes.",
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends.",
+      "Wait with a predicate and recheck it while holding the condition-variable mutex."
+    ],
+    "target": 3
+  },
+  {
+    "split": "test",
+    "family": "test-1",
+    "source": "std::future<int> calculate(){int local=7;return std::async(std::launch::async,[&local]{return local+1;});}",
+    "candidates": [
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой.",
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных.",
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации.",
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной."
+    ],
+    "target": 2
+  },
+  {
+    "split": "test",
+    "family": "test-1",
+    "source": "std::future<int> calculate(){int local=7;return std::async(std::launch::async,[&local]{return local+1;});}",
+    "candidates": [
+      "Use a consistent order or a joint lock when acquiring multiple mutexes.",
+      "Guard shared reads and writes with one synchronization policy.",
+      "Wait with a predicate and recheck it while holding the condition-variable mutex."
+    ],
+    "target": 0
+  },
+  {
+    "split": "test",
+    "family": "test-1",
+    "source": "std::future<int> calculate(){int local=7;return std::async(std::launch::async,[&local]{return local+1;});}",
+    "candidates": [
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной.",
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации.",
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой.",
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных."
+    ],
+    "target": 4
+  },
+  {
+    "split": "test",
+    "family": "test-1",
+    "source": "std::future<int> calculate(){int local=7;return std::async(std::launch::async,[&local]{return local+1;});}",
+    "candidates": [
+      "Use a consistent order or a joint lock when acquiring multiple mutexes.",
+      "Wait with a predicate and recheck it while holding the condition-variable mutex.",
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends.",
+      "Guard shared reads and writes with one synchronization policy."
+    ],
+    "target": 3
+  },
+  {
+    "split": "test",
+    "family": "test-1",
+    "source": "std::future<int> calculate(){int local=7;return std::async(std::launch::async,[&local]{return local+1;});}",
+    "candidates": [
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации.",
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой.",
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной.",
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных."
+    ],
+    "target": 4
+  },
+  {
+    "split": "test",
+    "family": "test-1",
+    "source": "std::future<int> calculate(){int local=7;return std::async(std::launch::async,[&local]{return local+1;});}",
+    "candidates": [
+      "Use a consistent order or a joint lock when acquiring multiple mutexes.",
+      "Guard shared reads and writes with one synchronization policy.",
+      "Wait with a predicate and recheck it while holding the condition-variable mutex."
+    ],
+    "target": 0
+  },
+  {
+    "split": "test",
+    "family": "test-1",
+    "source": "std::future<int> calculate(){int local=7;return std::async(std::launch::async,[&local]{return local+1;});}",
+    "candidates": [
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных.",
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной.",
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации.",
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой."
+    ],
+    "target": 1
+  },
+  {
+    "split": "test",
+    "family": "test-1",
+    "source": "std::future<int> calculate(){int local=7;return std::async(std::launch::async,[&local]{return local+1;});}",
+    "candidates": [
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends.",
+      "Guard shared reads and writes with one synchronization policy.",
+      "Use a consistent order or a joint lock when acquiring multiple mutexes.",
+      "Wait with a predicate and recheck it while holding the condition-variable mutex."
+    ],
+    "target": 1
+  },
+  {
+    "split": "test",
+    "family": "test-1",
+    "source": "std::future<int> calculate(){int local=7;return std::async(std::launch::async,[&local]{return local+1;});}",
+    "candidates": [
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной.",
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации.",
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных.",
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой."
+    ],
+    "target": 3
+  },
+  {
+    "split": "test",
+    "family": "test-2",
+    "source": "int take(){std::unique_lock<std::mutex> guard(m);available.wait(guard);int result=items.front();items.pop();return result;}",
+    "candidates": [
+      "Use a consistent order or a joint lock when acquiring multiple mutexes.",
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends.",
+      "Guard shared reads and writes with one synchronization policy."
+    ],
+    "target": 0
+  },
+  {
+    "split": "test",
+    "family": "test-2",
+    "source": "int take(){std::unique_lock<std::mutex> guard(m);available.wait(guard);int result=items.front();items.pop();return result;}",
+    "candidates": [
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных.",
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной.",
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой.",
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации."
+    ],
+    "target": 2
+  },
+  {
+    "split": "test",
+    "family": "test-2",
+    "source": "int take(){std::unique_lock<std::mutex> guard(m);available.wait(guard);int result=items.front();items.pop();return result;}",
+    "candidates": [
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends.",
+      "Guard shared reads and writes with one synchronization policy.",
+      "Use a consistent order or a joint lock when acquiring multiple mutexes.",
+      "Wait with a predicate and recheck it while holding the condition-variable mutex."
+    ],
+    "target": 4
+  },
+  {
+    "split": "test",
+    "family": "test-2",
+    "source": "int take(){std::unique_lock<std::mutex> guard(m);available.wait(guard);int result=items.front();items.pop();return result;}",
+    "candidates": [
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации.",
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой.",
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной.",
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных."
+    ],
+    "target": 3
+  },
+  {
+    "split": "test",
+    "family": "test-2",
+    "source": "int take(){std::unique_lock<std::mutex> guard(m);available.wait(guard);int result=items.front();items.pop();return result;}",
+    "candidates": [
+      "Guard shared reads and writes with one synchronization policy.",
+      "Wait with a predicate and recheck it while holding the condition-variable mutex.",
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends."
+    ],
+    "target": 2
+  },
+  {
+    "split": "test",
+    "family": "test-2",
+    "source": "int take(){std::unique_lock<std::mutex> guard(m);available.wait(guard);int result=items.front();items.pop();return result;}",
+    "candidates": [
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой.",
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных.",
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации.",
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной."
+    ],
+    "target": 4
+  },
+  {
+    "split": "test",
+    "family": "test-2",
+    "source": "int take(){std::unique_lock<std::mutex> guard(m);available.wait(guard);int result=items.front();items.pop();return result;}",
+    "candidates": [
+      "Guard shared reads and writes with one synchronization policy.",
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends.",
+      "Wait with a predicate and recheck it while holding the condition-variable mutex.",
+      "Use a consistent order or a joint lock when acquiring multiple mutexes."
+    ],
+    "target": 3
+  },
+  {
+    "split": "test",
+    "family": "test-2",
+    "source": "int take(){std::unique_lock<std::mutex> guard(m);available.wait(guard);int result=items.front();items.pop();return result;}",
+    "candidates": [
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной.",
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных.",
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации.",
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой."
+    ],
+    "target": 1
+  },
+  {
+    "split": "test",
+    "family": "test-2",
+    "source": "int take(){std::unique_lock<std::mutex> guard(m);available.wait(guard);int result=items.front();items.pop();return result;}",
+    "candidates": [
+      "Guard shared reads and writes with one synchronization policy.",
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends.",
+      "Use a consistent order or a joint lock when acquiring multiple mutexes."
+    ],
+    "target": 0
+  },
+  {
+    "split": "test",
+    "family": "test-2",
+    "source": "int take(){std::unique_lock<std::mutex> guard(m);available.wait(guard);int result=items.front();items.pop();return result;}",
+    "candidates": [
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой.",
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной.",
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации.",
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных."
+    ],
+    "target": 2
+  },
+  {
+    "split": "test",
+    "family": "test-2",
+    "source": "int take(){std::unique_lock<std::mutex> guard(m);available.wait(guard);int result=items.front();items.pop();return result;}",
+    "candidates": [
+      "Guard shared reads and writes with one synchronization policy.",
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends.",
+      "Wait with a predicate and recheck it while holding the condition-variable mutex.",
+      "Use a consistent order or a joint lock when acquiring multiple mutexes."
+    ],
+    "target": 3
+  },
+  {
+    "split": "test",
+    "family": "test-2",
+    "source": "int take(){std::unique_lock<std::mutex> guard(m);available.wait(guard);int result=items.front();items.pop();return result;}",
+    "candidates": [
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной.",
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных.",
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации.",
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой."
+    ],
+    "target": 1
+  },
+  {
+    "split": "test",
+    "family": "test-2",
+    "source": "int take(){std::unique_lock<std::mutex> guard(m);available.wait(guard);int result=items.front();items.pop();return result;}",
+    "candidates": [
+      "Guard shared reads and writes with one synchronization policy.",
+      "Use a consistent order or a joint lock when acquiring multiple mutexes.",
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends."
+    ],
+    "target": 0
+  },
+  {
+    "split": "test",
+    "family": "test-2",
+    "source": "int take(){std::unique_lock<std::mutex> guard(m);available.wait(guard);int result=items.front();items.pop();return result;}",
+    "candidates": [
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой.",
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной.",
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных.",
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации."
+    ],
+    "target": 2
+  },
+  {
+    "split": "test",
+    "family": "test-2",
+    "source": "int take(){std::unique_lock<std::mutex> guard(m);available.wait(guard);int result=items.front();items.pop();return result;}",
+    "candidates": [
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends.",
+      "Guard shared reads and writes with one synchronization policy.",
+      "Wait with a predicate and recheck it while holding the condition-variable mutex.",
+      "Use a consistent order or a joint lock when acquiring multiple mutexes."
+    ],
+    "target": 3
+  },
+  {
+    "split": "test",
+    "family": "test-2",
+    "source": "int take(){std::unique_lock<std::mutex> guard(m);available.wait(guard);int result=items.front();items.pop();return result;}",
+    "candidates": [
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации.",
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной.",
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных.",
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой."
+    ],
+    "target": 2
+  },
+  {
+    "split": "test",
+    "family": "test-3",
+    "source": "void left(){alpha.lock();beta.lock();use();beta.unlock();alpha.unlock();}void right(){beta.lock();alpha.lock();use();alpha.unlock();beta.unlock();}void run(){std::thread a(left),b(right);a.join();b.join();}",
+    "candidates": [
+      "Guard shared reads and writes with one synchronization policy.",
+      "Wait with a predicate and recheck it while holding the condition-variable mutex.",
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends."
+    ],
+    "target": 0
+  },
+  {
+    "split": "test",
+    "family": "test-3",
+    "source": "void left(){alpha.lock();beta.lock();use();beta.unlock();alpha.unlock();}void right(){beta.lock();alpha.lock();use();alpha.unlock();beta.unlock();}void run(){std::thread a(left),b(right);a.join();b.join();}",
+    "candidates": [
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой.",
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных.",
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации.",
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной."
+    ],
+    "target": 1
+  },
+  {
+    "split": "test",
+    "family": "test-3",
+    "source": "void left(){alpha.lock();beta.lock();use();beta.unlock();alpha.unlock();}void right(){beta.lock();alpha.lock();use();alpha.unlock();beta.unlock();}void run(){std::thread a(left),b(right);a.join();b.join();}",
+    "candidates": [
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends.",
+      "Wait with a predicate and recheck it while holding the condition-variable mutex.",
+      "Guard shared reads and writes with one synchronization policy.",
+      "Use a consistent order or a joint lock when acquiring multiple mutexes."
+    ],
+    "target": 4
+  },
+  {
+    "split": "test",
+    "family": "test-3",
+    "source": "void left(){alpha.lock();beta.lock();use();beta.unlock();alpha.unlock();}void right(){beta.lock();alpha.lock();use();alpha.unlock();beta.unlock();}void run(){std::thread a(left),b(right);a.join();b.join();}",
+    "candidates": [
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой.",
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации.",
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной.",
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных."
+    ],
+    "target": 1
+  },
+  {
+    "split": "test",
+    "family": "test-3",
+    "source": "void left(){alpha.lock();beta.lock();use();beta.unlock();alpha.unlock();}void right(){beta.lock();alpha.lock();use();alpha.unlock();beta.unlock();}void run(){std::thread a(left),b(right);a.join();b.join();}",
+    "candidates": [
+      "Use a consistent order or a joint lock when acquiring multiple mutexes.",
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends.",
+      "Wait with a predicate and recheck it while holding the condition-variable mutex."
+    ],
+    "target": 1
+  },
+  {
+    "split": "test",
+    "family": "test-3",
+    "source": "void left(){alpha.lock();beta.lock();use();beta.unlock();alpha.unlock();}void right(){beta.lock();alpha.lock();use();alpha.unlock();beta.unlock();}void run(){std::thread a(left),b(right);a.join();b.join();}",
+    "candidates": [
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных.",
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации.",
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой.",
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной."
+    ],
+    "target": 3
+  },
+  {
+    "split": "test",
+    "family": "test-3",
+    "source": "void left(){alpha.lock();beta.lock();use();beta.unlock();alpha.unlock();}void right(){beta.lock();alpha.lock();use();alpha.unlock();beta.unlock();}void run(){std::thread a(left),b(right);a.join();b.join();}",
+    "candidates": [
+      "Use a consistent order or a joint lock when acquiring multiple mutexes.",
+      "Wait with a predicate and recheck it while holding the condition-variable mutex.",
+      "Guard shared reads and writes with one synchronization policy.",
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends."
+    ],
+    "target": 1
+  },
+  {
+    "split": "test",
+    "family": "test-3",
+    "source": "void left(){alpha.lock();beta.lock();use();beta.unlock();alpha.unlock();}void right(){beta.lock();alpha.lock();use();alpha.unlock();beta.unlock();}void run(){std::thread a(left),b(right);a.join();b.join();}",
+    "candidates": [
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной.",
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой.",
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных.",
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации."
+    ],
+    "target": 2
+  },
+  {
+    "split": "test",
+    "family": "test-3",
+    "source": "void left(){alpha.lock();beta.lock();use();beta.unlock();alpha.unlock();}void right(){beta.lock();alpha.lock();use();alpha.unlock();beta.unlock();}void run(){std::thread a(left),b(right);a.join();b.join();}",
+    "candidates": [
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends.",
+      "Wait with a predicate and recheck it while holding the condition-variable mutex.",
+      "Use a consistent order or a joint lock when acquiring multiple mutexes."
+    ],
+    "target": 3
+  },
+  {
+    "split": "test",
+    "family": "test-3",
+    "source": "void left(){alpha.lock();beta.lock();use();beta.unlock();alpha.unlock();}void right(){beta.lock();alpha.lock();use();alpha.unlock();beta.unlock();}void run(){std::thread a(left),b(right);a.join();b.join();}",
+    "candidates": [
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной.",
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных.",
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации.",
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой."
+    ],
+    "target": 4
+  },
+  {
+    "split": "test",
+    "family": "test-3",
+    "source": "void left(){alpha.lock();beta.lock();use();beta.unlock();alpha.unlock();}void right(){beta.lock();alpha.lock();use();alpha.unlock();beta.unlock();}void run(){std::thread a(left),b(right);a.join();b.join();}",
+    "candidates": [
+      "Use a consistent order or a joint lock when acquiring multiple mutexes.",
+      "Wait with a predicate and recheck it while holding the condition-variable mutex.",
+      "Guard shared reads and writes with one synchronization policy.",
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends."
+    ],
+    "target": 1
+  },
+  {
+    "split": "test",
+    "family": "test-3",
+    "source": "void left(){alpha.lock();beta.lock();use();beta.unlock();alpha.unlock();}void right(){beta.lock();alpha.lock();use();alpha.unlock();beta.unlock();}void run(){std::thread a(left),b(right);a.join();b.join();}",
+    "candidates": [
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации.",
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных.",
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной.",
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой."
+    ],
+    "target": 4
+  },
+  {
+    "split": "test",
+    "family": "test-3",
+    "source": "void left(){alpha.lock();beta.lock();use();beta.unlock();alpha.unlock();}void right(){beta.lock();alpha.lock();use();alpha.unlock();beta.unlock();}void run(){std::thread a(left),b(right);a.join();b.join();}",
+    "candidates": [
+      "Use a consistent order or a joint lock when acquiring multiple mutexes.",
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends.",
+      "Wait with a predicate and recheck it while holding the condition-variable mutex."
+    ],
+    "target": 1
+  },
+  {
+    "split": "test",
+    "family": "test-3",
+    "source": "void left(){alpha.lock();beta.lock();use();beta.unlock();alpha.unlock();}void right(){beta.lock();alpha.lock();use();alpha.unlock();beta.unlock();}void run(){std::thread a(left),b(right);a.join();b.join();}",
+    "candidates": [
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных.",
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной.",
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации.",
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой."
+    ],
+    "target": 4
+  },
+  {
+    "split": "test",
+    "family": "test-3",
+    "source": "void left(){alpha.lock();beta.lock();use();beta.unlock();alpha.unlock();}void right(){beta.lock();alpha.lock();use();alpha.unlock();beta.unlock();}void run(){std::thread a(left),b(right);a.join();b.join();}",
+    "candidates": [
+      "Wait with a predicate and recheck it while holding the condition-variable mutex.",
+      "Use a consistent order or a joint lock when acquiring multiple mutexes.",
+      "Guard shared reads and writes with one synchronization policy.",
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends."
+    ],
+    "target": 2
+  },
+  {
+    "split": "test",
+    "family": "test-3",
+    "source": "void left(){alpha.lock();beta.lock();use();beta.unlock();alpha.unlock();}void right(){beta.lock();alpha.lock();use();alpha.unlock();beta.unlock();}void run(){std::thread a(left),b(right);a.join();b.join();}",
+    "candidates": [
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации.",
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной.",
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой.",
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных."
+    ],
+    "target": 3
+  },
+  {
+    "split": "test",
+    "family": "test-4",
+    "source": "void run(){std::vector<int> values{1,2,3};std::thread a([values]{for(int v:values)print(v);});a.join();}",
+    "candidates": [
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends.",
+      "Use a consistent order or a joint lock when acquiring multiple mutexes.",
+      "Guard shared reads and writes with one synchronization policy."
+    ],
+    "target": 0
+  },
+  {
+    "split": "test",
+    "family": "test-4",
+    "source": "void run(){std::vector<int> values{1,2,3};std::thread a([values]{for(int v:values)print(v);});a.join();}",
+    "candidates": [
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации.",
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных.",
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой.",
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной."
+    ],
+    "target": 0
+  },
+  {
+    "split": "test",
+    "family": "test-4",
+    "source": "void run(){std::vector<int> values{1,2,3};std::thread a([values]{for(int v:values)print(v);});a.join();}",
+    "candidates": [
+      "Wait with a predicate and recheck it while holding the condition-variable mutex.",
+      "Guard shared reads and writes with one synchronization policy.",
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends.",
+      "Use a consistent order or a joint lock when acquiring multiple mutexes."
+    ],
+    "target": 0
+  },
+  {
+    "split": "test",
+    "family": "test-4",
+    "source": "void run(){std::vector<int> values{1,2,3};std::thread a([values]{for(int v:values)print(v);});a.join();}",
+    "candidates": [
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных.",
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой.",
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной.",
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации."
+    ],
+    "target": 0
+  },
+  {
+    "split": "test",
+    "family": "test-4",
+    "source": "void run(){std::vector<int> values{1,2,3};std::thread a([values]{for(int v:values)print(v);});a.join();}",
+    "candidates": [
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends.",
+      "Use a consistent order or a joint lock when acquiring multiple mutexes.",
+      "Guard shared reads and writes with one synchronization policy."
+    ],
+    "target": 0
+  },
+  {
+    "split": "test",
+    "family": "test-4",
+    "source": "void run(){std::vector<int> values{1,2,3};std::thread a([values]{for(int v:values)print(v);});a.join();}",
+    "candidates": [
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных.",
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной.",
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации.",
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой."
+    ],
+    "target": 0
+  },
+  {
+    "split": "test",
+    "family": "test-4",
+    "source": "void run(){std::vector<int> values{1,2,3};std::thread a([values]{for(int v:values)print(v);});a.join();}",
+    "candidates": [
+      "Use a consistent order or a joint lock when acquiring multiple mutexes.",
+      "Wait with a predicate and recheck it while holding the condition-variable mutex.",
+      "Guard shared reads and writes with one synchronization policy.",
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends."
+    ],
+    "target": 0
+  },
+  {
+    "split": "test",
+    "family": "test-4",
+    "source": "void run(){std::vector<int> values{1,2,3};std::thread a([values]{for(int v:values)print(v);});a.join();}",
+    "candidates": [
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой.",
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных.",
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации.",
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной."
+    ],
+    "target": 0
+  },
+  {
+    "split": "test",
+    "family": "test-4",
+    "source": "void run(){std::vector<int> values{1,2,3};std::thread a([values]{for(int v:values)print(v);});a.join();}",
+    "candidates": [
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends.",
+      "Wait with a predicate and recheck it while holding the condition-variable mutex.",
+      "Use a consistent order or a joint lock when acquiring multiple mutexes."
+    ],
+    "target": 0
+  },
+  {
+    "split": "test",
+    "family": "test-4",
+    "source": "void run(){std::vector<int> values{1,2,3};std::thread a([values]{for(int v:values)print(v);});a.join();}",
+    "candidates": [
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной.",
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных.",
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой.",
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации."
+    ],
+    "target": 0
+  },
+  {
+    "split": "test",
+    "family": "test-4",
+    "source": "void run(){std::vector<int> values{1,2,3};std::thread a([values]{for(int v:values)print(v);});a.join();}",
+    "candidates": [
+      "Guard shared reads and writes with one synchronization policy.",
+      "Wait with a predicate and recheck it while holding the condition-variable mutex.",
+      "Use a consistent order or a joint lock when acquiring multiple mutexes.",
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends."
+    ],
+    "target": 0
+  },
+  {
+    "split": "test",
+    "family": "test-4",
+    "source": "void run(){std::vector<int> values{1,2,3};std::thread a([values]{for(int v:values)print(v);});a.join();}",
+    "candidates": [
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных.",
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой.",
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной.",
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации."
+    ],
+    "target": 0
+  },
+  {
+    "split": "test",
+    "family": "test-4",
+    "source": "void run(){std::vector<int> values{1,2,3};std::thread a([values]{for(int v:values)print(v);});a.join();}",
+    "candidates": [
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends.",
+      "Use a consistent order or a joint lock when acquiring multiple mutexes.",
+      "Guard shared reads and writes with one synchronization policy."
+    ],
+    "target": 0
+  },
+  {
+    "split": "test",
+    "family": "test-4",
+    "source": "void run(){std::vector<int> values{1,2,3};std::thread a([values]{for(int v:values)print(v);});a.join();}",
+    "candidates": [
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации.",
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных.",
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной.",
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой."
+    ],
+    "target": 0
+  },
+  {
+    "split": "test",
+    "family": "test-4",
+    "source": "void run(){std::vector<int> values{1,2,3};std::thread a([values]{for(int v:values)print(v);});a.join();}",
+    "candidates": [
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends.",
+      "Guard shared reads and writes with one synchronization policy.",
+      "Use a consistent order or a joint lock when acquiring multiple mutexes.",
+      "Wait with a predicate and recheck it while holding the condition-variable mutex."
+    ],
+    "target": 0
+  },
+  {
+    "split": "test",
+    "family": "test-4",
+    "source": "void run(){std::vector<int> values{1,2,3};std::thread a([values]{for(int v:values)print(v);});a.join();}",
+    "candidates": [
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных.",
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной.",
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации.",
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой."
+    ],
+    "target": 0
+  },
+  {
+    "split": "test",
+    "family": "test-5",
+    "source": "int read(const Widget& object){return object.value();}",
+    "candidates": [
+      "Guard shared reads and writes with one synchronization policy.",
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends.",
+      "Use a consistent order or a joint lock when acquiring multiple mutexes."
+    ],
+    "target": 0
+  },
+  {
+    "split": "test",
+    "family": "test-5",
+    "source": "int read(const Widget& object){return object.value();}",
+    "candidates": [
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации.",
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой.",
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных.",
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной."
+    ],
+    "target": 0
+  },
+  {
+    "split": "test",
+    "family": "test-5",
+    "source": "int read(const Widget& object){return object.value();}",
+    "candidates": [
+      "Wait with a predicate and recheck it while holding the condition-variable mutex.",
+      "Guard shared reads and writes with one synchronization policy.",
+      "Use a consistent order or a joint lock when acquiring multiple mutexes.",
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends."
+    ],
+    "target": 0
+  },
+  {
+    "split": "test",
+    "family": "test-5",
+    "source": "int read(const Widget& object){return object.value();}",
+    "candidates": [
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации.",
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных.",
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной.",
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой."
+    ],
+    "target": 0
+  },
+  {
+    "split": "test",
+    "family": "test-5",
+    "source": "int read(const Widget& object){return object.value();}",
+    "candidates": [
+      "Wait with a predicate and recheck it while holding the condition-variable mutex.",
+      "Guard shared reads and writes with one synchronization policy.",
+      "Use a consistent order or a joint lock when acquiring multiple mutexes."
+    ],
+    "target": 0
+  },
+  {
+    "split": "test",
+    "family": "test-5",
+    "source": "int read(const Widget& object){return object.value();}",
+    "candidates": [
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой.",
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных.",
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации.",
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной."
+    ],
+    "target": 0
+  },
+  {
+    "split": "test",
+    "family": "test-5",
+    "source": "int read(const Widget& object){return object.value();}",
+    "candidates": [
+      "Wait with a predicate and recheck it while holding the condition-variable mutex.",
+      "Use a consistent order or a joint lock when acquiring multiple mutexes.",
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends.",
+      "Guard shared reads and writes with one synchronization policy."
+    ],
+    "target": 0
+  },
+  {
+    "split": "test",
+    "family": "test-5",
+    "source": "int read(const Widget& object){return object.value();}",
+    "candidates": [
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой.",
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных.",
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной.",
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации."
+    ],
+    "target": 0
+  },
+  {
+    "split": "test",
+    "family": "test-5",
+    "source": "int read(const Widget& object){return object.value();}",
+    "candidates": [
+      "Use a consistent order or a joint lock when acquiring multiple mutexes.",
+      "Guard shared reads and writes with one synchronization policy.",
+      "Wait with a predicate and recheck it while holding the condition-variable mutex."
+    ],
+    "target": 0
+  },
+  {
+    "split": "test",
+    "family": "test-5",
+    "source": "int read(const Widget& object){return object.value();}",
+    "candidates": [
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации.",
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой.",
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных.",
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной."
+    ],
+    "target": 0
+  },
+  {
+    "split": "test",
+    "family": "test-5",
+    "source": "int read(const Widget& object){return object.value();}",
+    "candidates": [
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends.",
+      "Use a consistent order or a joint lock when acquiring multiple mutexes.",
+      "Wait with a predicate and recheck it while holding the condition-variable mutex.",
+      "Guard shared reads and writes with one synchronization policy."
+    ],
+    "target": 0
+  },
+  {
+    "split": "test",
+    "family": "test-5",
+    "source": "int read(const Widget& object){return object.value();}",
+    "candidates": [
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой.",
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации.",
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной.",
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных."
+    ],
+    "target": 0
+  },
+  {
+    "split": "test",
+    "family": "test-5",
+    "source": "int read(const Widget& object){return object.value();}",
+    "candidates": [
+      "Guard shared reads and writes with one synchronization policy.",
+      "Wait with a predicate and recheck it while holding the condition-variable mutex.",
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends."
+    ],
+    "target": 0
+  },
+  {
+    "split": "test",
+    "family": "test-5",
+    "source": "int read(const Widget& object){return object.value();}",
+    "candidates": [
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации.",
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных.",
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой.",
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной."
+    ],
+    "target": 0
+  },
+  {
+    "split": "test",
+    "family": "test-5",
+    "source": "int read(const Widget& object){return object.value();}",
+    "candidates": [
+      "Keep referenced data alive until asynchronous tasks finish; join before its scope ends.",
+      "Guard shared reads and writes with one synchronization policy.",
+      "Wait with a predicate and recheck it while holding the condition-variable mutex.",
+      "Use a consistent order or a joint lock when acquiring multiple mutexes."
+    ],
+    "target": 0
+  },
+  {
+    "split": "test",
+    "family": "test-5",
+    "source": "int read(const Widget& object){return object.value();}",
+    "candidates": [
+      "Ожидайте с предикатом и повторно проверяйте условие под mutex условной переменной.",
+      "Защитите чтение и запись разделяемых данных единой политикой синхронизации.",
+      "Обеспечьте время жизни захваченных ссылок до завершения задач; присоедините поток до выхода из области данных.",
+      "Захватывайте несколько mutex в едином порядке либо совместной блокировкой."
+    ],
+    "target": 0
+  }
+]

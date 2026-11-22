@@ -62,9 +62,25 @@ Verify downloads against `SHA256SUMS.txt` attached to the release. Linux package
 - **Database tools:** independent connection tabs, schema/table browsing, editable grids, pagination, filtering and sorting of loaded rows, SQL execution, cancellation, and CSV export. Drivers are discovered from Qt plugins.
 - **Native debugging:** LLDB breakpoints, stepping, call stacks, local variables, expression evaluation, and program input/output.
 - **Thread review:** live source diagnostics and localized recommendations, with optional local model ranking.
-- **Local inference:** Qwen2.5-Coder 0.5B in Q4_K_M format, approximately 491 MB, executed in-process through llama.cpp. No model service is required. Inline suggestions are accepted with Tab and dismissed with Escape.
+- **Local inference:** Qwen2.5-Coder 0.5B in Q4_K_M format, approximately 491 MB, executed in-process through llama.cpp. Inline completion uses native fill-in-the-middle tokens, where supported, and stops at the first completed line. The runtime retains at most two contexts and reuses matching prompt prefixes in memory. No model service is required. Inline suggestions are accepted with Tab and dismissed with Escape.
 - **Project agent:** contextual questions and reviewed repair proposals using the active buffer, selected code, neighboring files, adapter-defined project configuration, SDK information and available compiler/LSP diagnostics. Uses bundled Qwen locally or API providers configured directly in Veyra through the optional Beamcore runtime.
 - **Interface:** dark theme, configurable shortcuts, and English/Russian localization. A fresh installation starts in English.
+
+### Local model measurements
+
+On an M1 Mac with 8 GB RAM, the short-function fixture improved from 5/16 to 13/16 exact expected continuations. Median request time fell from 367 ms to 89 ms on CPU and 63 ms on Metal. These are 32 sequential requests per executable, without the editor's debounce delay. Initial loading and shader compilation can take longer; these results do not describe cold startup or general coding ability. Equivalent code can fail the strict text comparison. Raw outputs, timings, model identity and methodology are in the [measurement report](docs/benchmarks/local-model.json).
+
+The bundled Qwen weights are unchanged. A local rank-8 output-head LoRA experiment for recommendation selection was rejected: its held-out score fell from 38/96 to 26/96 across permutations of six source families. That adapter is not shipped. The transformer remained frozen; this experiment does not constitute full-model training.
+
+Developer tools run locally in C++ and operate only on the dataset explicitly supplied:
+
+```sh
+cmake --build <build-directory> --target veyra_model_benchmark veyra_selection_train
+<build-directory>/veyra_model_benchmark
+<build-directory>/veyra_selection_train tests/data/model/selection.json /tmp/selection-trial
+```
+
+The training fixture separates source families between training, validation and test sets. The tool writes a report and exports an adapter only when both validation and test accuracy exceed the frozen baseline. It does not collect editor buffers or train automatically. The training tool produces an experimental GGUF adapter for a compatible llama.cpp runtime; Veyra does not automatically load it.
 
 Language adapters describe file types, project templates, compiler recipes, and language-server configuration. SDK discovery is read-only; connecting an SDK or installing language tooling requires an explicit action. Adapters can be imported without rebuilding the IDE.
 
@@ -135,7 +151,7 @@ git lfs install --local
 git lfs pull
 ```
 
-Local inference uses the CPU runtime. Optional backends that require external code generators are excluded from this build.
+Local inference uses Metal by default on Apple Silicon and CPU on other platforms. Metal kernels are embedded in the application and compiled by the system runtime; a separate shader compiler is not required. Set `-DTS_MODEL_METAL=OFF` for a CPU-only build, or launch with `VEYRA_MODEL_DEVICE=cpu` to select CPU at runtime. A failed Metal context falls back to CPU.
 
 ## Build and installation
 
