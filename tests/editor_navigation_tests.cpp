@@ -77,6 +77,13 @@ int main(int argc, char** argv) {
         while (!completion->popup()->isVisible() && completionDeadline.elapsed() < 2000)
             QTest::qWait(20);
         check(completion->popup()->isVisible(), "Live completion works beyond the former 2 MiB limit");
+        QTest::keyClick(&editor, Qt::Key_Down);
+        const auto selectedBeforeScroll = completion->popup()->currentIndex().data();
+        editor.verticalScrollBar()->setValue(editor.verticalScrollBar()->value() + 1);
+        QTest::qWait(40);
+        check(completion->popup()->isVisible(), "Scrolling a visible caret keeps completion anchored");
+        check(completion->popup()->currentIndex().data() == selectedBeforeScroll,
+              "Repositioning preserves the selected completion");
         const auto expectedPopup = editor.viewport()->mapToGlobal(editor.cursorRect().bottomLeft());
         check(std::abs(completion->popup()->pos().x() - expectedPopup.x()) <= 4,
               "Completion is aligned with the caret after the gutter offset");

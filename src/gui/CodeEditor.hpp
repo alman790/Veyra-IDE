@@ -94,10 +94,12 @@ class CodeEditor final : public QPlainTextEdit {
     bool editingKey_ = false;
     bool gitAnnotationsAvailable_ = true;
     void dismissCompletion();
+    void repositionCompletion();
     void updateDocumentWords();
     QHash<QString, QJsonObject> serverEdits_;
     QStringList serverWords_;
     QTimer completionTimer_;
+    int completionDelay_ = 180;
     bool autoCompletion_ = true, autoPairs_ = true, indentGuides_ = true;
     int tabWidth_ = 4;
     quint64 viewGeneration_ = 0;

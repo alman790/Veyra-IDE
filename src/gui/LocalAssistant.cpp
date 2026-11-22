@@ -22,7 +22,7 @@ void MainWindow::setupLocalAssistant() {
     localModelJob_ = new BackgroundJob(this);
     predictiveTimer_ = new QTimer(this);
     predictiveTimer_->setSingleShot(true);
-    predictiveTimer_->setInterval(1000);
+    predictiveTimer_->setInterval(450);
     neuralReviewTimer_ = new QTimer(this);
     neuralReviewTimer_->setSingleShot(true);
     neuralReviewTimer_->setInterval(2400);

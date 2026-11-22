@@ -315,7 +315,7 @@ CodeEditor::CodeEditor(QWidget* parent) : QPlainTextEdit(parent) {
         completionAllowed_ = false;
         wordsRevision_ = -1;
         if (autoCompletion_ && editingKey_ && !isReadOnly())
-            completionTimer_.start();
+            completionTimer_.start(completer_->popup()->isVisible() ? 0 : completionDelay_);
         else
             dismissCompletion();
     });
@@ -338,11 +338,11 @@ CodeEditor::CodeEditor(QWidget* parent) : QPlainTextEdit(parent) {
     });
     connect(verticalScrollBar(), &QScrollBar::valueChanged, this, [this] {
         if (!editingKey_)
-            dismissCompletion();
+            QTimer::singleShot(0, this, &CodeEditor::repositionCompletion);
     });
     connect(horizontalScrollBar(), &QScrollBar::valueChanged, this, [this] {
         if (!editingKey_)
-            dismissCompletion();
+            QTimer::singleShot(0, this, &CodeEditor::repositionCompletion);
     });
     updateLineNumberAreaWidth(0);
     wireDocument();
@@ -379,6 +379,7 @@ void CodeEditor::resizeEvent(QResizeEvent* e) {
     QPlainTextEdit::resizeEvent(e);
     QRect cr = contentsRect();
     lineNumbers_->setGeometry(QRect(cr.left(), cr.top(), lineNumberAreaWidth(), cr.height()));
+    QTimer::singleShot(0, this, &CodeEditor::repositionCompletion);
 }
 
 void CodeEditor::lineNumberAreaPaintEvent(QPaintEvent* e) {
@@ -641,7 +642,8 @@ void CodeEditor::applyPreferences() {
     autoPairs_ = settings.value("editor/autoPairs", true).toBool();
     indentGuides_ = settings.value("editor/indentGuides", true).toBool();
     tabWidth_ = std::clamp(settings.value("editor/tabWidth", 4).toInt(), 2, 8);
-    completionTimer_.setInterval(settings.value("editor/completionDelay", 180).toInt());
+    completionDelay_ = std::clamp(settings.value("editor/completionDelay", 180).toInt(), 0, 1500);
+    completionTimer_.setInterval(completionDelay_);
     setLineWrapMode(settings.value("editor/wordWrap", false).toBool() ? QPlainTextEdit::WidgetWidth
                                                                       : QPlainTextEdit::NoWrap);
     setTabStopDistance(QFontMetricsF(font()).horizontalAdvance(' ') * tabWidth_);
@@ -677,6 +679,10 @@ void CodeEditor::requestSuggestions() {
                                        .arg(textCursor().hasSelection()));
     if ((!hasFocus() && !completer_->popup()->isVisible()) || textCursor().hasSelection())
         return;
+    if (!viewport()->rect().intersects(cursorRect())) {
+        dismissCompletion();
+        return;
+    }
     const auto prefix = completionPrefix();
     const auto before = textCursor().block().text().left(textCursor().positionInBlock());
     const bool member = before.endsWith('.') || before.endsWith("->") || before.endsWith("::");
@@ -794,9 +800,10 @@ void CodeEditor::showCompletion() {
     words.removeDuplicates();
     const auto selected = completer_->popup()->currentIndex().data().toString();
     auto* model = qobject_cast<QStringListModel*>(completer_->model());
-    if (model)
-        model->setStringList(words);
-    else
+    if (model) {
+        if (model->stringList() != words)
+            model->setStringList(words);
+    } else
         completer_->setModel(new QStringListModel(words, completer_));
     completer_->setCompletionPrefix(prefix);
     if (completer_->completionCount() == 0) {
@@ -823,6 +830,25 @@ void CodeEditor::dismissCompletion() {
     serverEdits_.clear();
     if (completer_)
         completer_->popup()->hide();
+}
+
+void CodeEditor::repositionCompletion() {
+    if (!completer_ || !completer_->popup()->isVisible())
+        return;
+    if (completionTimer_.isActive())
+        return;
+    if (!completionAllowed_ || completionPosition_ != textCursor().position() ||
+        completionRevision_ != sourceRevision(document()) || !viewport()->rect().intersects(cursorRect())) {
+        dismissCompletion();
+        return;
+    }
+    auto rectangle = cursorRect();
+    rectangle.moveTopLeft(viewport()->mapTo(this, rectangle.topLeft()));
+    rectangle.setWidth(completer_->popup()->width());
+    const auto selected = completer_->popup()->currentIndex();
+    completer_->complete(rectangle);
+    if (selected.isValid())
+        completer_->popup()->setCurrentIndex(selected);
 }
 
 void CodeEditor::updateDocumentWords() {
@@ -1091,9 +1117,6 @@ void CodeEditor::keyPressEvent(QKeyEvent* event) {
         }
     }
     QPlainTextEdit::keyPressEvent(event);
-    if (!event->text().isEmpty() || event->key() == Qt::Key_Backspace || event->key() == Qt::Key_Delete) {
-        completer_->popup()->hide();
-    }
 }
 
 void CodeEditor::dragEnterEvent(QDragEnterEvent* event) {

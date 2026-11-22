@@ -4,8 +4,10 @@
 #include "MainWindow.hpp"
 #include "ToolDiscovery.hpp"
 #include "UiLanguage.hpp"
+#include <QAbstractItemView>
 #include <QAction>
 #include <QApplication>
+#include <QCompleter>
 #include <QElapsedTimer>
 #include <QFile>
 #include <QJsonDocument>
@@ -97,6 +99,49 @@ int main(int argc, char** argv) {
             QTest::qWait(20);
         check(!inlineHint->isHidden() && inlineHint->text().contains("mutex"),
               "Thread hint appears live below code");
+        const auto originalSource = editor->toPlainText();
+        auto completionCursor = editor->textCursor();
+        completionCursor.movePosition(QTextCursor::EndOfBlock);
+        editor->setTextCursor(completionCursor);
+        window.activateWindow();
+        window.raise();
+        editor->setFocus();
+        QTest::qWait(50);
+        QTest::keyClick(editor, Qt::Key_Return);
+        QTest::keyClicks(editor, "co", Qt::NoModifier, 170);
+        auto* completion = editor->findChild<QCompleter*>();
+        QElapsedTimer completionDeadline;
+        completionDeadline.start();
+        while (!completion->popup()->isVisible() && completionDeadline.elapsed() < 2000)
+            QTest::qWait(10);
+        check(completion->popup()->isVisible(), "Completion opens while live thread analysis runs");
+        QTest::keyClick(editor, Qt::Key_U);
+        check(completion->popup()->isVisible(), "Typing another character does not hide the completion menu");
+        QTest::qWait(40);
+        check(completion->completionPrefix() == "cou" && completion->popup()->isVisible(),
+              "An open menu filters the next character without waiting for the initial delay");
+        QTest::qWait(1400);
+        check(completion->popup()->isVisible(),
+              "Completion stays open across live analysis and layout updates");
+        QTest::keyClick(editor, Qt::Key_Backspace);
+        QTest::qWait(40);
+        check(completion->popup()->isVisible() && completion->completionPrefix() == "co",
+              "Backspace updates an open menu without closing it");
+        const int completionPosition = editor->textCursor().position();
+        QTest::keyClick(editor, Qt::Key_Down);
+        check(editor->textCursor().position() == completionPosition, "Menu arrows leave the caret in place");
+        QTest::keyClick(editor, Qt::Key_Tab);
+        check(editor->textCursor().block().text().trimmed() == "counter",
+              "Tab accepts the updated completion");
+        editor->undo();
+        check(editor->textCursor().block().text().trimmed() == "co",
+              "The accepted completion undoes atomically");
+        editor->setPlainText(originalSource);
+        editor->jumpToLine(6);
+        hints.restart();
+        while (inlineHint->isHidden() && hints.elapsed() < 5000)
+            QTest::qWait(20);
+        check(!inlineHint->isHidden(), "Live thread feedback resumes after completion and undo");
         editor->document()->setModified(false);
         if (qEnvironmentVariableIsSet("TS_IDE_PREVIEW"))
             window.grab().save(qEnvironmentVariable("TS_IDE_PREVIEW"));

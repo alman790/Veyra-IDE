@@ -1,5 +1,6 @@
 #include "CodeEditor.hpp"
 #include "MainWindow.hpp"
+#include <QAbstractItemView>
 #include <QApplication>
 #include <QCompleter>
 #include <QDir>
@@ -59,7 +60,8 @@ int main(int argc, char** argv) {
         QTimer recorder;
         QObject::connect(&recorder, &QTimer::timeout, &window, [&] {
             auto frame = window.grab();
-            if (auto* popup = QApplication::activePopupWidget(); popup && popup->isVisible()) {
+            auto* completion = editor->findChild<QCompleter*>();
+            if (auto* popup = completion ? completion->popup() : nullptr; popup && popup->isVisible()) {
                 QPainter painter(&frame);
                 painter.drawPixmap(window.mapFromGlobal(popup->mapToGlobal(QPoint())), popup->grab());
             }
@@ -86,6 +88,9 @@ int main(int argc, char** argv) {
         cursor.insertText("\n    ");
         editor->setTextCursor(cursor);
         QTest::keyClicks(editor, "cou", Qt::NoModifier, 170);
+        QTest::qWait(250);
+        if (!editor->findChild<QCompleter*>()->popup()->isVisible())
+            throw std::runtime_error("The live completion menu must remain visible while recording");
         QTest::qWait(1700);
         QTest::keyClick(editor, Qt::Key_Escape);
         editor->document()->setModified(false);
